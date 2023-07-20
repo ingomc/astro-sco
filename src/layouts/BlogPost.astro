@@ -33,7 +33,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<Header />
 		<main>
 			<article>
-				{heroImage && <Picture widths={[400, 800, 1200]} aspectRatio="2:1" alt="descriptive text" src="/assets/placeholder-about.jpg" alt="" />}
+				{heroImage && <Picture widths={[400, 800, 1200]} aspectRatio="2:1" alt="descriptive text" src={heroImage} alt="" />}
 
 				<h1 class="title">{title}</h1>
 				<FormattedDate date={pubDate} />
