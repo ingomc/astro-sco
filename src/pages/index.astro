@@ -1,47 +1,36 @@
 ---
-import BaseHead from "../components/BaseHead.astro";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import App from "../layouts/App.astro";
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-  </head>
-  <body>
-    <Header title={SITE_TITLE} />
-    <main class="prose container mx-auto">
-      <h1>Herzlich Willkommen</h1>
-      <hr />
-      <h2>Heim</h2>
-      <h3>Zeiten</h3>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum blanditiis
-        necessitatibus ullam natus modi quae rem expedita illo perferendis iste
-        odio officiis aperiam, repudiandae, sed, sequi iusto temporibus magnam
-        labore.
-      </p>
-      <h3>Feiern</h3>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus sed, ex
-        eligendi vero qui molestiae nostrum harum saepe cupiditate commodi
-        corrupti omnis dicta ratione neque quidem. Laboriosam laudantium
-        reiciendis ratione!
-      </p>
-      <h3>Anschrift</h3>
-      <p>
-        sdjfjsaf asfhj
-        <br />
-        sadfhjsf 435
-        <br />
-        94757 kjasdflkjh
-        <br />
-        Tel: <br />
-        mail ...
-      </p>
-    </main>
-    <Footer />
-  </body>
-</html>
+<App>
+      <main class="prose container mx-auto">
+        <h1>Herzlich Willkommen</h1>
+        <hr />
+        <h2>Heim</h2>
+        <h3>Zeiten</h3>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum blanditiis
+          necessitatibus ullam natus modi quae rem expedita illo perferendis iste
+          odio officiis aperiam, repudiandae, sed, sequi iusto temporibus magnam
+          labore.
+        </p>
+        <h3>Feiern</h3>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus sed, ex
+          eligendi vero qui molestiae nostrum harum saepe cupiditate commodi
+          corrupti omnis dicta ratione neque quidem. Laboriosam laudantium
+          reiciendis ratione!
+        </p>
+        <h3>Anschrift</h3>
+        <p>
+          sdjfjsaf asfhj
+          <br />
+          sadfhjsf 435
+          <br />
+          94757 kjasdflkjh
+          <br />
+          Tel: <br />
+          mail ...
+        </p>
+      </main>
+    </App> 
