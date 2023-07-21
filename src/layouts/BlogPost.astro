@@ -31,8 +31,8 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
 	<body>
 		<Header />
-		<main>
-			<article>
+		<main class="container mx-auto">
+			<article class="prose">
 				{heroImage && <Picture widths={[400, 800, 1200]} aspectRatio="2:1" alt="descriptive text" src={heroImage} alt="" />}
 
 				<h1 class="title">{title}</h1>
