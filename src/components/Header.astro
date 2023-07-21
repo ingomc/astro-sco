@@ -4,18 +4,21 @@ import { SITE_TITLE } from '../consts';
 ---
 
 <header>
-	<h2>
+	<div class="wrapper">
 		<a href="/">{SITE_TITLE}</a>
-	</h2>
-	<nav>
-		<HeaderLink href="/blog">Blog</HeaderLink>
-		<HeaderLink href="/veranstaltungen">Veranstaltungen</HeaderLink>
-		<HeaderLink href="/mitglieder">Mitglieder</HeaderLink>
-	</nav>
+		<nav>
+			<HeaderLink href="/blog">Blog</HeaderLink>
+			<HeaderLink href="/veranstaltungen">Veranstaltungen</HeaderLink>
+			<HeaderLink href="/mitglieder">Mitglieder</HeaderLink>
+		</nav>
+	</div>
 </header>
 <style>
 	header {
-		margin: 0em 0 2em;
+		@apply shadow-md
+	}
+	.wrapper {
+		@apply container mx-auto px-2 py-4 flex justify-between items-center
 	}
 	h2 {
 		margin: 0.5em 0;
