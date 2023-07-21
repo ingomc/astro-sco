@@ -1,7 +1,7 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
+import type { HTMLAttributes } from "astro/types";
 
-type Props = HTMLAttributes<'a'>;
+type Props = HTMLAttributes<"a">;
 
 const { href, class: className, ...props } = Astro.props;
 
@@ -10,15 +10,13 @@ const isActive = href && pathname.includes(href.toString());
 ---
 
 <a href={href} class:list={[className, { active: isActive }]} {...props}>
-	<slot />
+  <slot />
 </a>
 <style>
-	a {
-		display: inline-block;
-		text-decoration: none;
-	}
-	a.active {
-		font-weight: bolder;
-		text-decoration: underline;
-	}
+  a {
+    @apply inline-flex items-center rounded-md bg-gray-50 hover:bg-gray-200 px-4 py-1 text-lg font-medium text-gray-700 transition duration-300;
+  }
+  a.active {
+	@apply font-bold bg-gray-700 text-neutral-200
+  }
 </style>
