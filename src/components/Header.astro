@@ -1,11 +1,14 @@
 ---
 import HeaderLink from './HeaderLink.astro';
+import { Picture } from "astro-imagetools/components";
 import { SITE_TITLE } from '../consts';
 ---
 
 <header>
 	<div class="wrapper">
-		<a href="/">{SITE_TITLE}</a>
+		<a href="/" title={SITE_TITLE}>
+			<Picture height="60" src="/assets/cropped-Wappen-SCO-OGV-1.jpg" alt="SCO Logo" />
+		</a>
 		<nav>
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/veranstaltungen">Veranstaltungen</HeaderLink>
@@ -15,10 +18,11 @@ import { SITE_TITLE } from '../consts';
 </header>
 <style>
 	header {
-		@apply bg-white shadow-md sticky top-0 z-40
+		@apply bg-white shadow-md sticky top-0 z-40;
 	}
 	.wrapper {
-		@apply container mx-auto px-2 py-4 flex justify-between items-center
+		@apply container mx-auto px-2 py-2 flex justify-between items-center;
+		max-width: 120ch;
 	}
 	h2 {
 		margin: 0.5em 0;
