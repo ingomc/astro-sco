@@ -16,11 +16,11 @@ const { Content, headings } = await post.render();
 ---
 
 <BlogPost {...post.data}>
-	<h1>{post.data.title}</h1>
+	<!-- <h1>{post.data.title}</h1>
 	<ol>
 		{headings.map(heading => 
 			heading.depth == 2 && (<li><a href={`#${heading.slug}`} title={heading.text}>{heading.text}</a></li>)
 		)}
-	</ol>
+	</ol> -->
 	<Content />
 </BlogPost>

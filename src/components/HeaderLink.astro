@@ -14,9 +14,7 @@ const isActive = href && pathname.includes(href.toString());
 </a>
 <style>
   a {
-    @apply inline-flex items-center rounded-full hover:bg-slate-100 px-4 py-1 font-bold text-gray-700;
-    transition: all 0.2s ease-in-out;
-    text-transform: uppercase;
+    @apply inline-flex items-center rounded-full hover:bg-slate-100 px-4 py-1 font-bold text-gray-700 uppercase;
   }
   a.active {
 	@apply font-bold bg-red-700 text-neutral-200
