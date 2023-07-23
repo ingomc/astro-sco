@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import App from '../layouts/App.astro';
-import { Image, Picture } from '@astrojs/image/components';
+import { Picture } from "astro-imagetools/components";
 import FormattedDate from '../components/FormattedDate.astro';
 import Author from '../components/Author.astro';
 
@@ -13,7 +13,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 <App>
 	<main class="container mx-auto px-2">
 		<article class="prose mx-auto">
-			{heroImage && <div  class="not-prose"><Picture width="1200" height="600" widths={[400, 800, 1200]} aspectRatio="2:1" alt="descriptive text" src={heroImage} alt="" /></div>}
+			{heroImage && <div  class="not-prose"><Picture alt="descriptive text" src={heroImage} alt="" /></div>}
 
 			<h1 class="title">{title}</h1>
 			<FormattedDate date={pubDate} />
