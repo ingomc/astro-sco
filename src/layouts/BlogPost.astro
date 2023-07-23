@@ -1,9 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import App from '../layouts/App.astro';
 import { Image, Picture } from '@astrojs/image/components';
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Author from '../components/Author.astro';
 
@@ -12,44 +10,26 @@ type Props = CollectionEntry<'blog'>['data'];
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
-<html lang="de">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			.title {
-				font-size: 2em;
-				margin: 0.25em 0 0;
-			}
-			hr {
-				border-top: 1px solid #ddd;
-				margin: 1rem 0;
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+<App>
+	<main class="container mx-auto px-2">
+		<article class="prose mx-auto">
+			{heroImage && <div  class="not-prose"><Picture width="1200" height="600" widths={[400, 800, 1200]} aspectRatio="2:1" alt="descriptive text" src={heroImage} alt="" /></div>}
 
-	<body>
-		<Header />
-		<main class="container mx-auto px-2">
-			<article class="prose mx-auto">
-				{heroImage && <div  class="not-prose"><Picture widths={[400, 800, 1200]} aspectRatio="2:1" alt="descriptive text" src={heroImage} alt="" /></div>}
-
-				<h1 class="title">{title}</h1>
-				<FormattedDate date={pubDate} />
-				{
-					updatedDate && (
-						<div class="last-updated-on">
-							Last updated on <FormattedDate date={updatedDate} />
-						</div>
+			<h1 class="title">{title}</h1>
+			<FormattedDate date={pubDate} />
+			{
+				updatedDate && (
+					<div class="last-updated-on">
+						Last updated on <FormattedDate date={updatedDate} />
+					</div>
 					)
 				}
-				<hr />
-				<slot />
-				<Author />
-			</article>
-		</main>
-		<Footer />
-	</body>
-</html>
+			<slot />
+			<Author />
+		</article>
+	</main>
+</App>
+		
+
+<style>
+</style>
