@@ -1,19 +1,24 @@
 ---
 import HeaderLink from './HeaderLink.astro';
-import { Picture } from "astro-imagetools/components";
 import { SITE_TITLE } from '../consts';
+import HeaderMenu from './HeaderMenu.astro';
 ---
 
 <header>
-	<div class="wrapper">
+	<div class="wrapper text-gray-700">
 		<a href="/" title={SITE_TITLE}>
-			<Picture height="60" src="/assets/cropped-Wappen-SCO-OGV-1.jpg" alt="SCO Logo" />
+			<img width="68" src="/assets/cropped-Wappen-SCO-OGV-1.jpg" alt="SCO Logo" />
 		</a>
-		<nav>
+		<!-- <a href="https://flowbite.com/" class="flex items-center">
+			<img src="https://flowbite.com/docs/images/logo.svg" class="h-8 mr-3" alt="Flowbite Logo" />
+			<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
+		</a> -->
+		<!-- <nav>
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/veranstaltungen">Veranstaltungen</HeaderLink>
 			<HeaderLink href="/mitglieder">Mitglieder</HeaderLink>
-		</nav>
+		</nav> -->
+		<HeaderMenu />
 	</div>
 </header>
 <style>
