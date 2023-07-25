@@ -40,7 +40,6 @@ const posts = (await getCollection('blog')).sort(
 		color: #8e32dc;
 	}
 	section {
-		margin: 0 auto;
-		max-width:120ch;
+		@apply container mx-auto;
 	}
 </style>

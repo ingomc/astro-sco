@@ -17,7 +17,7 @@ const posts = (await getCollection('start')).sort(
 					posts.map(async (post) => {
             const { Content } = await post.render();
             return (
-						<li class="prose">
+						<li class="prose max-w-none">
               <Content />
 						</li>
 					)
