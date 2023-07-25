@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "post:build": "npx tailwindcss -i ./src/styles/global.css -o ./public/admin/admin.css"
+    "tailwind": "npx tailwindcss -i ./src/styles/global.css -o ./public/admin/admin.css"
   },
   "dependencies": {
     "@astrojs/image": "^0.17.2",
