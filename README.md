@@ -10,6 +10,10 @@ TODO:
  - [ ] Mitglieder
  - [ ] Authoren
 
+## Inspiration
+https://infallible-varahamihira-058515.netlify.app/projects/2021-08-14-new-office-spaces-in-central-kopenhagen/
+
+
 ## 🧞 Commands
 
 All commands are run from the root of the project, from a terminal:
