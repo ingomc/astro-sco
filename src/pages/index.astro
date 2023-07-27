@@ -12,31 +12,42 @@ const posts = (await getCollection('start')).sort(
 
 <App>
   <HpStage />
-  <main class="container mx-auto px-2 py-4 max-w-full overflow-hidden">
+  <main class="container mx-auto px-2 py-4 overflow-hidden">
 	<aside>
 		<HpCard>
-			<div class="flex justify-between items-center" slot="title">
+			<div class="flex gap-2 justify-between items-center" slot="title">
 				<h2 class="font-bold text-lg">Veranstaltungen</h2>
-				<a class="text-xs font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Termine →</a>
+				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Termine →</a>
 			</div>
 			<ul class="whitespace-nowrap">
-				<li class=""><a href="/veranstaltungen/2023-kirchweih" class="flex flex-row gap-2 overflow-hidden max-w-full block py-2" title="Kirchweih: Merch essen"><BadgeMini><span class="font-semibold">Do, 14.09.2023</span></BadgeMini><span class="underline overflow-hidden text-ellipsis">Kirchweih: Merch essen</span></a></li>
-				<li class=""><a href="/veranstaltungen/2023-spanferkel" class="flex flex-row gap-2 overflow-hidden max-w-full block py-2 pb-0" title="Spanferkel-Grillfest"><BadgeMini><span class="font-semibold">Sa, 29.07.2023</span></BadgeMini><span class="underline overflow-hidden text-ellipsis">Spanferkel-Grillfest</span></a></li>
+				<li class="">
+					<a href="/veranstaltungen/2023-kirchweih" class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2" title="Kirchweih: Merch essen">
+						<BadgeMini>
+							<span class="font-semibold">Do, 14.09.2023</span>
+						</BadgeMini>
+						<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">Kirchweih: Merch essen</span>
+					</a>
+				</li>
+				<li class="">
+					<a href="/veranstaltungen/2023-spanferkel" class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2 pb-0" title="Spanferkel-Grillfest">
+						<BadgeMini>
+							<span class="font-semibold">Sa, 29.07.2023</span>
+						</BadgeMini>
+						<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">Spanferkel-Grillfest</span>
+					</a>
+				</li>
 			</ul>
 		</HpCard>
 	</aside>
-    <section>
-				{
-					posts.map(async (post) => {
-            const { Content } = await post.render();
-            return (
-						<div class="prose max-w-none">
-              <Content />
-						</div>
-					)
-          } 
-          )
-				}
-		</section>
+    <section class="prose py-4">
+		{
+			posts.map(async (post) => {
+            	const { Content } = await post.render();
+            	return (
+						<Content />
+				)
+          	})
+		}
+	</section>
   </main>
 </App> 
