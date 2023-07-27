@@ -13,12 +13,14 @@ import HeaderMenu from './HeaderMenu.astro';
 			<img src="https://flowbite.com/docs/images/logo.svg" class="h-8 mr-3" alt="Flowbite Logo" />
 			<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
 		</a> -->
-		<!-- <nav>
-			<HeaderLink href="/blog">Blog</HeaderLink>
+		<nav class="hidden md:block">
 			<HeaderLink href="/veranstaltungen">Veranstaltungen</HeaderLink>
 			<HeaderLink href="/mitglieder">Mitglieder</HeaderLink>
-		</nav> -->
-		<HeaderMenu />
+			<HeaderLink href="/blog">Sportheim</HeaderLink>
+		</nav>
+		<div class="md:hidden">
+			<HeaderMenu />
+		</div>
 	</div>
 </header>
 <style>

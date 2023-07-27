@@ -12,18 +12,26 @@ const posts = (await getCollection('start')).sort(
 
 <App>
   <HpStage />
-  <main class="container mx-auto px-2 py-4 overflow-hidden">
-	<aside>
+  <div class="main container grid gap-4 mx-auto px-2 md:py-4 overflow-hidden">
+	<aside class="news">
 		<HpCard>
 			<div class="flex gap-2 justify-between items-center" slot="title">
-				<h2 class="font-bold text-lg">Veranstaltungen</h2>
+				<h2 class="font-bold text-lg">Aktuelles</h2>
 				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Termine →</a>
 			</div>
 			<ul class="whitespace-nowrap">
 				<li class="">
+					<span class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
+						<BadgeMini>
+							<span class="font-semibold"><span class="day">Fr,</span> <span>17.07.2023</span></span>
+						</BadgeMini>
+						<span class="overflow-hidden text-ellipsis">Neue Website online langer Satz hier!</span>
+					</span>
+				</li>
+				<li class="">
 					<a href="/veranstaltungen/2023-kirchweih" class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2" title="Kirchweih: Merch essen">
 						<BadgeMini>
-							<span class="font-semibold">Do, 14.09.2023</span>
+							<span class="font-semibold"><span class="day">Do,</span> <span>14.09.2023</span></span>
 						</BadgeMini>
 						<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">Kirchweih: Merch essen</span>
 					</a>
@@ -31,7 +39,7 @@ const posts = (await getCollection('start')).sort(
 				<li class="">
 					<a href="/veranstaltungen/2023-spanferkel" class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2 pb-0" title="Spanferkel-Grillfest">
 						<BadgeMini>
-							<span class="font-semibold">Sa, 29.07.2023</span>
+							<span class="font-semibold"><span class="day">Sa,</span> <span>29.07.2023</span></span>
 						</BadgeMini>
 						<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">Spanferkel-Grillfest</span>
 					</a>
@@ -39,7 +47,7 @@ const posts = (await getCollection('start')).sort(
 			</ul>
 		</HpCard>
 	</aside>
-    <section class="prose py-4">
+	<main class="content prose py-6 lg:py-10">
 		{
 			posts.map(async (post) => {
             	const { Content } = await post.render();
@@ -48,6 +56,60 @@ const posts = (await getCollection('start')).sort(
 				)
           	})
 		}
-	</section>
-  </main>
+	</main>
+  </div>
 </App> 
+
+<style>
+	.day {
+		display: inline-block;
+		width: 3ch;
+	}
+	aside {
+		min-width: 0; /* grid hacky */
+	}
+
+	@media (max-width:767px) {
+		.main {
+			grid-area: main;
+			grid-template-areas:
+			  "news"
+			  "content"
+			  "sidebar";
+			grid-template-columns: 1fr;
+			grid-template-rows: 2fr;
+		  }
+		  .content {
+			grid-area: content;
+		  }
+		  aside {
+			grid-area: sidebar;
+		  }
+		  aside.news {
+			grid-area: news;
+		  }
+
+	}
+	@media (min-width: 768px) {
+		.main {
+			grid-area: main;
+			grid-template-areas:
+			  "content content sidebar";
+			grid-template-columns: 2fr 2fr 3fr;
+			grid-template-rows: 1fr;
+		  }
+		  .content {
+			  grid-area: content;
+			}
+			aside {
+				grid-area: sidebar;
+			}
+		}
+		
+		@media (min-width: 1280px) {
+		.main {
+			grid-template-columns: 1fr 1fr 1fr;
+		  }
+
+	}
+</style>
