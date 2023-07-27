@@ -3,6 +3,8 @@ title: Herzlich Willkommen
 order: 1
 ---
 
-## Mitglieder
+## Willkommen beim SCO-OGV Oberfüllbach!
 
-Wer sind die Mitglieder des SCO-OGV Oberfüllbach? Wir stellen uns vor.
+Der SCO-OGV Oberfüllbach 1963 e.V. ist ein offener und familiärer Verein,
+bei dem neben dem sportlichen Betätigung auch das gesellschaftliche Leben eine wichtige Rolle spielt.
+Wir freuen uns über jedes Mitglied und jeden Gast, der uns besucht.
