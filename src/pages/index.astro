@@ -2,6 +2,8 @@
 import { getCollection } from "astro:content";
 import HpStage from "../components/HpStage.astro";
 import App from "../layouts/App.astro";
+import HpCard from "../components/HpCard.astro";
+import BadgeMini from "../components/BadgeMini.astro";
 
 const posts = (await getCollection('start')).sort(
 	(a, b) => a.data.order.valueOf() - b.data.order.valueOf()
@@ -10,21 +12,31 @@ const posts = (await getCollection('start')).sort(
 
 <App>
   <HpStage />
-  <main class="container mx-auto px-2">
-    <section>
+  <main class="container mx-auto px-2 py-4">
+	<aside>
+		<HpCard>
+			<div class="flex justify-between items-center" slot="title">
+				<h2 class="font-bold text-lg">Veranstaltungen</h2>
+				<a class="text-xs inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Termine →</a>
+			</div>
 			<ul>
+				<li><a href="/veranstaltungen/2023-kirchweih" class="block pt-4" title="Kirchweih - Merchessen"><BadgeMini><strong>Do, 14.09.2023</strong></BadgeMini> <span class="underline">Kirchweih-Merchessen</span></a></li>
+				<li><a href="/veranstaltungen/2023-spanferkel" class="block pt-4" title="Spanferkel-Grillfest"><BadgeMini><strong>Sa, 29.07.2023</strong></BadgeMini> <span class="underline">Spanferkel-Grillfest</span></a></li>
+			</ul>
+		</HpCard>
+	</aside>
+    <section>
 				{
 					posts.map(async (post) => {
             const { Content } = await post.render();
             return (
-						<li class="prose max-w-none">
+						<div class="prose max-w-none">
               <Content />
-						</li>
+						</div>
 					)
           } 
           )
 				}
-			</ul>
 		</section>
   </main>
 </App> 
