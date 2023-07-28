@@ -37,7 +37,6 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
     fields: # The fields for each document, usually in front matter
       - { label: "Titel", name: "title", widget: "string" }
-      - { label: "Beschreibung", name: "description", widget: "string" }
       - {
           label: "Author",
           name: "author",
@@ -46,10 +45,9 @@ collections:
           value_field: "name",
           display_fields: ["name"],
           search_fields: ["name"],
-          filter: {field: "contentcreator", value: "true"}
         }
       - { label: "Erstellungsdatum", name: "pubDate", widget: "datetime" }
-      - { label: "Veranstaltungs-Dautm", name: "eventDate", widget: "datetime" }
+      - { label: "Veranstaltungs-Datum", name: "eventDate", widget: "datetime" }
       - { label: "Titelbild", name: "heroImage", widget: "image" }
       - { label: "Body", name: "body", widget: "markdown" }
   - name: authors
