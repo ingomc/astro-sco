@@ -43,9 +43,9 @@ collections:
           name: "author",
           widget: "relation",
           collection: "authors",
-          value_field: "email",
+          value_field: "name",
           display_fields: ["name"],
-          search_fields: ["name", "email"]
+          search_fields: ["name"]
         }
       - { label: "Erstellungsdatum", name: "pubDate", widget: "datetime" }
       - { label: "Veranstaltungs-Dautm", name: "eventDate", widget: "datetime" }
