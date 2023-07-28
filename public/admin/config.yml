@@ -54,8 +54,8 @@ collections:
       - { label: "Body", name: "body", widget: "markdown" }
   - name: authors
     label: Authors
-    identifier_field: "{{surname}}-{{lastname}}"
     folder: src/content/blog/_authors/
+    identifier_field: slug
     media_folder: ""
     public_folder: ""
     create: true
