@@ -46,6 +46,9 @@ collections:
           value_field: "email",
           display_fields: ["name"],
           search_fields: ["name", "email"],
+          view_filters:
+            - field: author
+              pattern: 'true'
         }
       - { label: "Erstellungsdatum", name: "pubDate", widget: "datetime" }
       - { label: "Veranstaltungs-Dautm", name: "eventDate", widget: "datetime" }
