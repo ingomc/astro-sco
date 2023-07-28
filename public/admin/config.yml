@@ -59,7 +59,7 @@ collections:
     media_folder: ""
     public_folder: ""
     create: true
-    slug: "{{surname}}-{lastname}}"
+    slug: "{{surname}}-{{lastname}}"
     fields:
       - { label: Vorname, name: surname, widget: string }
       - { label: Nachname, name: lastname, widget: string }
