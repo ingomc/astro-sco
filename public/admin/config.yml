@@ -44,8 +44,8 @@ collections:
           widget: "relation",
           collection: "authors",
           value_field: "email",
-          display_fields: ["name"],
-          search_fields: ["name", "email"],
+          display_fields: ["surname"],
+          search_fields: ["surname","lastname", "email"],
           filter: {field: "contentcreator", value: "true"}
         }
       - { label: "Erstellungsdatum", name: "pubDate", widget: "datetime" }
