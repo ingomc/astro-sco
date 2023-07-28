@@ -4,8 +4,8 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import App from '../../layouts/App.astro';
 
 const events = (await getCollection('veranstaltungen')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+	(a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+).reverse();
 ---
 <App>
 	<main class="container mx-auto px-2 py-4">

@@ -5,7 +5,7 @@ import App from '../../layouts/App.astro';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-);
+).reverse();
 ---
 <App>
 	<main class="container mx-auto px-2 py-4">
