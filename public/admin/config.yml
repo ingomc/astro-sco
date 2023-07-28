@@ -45,7 +45,8 @@ collections:
           collection: "authors",
           value_field: "name",
           display_fields: ["name"],
-          search_fields: ["name"]
+          search_fields: ["name"],
+          filter: {field: "contentcreator", value: "true"}
         }
       - { label: "Erstellungsdatum", name: "pubDate", widget: "datetime" }
       - { label: "Veranstaltungs-Dautm", name: "eventDate", widget: "datetime" }
