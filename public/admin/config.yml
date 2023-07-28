@@ -59,8 +59,9 @@ collections:
     create: true
     slug: "{{name}}"
     fields:
-      - { label: Name, name: name, widget: string }
-      - { label: Title, name: title, widget: string }
-      - { label: Email, name: email, widget: string }
-      - { label: Shortbio, name: shortbio, widget: text }
-      - { label: Image, name: authorimage, widget: image }
+      - { label: Vorname, name: name, widget: string }
+      - { label: Name, name: lastname, widget: string }
+      - { label: Title, name: title, widget: "select", options: ["1. Vorsitzender","2. Vorsitzender","Kassenwart","Gartenbau","Sportheimwart","Schriftführer" ], required: false }
+      - { label: Stammtisch, name: stammtisch, widget: boolean, default: false}
+      - { label: Email, name: email, widget: string, required: false, hint: "Wird nicht öffentlich angezeigt" }
+      - { label: Image, name: authorimage, widget: image, required: false }
