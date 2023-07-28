@@ -9,6 +9,6 @@ const formattedDate = new Date(date);
 
 <time datetime={formattedDate.toLocaleDateString('de-de')}>
 	{
-		formattedDate.toLocaleDateString('de-de')
+		formattedDate.toLocaleDateString('de-de', { year: 'numeric', month: '2-digit', day: '2-digit' })
 	}
 </time>
