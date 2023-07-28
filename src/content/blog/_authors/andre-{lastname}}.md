@@ -2,6 +2,6 @@
 surname: Andre
 lastname: Bellmann
 title: Webmaster
-contentcreator: false
+contentcreator: true
 stammtisch: false
 ---
