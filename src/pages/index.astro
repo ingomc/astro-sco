@@ -39,7 +39,7 @@ const events = (await getCollection('veranstaltungen')).sort(
 							<li>
 								<a href={`/veranstaltungen/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
 									<BadgeMini>
-										<span class="font-semibold"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span> <span><FormattedDate date={event.data.eventDate} /></span></span>
+										<span class="font-semibold"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={event.data.eventDate} /></span></span>
 									</BadgeMini>
 									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">{event.data.title}</span>
 								</a>
