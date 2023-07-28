@@ -61,7 +61,7 @@ collections:
     create: true
     slug: "{{surname}}-{{lastname}}"
     fields:
-      - { label: Title, title: "{{surname}} {{lastname}}", hidden: true, widget: string }
+      - { label: Title, name: title, title: "{{surname}} {{lastname}}", hidden: true, widget: string }
       - { label: Vorname, name: surname, widget: string }
       - { label: Nachname, name: lastname, widget: string }
       - { label: Title, name: position, widget: "select", options: ["1. Vorsitzender","2. Vorsitzender","Kassenwart","Gartenbau","Sportheimwart","Schriftführer", "Webmaster" ], required: false }
