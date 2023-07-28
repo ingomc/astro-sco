@@ -1,4 +1,5 @@
 backend:
+  squash_merges: true
   name: git-gateway
   branch: main # Branch to update (optional; defaults to master)
 
@@ -37,7 +38,30 @@ collections:
     fields: # The fields for each document, usually in front matter
       - { label: "Titel", name: "title", widget: "string" }
       - { label: "Beschreibung", name: "description", widget: "string" }
+      - {
+          label: "Author",
+          name: "author",
+          widget: "relation",
+          collection: "authors",
+          value_field: "email",
+          display_fields: ["name"],
+          search_fields: ["name", "email"],
+        }
       - { label: "Erstellungsdatum", name: "pubDate", widget: "datetime" }
       - { label: "Veranstaltungs-Dautm", name: "eventDate", widget: "datetime" }
       - { label: "Titelbild", name: "heroImage", widget: "image" }
       - { label: "Body", name: "body", widget: "markdown" }
+  - name: authors
+    label: Authors
+    folder: src/content/blog/_authors/
+    media_folder: ""
+    public_folder: ""
+    format: json
+    create: true
+    slug: "{{name}}"
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Title, name: title, widget: string }
+      - { label: Email, name: email, widget: string }
+      - { label: Shortbio, name: shortbio, widget: text }
+      - { label: Image, name: authorimage, widget: image }
