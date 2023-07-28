@@ -37,15 +37,6 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
     fields: # The fields for each document, usually in front matter
       - { label: "Titel", name: "title", widget: "string" }
-      - {
-          label: "Author",
-          name: "author",
-          widget: "relation",
-          collection: "authors",
-          value_field: "name",
-          display_fields: ["name"],
-          search_fields: ["name"],
-        }
       - { label: "Erstellungsdatum", name: "pubDate", widget: "datetime" }
       - { label: "Veranstaltungs-Datum", name: "eventDate", widget: "datetime" }
       - { label: "Titelbild", name: "heroImage", widget: "image" }
