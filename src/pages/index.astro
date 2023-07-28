@@ -8,6 +8,11 @@ import BadgeMini from "../components/BadgeMini.astro";
 const posts = (await getCollection('start')).sort(
 	(a, b) => a.data.order.valueOf() - b.data.order.valueOf()
 );
+
+// Events + News
+// const events = (await getCollection('veranstaltungen')).sort(
+// 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+// );
 ---
 
 <App>
@@ -29,7 +34,7 @@ const posts = (await getCollection('start')).sort(
 					</span>
 				</li>
 				<li class="">
-					<a href="/veranstaltungen/2023-kirchweih" class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2" title="Kirchweih: Merch essen">
+					<a href="/veranstaltungen/2023-07-28-kirchweih-merch-essen/" class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2" title="Kirchweih: Merch essen">
 						<BadgeMini>
 							<span class="font-semibold"><span class="day">Do,</span> <span>14.09.2023</span></span>
 						</BadgeMini>
@@ -37,7 +42,7 @@ const posts = (await getCollection('start')).sort(
 					</a>
 				</li>
 				<li class="">
-					<a href="/veranstaltungen/2023-spanferkel" class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2 pb-0" title="Spanferkel-Grillfest">
+					<a href="veranstaltungen/2023-07-28-spanferkel-grillfest/" class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2 pb-0" title="Spanferkel-Grillfest">
 						<BadgeMini>
 							<span class="font-semibold"><span class="day">Sa,</span> <span>29.07.2023</span></span>
 						</BadgeMini>

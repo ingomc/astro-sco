@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import App from '../../layouts/App.astro';
+
+const events = (await getCollection('veranstaltungen')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+<App>
+	<main class="container mx-auto px-2 py-4">
+		<section>
+			<ul>
+				{
+					events.map((event) => (
+						<li>
+							<FormattedDate date={event.data.eventDate} />
+							<a href={`/veranstaltungen/${event.slug}/`} title={event.data.title}>{event.data.title}</a>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+	</main>
+</App>
+<style>
+	ul {
+		list-style-type: none;
+		padding: unset;
+	}
+	ul li {
+		display: flex;
+	}
+	ul li :global(time) {
+		flex: 0 0 130px;
+		font-style: italic;
+		color: #595959;
+	}
+	ul li a:visited {
+		color: #8e32dc;
+	}
+	section {
+		@apply container mx-auto;
+	}
+</style>
