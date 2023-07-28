@@ -56,7 +56,6 @@ collections:
     folder: src/content/blog/_authors/
     media_folder: ""
     public_folder: ""
-    format: json
     create: true
     slug: "{{name}}"
     fields:
