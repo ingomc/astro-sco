@@ -58,10 +58,10 @@ collections:
     media_folder: ""
     public_folder: ""
     create: true
-    slug: "{{name}}"
+    slug: "{{surname}}-{lastname}}"
     fields:
-      - { label: Vorname, name: name, widget: string }
-      - { label: Name, name: lastname, widget: string }
+      - { label: Vorname, name: surname, widget: string }
+      - { label: Nachname, name: lastname, widget: string }
       - { label: Title, name: title, widget: "select", options: ["1. Vorsitzender","2. Vorsitzender","Kassenwart","Gartenbau","Sportheimwart","Schriftführer", "Webmaster" ], required: false }
       - { label: Webseiten-Author, name: contentcreator, widget: boolean, default: false, hint: "Berechtigt Inhalte auf der Webseite zu pflegen"}
       - { label: Stammtisch, name: stammtisch, widget: boolean, default: false}
