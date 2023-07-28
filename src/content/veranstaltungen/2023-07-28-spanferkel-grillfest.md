@@ -1,6 +1,5 @@
 ---
 title: Spanferkel-Grillfest
-description: Das hier ist die Beschreibung
 pubDate: 2023-07-28T09:13:39.187Z
 eventDate: 2023-07-29T09:13:39.196Z
 heroImage: /assets/sco-heim.png
