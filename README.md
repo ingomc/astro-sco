@@ -10,6 +10,10 @@ TODO:
  - [ ] Mitglieder
  - [ ] Authoren
 
+Netlify CMS
+ https://okaycloud.de/manage-and-display-authors-with-netlifycms-and-gatsby/
+ https://decapcms.org/docs/beta-features/#working-with-a-local-git-repository
+
 ## Inspiration
 https://infallible-varahamihira-058515.netlify.app/projects/2021-08-14-new-office-spaces-in-central-kopenhagen/
 
