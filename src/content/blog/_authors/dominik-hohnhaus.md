@@ -1,5 +1,5 @@
 ---
 name: Dominik Hohnhaus
-contentcreator: true
+contentcreator: false
 stammtisch: false
 ---
