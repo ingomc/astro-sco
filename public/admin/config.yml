@@ -55,10 +55,11 @@ collections:
   - name: authors
     label: Authors
     folder: src/content/blog/_authors/
-    identifier_field: slug
+    identifier_field: email
     media_folder: ""
     public_folder: ""
     create: true
+    title: "{{surname}} {{lastname}}"
     slug: "{{surname}}-{{lastname}}"
     fields:
       - { label: Vorname, name: surname, widget: string }
@@ -66,5 +67,5 @@ collections:
       - { label: Title, name: position, widget: "select", options: ["1. Vorsitzender","2. Vorsitzender","Kassenwart","Gartenbau","Sportheimwart","Schriftführer", "Webmaster" ], required: false }
       - { label: Webseiten-Author, name: contentcreator, widget: boolean, default: false, hint: "Berechtigt Inhalte auf der Webseite zu pflegen"}
       - { label: Stammtisch, name: stammtisch, widget: boolean, default: false}
-      - { label: Email, name: email, widget: string, required: false, hint: "Wird nicht öffentlich angezeigt" }
+      - { label: Email, name: email, widget: string, hint: "Wird nicht öffentlich angezeigt" }
       - { label: Image, name: authorimage, widget: image, required: false }
