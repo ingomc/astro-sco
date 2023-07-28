@@ -61,7 +61,8 @@ collections:
     fields:
       - { label: Vorname, name: name, widget: string }
       - { label: Name, name: lastname, widget: string }
-      - { label: Title, name: title, widget: "select", options: ["1. Vorsitzender","2. Vorsitzender","Kassenwart","Gartenbau","Sportheimwart","Schriftführer" ], required: false }
+      - { label: Title, name: title, widget: "select", options: ["1. Vorsitzender","2. Vorsitzender","Kassenwart","Gartenbau","Sportheimwart","Schriftführer", "Webmaster" ], required: false }
+      - { label: Webseiten-Author, name: contentcreator, widget: boolean, default: false, hint: "Berechtigt Inhalte auf der Webseite zu pflegen"}
       - { label: Stammtisch, name: stammtisch, widget: boolean, default: false}
       - { label: Email, name: email, widget: string, required: false, hint: "Wird nicht öffentlich angezeigt" }
       - { label: Image, name: authorimage, widget: image, required: false }
