@@ -37,7 +37,7 @@ const events = (await getCollection('veranstaltungen')).sort(
 					{
 						events.map((event) => (
 							<li>
-								<a href={`/blog/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
+								<a href={`/veranstaltungen/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
 									<BadgeMini>
 										<span class="font-semibold"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span> <span><FormattedDate date={event.data.eventDate} /></span></span>
 									</BadgeMini>
