@@ -41,9 +41,9 @@ collections:
       - { label: "Veranstaltungs-Datum", name: "eventDate", widget: "datetime" }
       - { label: "Titelbild", name: "heroImage", widget: "image" }
       - { label: "Body", name: "body", widget: "markdown" }
-  - name: authors
-    label: Authors
-    folder: src/content/blog/_authors/
+  - name: mitglieder
+    label: Mitglieder
+    folder: src/content/mitglieder/
     media_folder: ""
     public_folder: ""
     create: true
