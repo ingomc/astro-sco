@@ -1,25 +1,18 @@
 ---
 import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
 import App from '../../layouts/App.astro';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-).reverse();
+const members = (await getCollection('mitglieder'));
+console.log(members);
 ---
 <App>
 	<main class="container mx-auto px-2 py-4">
 		<section>
-			<ul>
 				{
-					posts.map((post) => (
-						<li>
-							<FormattedDate date={post.data.pubDate} />
-							<a href={`/blog/${post.slug}/`} title={post.data.title}>{post.data.title}</a>
-						</li>
+					members.map(({data:{ name,position,stammtisch}}) => (
+						<div>{name}, {position}, {stammtisch}</div>
 					))
 				}
-			</ul>
 		</section>
 	</main>
 </App>
