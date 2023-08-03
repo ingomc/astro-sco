@@ -9,14 +9,14 @@ const { pathname } = Astro.url;
 const isActive = href && pathname.includes(href.toString());
 ---
 
-<a href={href} class:list={[className, { active: isActive }]} {...props}>
+<a href={href} class:list={[className, 'link', { active: isActive }]} {...props}>
   <slot />
 </a>
 <style>
-  a {
-    @apply inline-flex items-center rounded-full px-4 py-1 font-bold uppercase hover:bg-slate-100;
+  a.link {
+    @apply inline-flex items-center rounded-full px-4 py-2 font-bold uppercase hover:bg-slate-100 bg-neutral-50;
   }
-  a.active {
+  a.link.active {
 	@apply bg-red-700 font-bold text-neutral-200
   }
 </style>

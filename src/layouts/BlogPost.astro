@@ -5,9 +5,10 @@ import { Picture } from "astro-imagetools/components";
 import FormattedDate from '../components/FormattedDate.astro';
 import Author from '../components/Author.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+// type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+console.log("🚀 ~ file: BlogPost.astro:11 ~ heroImage:", heroImage)
 ---
 
 <App>
@@ -22,8 +23,8 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 					<div class="last-updated-on">
 						Last updated on <FormattedDate date={updatedDate} />
 					</div>
-					)
-				}
+				)
+			}
 			<slot />
 			<Author />
 		</article>

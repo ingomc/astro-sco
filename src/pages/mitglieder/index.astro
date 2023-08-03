@@ -1,15 +1,17 @@
 ---
 import { getCollection } from 'astro:content';
 import App from '../../layouts/App.astro';
+import { Picture } from "astro-imagetools/components";
 
 const members = (await getCollection('mitglieder'));
-console.log(members);
+console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage)
 ---
 <App>
 	<main class="container mx-auto px-2 py-4">
 		<section>
 				{
-					members.map(({data:{ name,position,stammtisch}}) => (
+					members.map(({data:{ name,position,stammtisch, authorimage}}) => (
+						<div>{authorimage && <div  class="not-prose"><Picture alt="descriptive text" src={`/assets/mitglieder/${authorimage}`} alt="" /></div>}</div>
 						<div>{name}, {position}, {stammtisch}</div>
 					))
 				}
