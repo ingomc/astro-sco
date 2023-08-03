@@ -1,7 +1,6 @@
 ---
 import HeaderLink from './HeaderLink.astro';
 import { SITE_TITLE } from '../consts';
-import HeaderMenu from './HeaderMenu.astro';
 ---
 
 <header>
@@ -9,17 +8,46 @@ import HeaderMenu from './HeaderMenu.astro';
 		<a href="/" title={SITE_TITLE}>
 			<img width="68" src="/assets/cropped-Wappen-SCO-OGV-1.jpg" alt="SCO Logo" />
 		</a>
-		<!-- <a href="https://flowbite.com/" class="flex items-center">
-			<img src="https://flowbite.com/docs/images/logo.svg" class="h-8 mr-3" alt="Flowbite Logo" />
-			<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
-		</a> -->
-		<nav class="hidden md:block">
-			<HeaderLink href="/veranstaltungen">Veranstaltungen</HeaderLink>
-			<HeaderLink href="/mitglieder">Mitglieder</HeaderLink>
-			<HeaderLink href="/blog">Sportheim</HeaderLink>
+		<!-- <nav class="hidden md:block">
+			<div>
+				<HeaderLink href="/veranstaltungen">Veranstaltungen</HeaderLink>
+				<HeaderLink href="/mitglieder">Mitglieder</HeaderLink>
+				<HeaderLink href="/blog">Sportheim</HeaderLink>
+			</div>
+		</nav> 
+			<div class="top-0 right-0 w-[35vw] bg-blue-600  p-10 pl-20 text-white fixed h-full ">
+			<h2 class="mt-20 text-4xl font-semibold text-white">I am a sidebar</h2>
+		  </div>
+	
+	-->
+		<nav class="bg-neutral-200 text-right top-0 right-0 w-[75vw] p-4 fixed h-full ">
+			<div class="flex flex-col gap-4 text-right justify-end">
+				<button   
+					type="button"
+					aria-controls="offcanvasBottom"
+					type="button" class="inline-flex gap-2 items-center px-5 h-10 justify-center rounded-full md:hidden bg-neutral-50">
+					<span class="sr-only">Hauptmenü schließen</span>
+					<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+						<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+					</svg>
+					<span class="font-semibold">schließen</span>
+				</button>
+				<HeaderLink href="/veranstaltungen">Veranstaltungen</HeaderLink>
+				<HeaderLink href="/mitglieder">Mitglieder</HeaderLink>
+				<HeaderLink href="/blog">Sportheim</HeaderLink>
+			</div>
 		</nav>
 		<div class="md:hidden">
-			<HeaderMenu />
+			<button   
+				type="button"
+				aria-controls="offcanvasBottom"
+				type="button" class="inline-flex gap-2 items-center px-5 h-10 justify-center rounded-full md:hidden bg-neutral-100 hover:bg-neutral-200">
+				<span class="sr-only">Hauptmenü öffnen</span>
+				<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+					<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+				</svg>
+				<span class="font-semibold">Menü</span>
+			</button>
 		</div>
 	</div>
 </header>
