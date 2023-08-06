@@ -3,7 +3,6 @@ import type { CollectionEntry } from 'astro:content';
 import App from '../layouts/App.astro';
 import { Picture } from "astro-imagetools/components";
 import FormattedDate from '../components/FormattedDate.astro';
-import Author from '../components/Author.astro';
 
 // type Props = CollectionEntry<'blog'>['data'];
 
@@ -26,7 +25,6 @@ console.log("🚀 ~ file: BlogPost.astro:11 ~ heroImage:", heroImage)
 				)
 			}
 			<slot />
-			<Author />
 		</article>
 	</main>
 </App>
