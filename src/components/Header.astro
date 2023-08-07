@@ -38,13 +38,13 @@ export const menuItems = [
 			<h2 class="mt-20 text-4xl font-semibold text-white">I am a sidebar</h2>
 		  </div> -->
 	
-		<nav class="md:hidden bg-neutral-200 text-right top-0 right-0 w-[75vw] p-4 fixed h-full ">
+		<nav class="mobile-menu md:hidden bg-neutral-200 text-right top-0 right-0 w-[75vw] p-4 fixed h-full ">
 			<div class="flex flex-col gap-4 text-right justify-end">
 				<button   
 					autofocus
 					type="button"
 					aria-controls="offcanvasBottom"
-					type="button" class="inline-flex gap-2 items-center px-5 h-10 justify-start self-start rounded-full md:hidden bg-neutral-50">
+					type="button" class="close-btn inline-flex gap-2 items-center px-5 h-10 justify-start self-start rounded-full md:hidden bg-neutral-50">
 					<span class="sr-only">Hauptmenü schließen</span>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="currentColor" d="M208.49 191.51a12 12 0 0 1-17 17L128 145l-63.51 63.49a12 12 0 0 1-17-17L111 128L47.51 64.49a12 12 0 0 1 17-17L128 111l63.51-63.52a12 12 0 0 1 17 17L145 128Z"/></svg>
 				</button>
@@ -57,7 +57,7 @@ export const menuItems = [
 			<button   
 				type="button"
 				aria-controls="offcanvasBottom"
-				type="button" class="inline-flex gap-2 items-center px-5 h-10 justify-center rounded-full md:hidden bg-neutral-100 hover:bg-neutral-200">
+				type="button" class="open-btn inline-flex gap-2 items-center px-5 h-10 justify-center rounded-full md:hidden bg-neutral-100 hover:bg-neutral-200">
 				<span class="sr-only">Hauptmenü öffnen</span>
 				<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
 					<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
@@ -81,4 +81,25 @@ export const menuItems = [
 	.icon svg {
 		@apply block w-5 h-5
 	}
+	.mobile-menu {
+		box-shadow: 0px 0px 24px 4px rgba(0,0,0,0.5),0px 0px 0px 100vw rgba(0,0,0,0.5);
+		transform: translate3d(100%,0,0);
+		pointer-events: none;
+		opacity: 0;
+		transition: all 0.25s ease-in-out;
+	}
+	.mobile-menu--open {
+		pointer-events: inherit;
+		transform: translate3d(0,0,0);
+		opacity: 1;
+	}
+
 </style>
+
+<script>
+	const close = document.querySelector('.close-btn');
+	const open = document.querySelector('.open-btn');
+	const mobileMenu = document.querySelector('.mobile-menu');
+	close?.addEventListener('click', () => {mobileMenu?.classList.toggle('mobile-menu--open')});
+	open?.addEventListener('click', () => {mobileMenu?.classList.toggle('mobile-menu--open')});
+</script>
