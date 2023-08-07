@@ -1,34 +1,37 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import App from '../layouts/App.astro';
+import type { CollectionEntry } from "astro:content";
+import App from "../layouts/App.astro";
 import { Picture } from "astro-imagetools/components";
-import FormattedDate from '../components/FormattedDate.astro';
+import FormattedDate from "../components/FormattedDate.astro";
+import BadgeMini from "../components/BadgeMini.astro";
 
 // type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
-console.log("🚀 ~ file: BlogPost.astro:11 ~ heroImage:", heroImage)
+console.log("🚀 ~ file: BlogPost.astro:11 ~ heroImage:", heroImage);
 ---
 
 <App>
-	<main class="container mx-auto px-2">
-		<article class="prose max-w-none">
-			{heroImage && <div  class="not-prose"><Picture alt="descriptive text" src={heroImage} alt="" /></div>}
+  <main class="container mx-auto px-2">
+    <article>
+      {heroImage && <Picture alt="Titelbild" src={heroImage} />}
 
-			<h1 class="title">{title}</h1>
-			<FormattedDate date={pubDate} />
-			{
-				updatedDate && (
-					<div class="last-updated-on">
-						Last updated on <FormattedDate date={updatedDate} />
-					</div>
-				)
-			}
-			<slot />
-		</article>
-	</main>
+      <div class="prose mx-auto">
+        <h1 class="not-prose">{title}</h1>
+        <BadgeMini>
+          <FormattedDate date={pubDate} />
+        </BadgeMini>
+        {
+          updatedDate && (
+            <div class="last-updated-on">
+              Last updated on <FormattedDate date={updatedDate} />
+            </div>
+          )
+        }
+      </div>
+      <div class="prose mx-auto">
+        <slot />
+      </div>
+    </article>
+  </main>
 </App>
-		
-
-<style>
-</style>

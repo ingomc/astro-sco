@@ -38,8 +38,34 @@ collections:
     create: true
     slug: "{{name}}"
     fields:
-      - { label: "Name", name: "name", widget: "string", hint: "Vor- und Nachname" }
-      - { label: Rolle, name: position, widget: "select", options: ["1. Vorsitzender","2. Vorsitzender","Kassenwart","Gartenbau","Sportheimwart","Schriftführer", "Webmaster" ], required: false }
-      - { label: Stammtisch, name: stammtisch, widget: boolean, default: false}
-      - { label: Email, name: email, widget: string, hint: "Wird nicht öffentlich angezeigt", required: false }
+      - {
+          label: "Name",
+          name: "name",
+          widget: "string",
+          hint: "Vor- und Nachname",
+        }
+      - {
+          label: Rolle,
+          name: position,
+          widget: "select",
+          options:
+            [
+              "1. Vorsitzender",
+              "2. Vorsitzender",
+              "Kassenwart",
+              "Gartenbau",
+              "Sportheimwart",
+              "Schriftführer",
+              "Webmaster",
+            ],
+          required: false,
+        }
+      - { label: Stammtisch, name: stammtisch, widget: boolean, default: false }
+      - {
+          label: Email,
+          name: email,
+          widget: string,
+          hint: "Wird nicht öffentlich angezeigt",
+          required: false,
+        }
       - { label: Image, name: authorimage, widget: image, required: false }
