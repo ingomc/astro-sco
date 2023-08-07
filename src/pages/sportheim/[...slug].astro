@@ -21,6 +21,6 @@ const { Content, headings } = await post.render();
 		{headings.map(heading => 
 			heading.depth == 2 && (<li><a href={`#${heading.slug}`} title={heading.text}>{heading.text}</a></li>)
 		)}
-	</ol> -->		
+	</ol> -->
 	<Content />
 </BlogPost>
