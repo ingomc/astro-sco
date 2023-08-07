@@ -1,0 +1,5 @@
+<svg width="2000" height="100" xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <path d="m0,100l2000,-100l0,100l-2000,0z" fill="currentColor"/>
+    </g>
+</svg>
