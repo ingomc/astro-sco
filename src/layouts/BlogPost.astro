@@ -9,6 +9,11 @@ import BadgeMini from "../components/BadgeMini.astro";
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 console.log("🚀 ~ file: BlogPost.astro:11 ~ heroImage:", heroImage);
+
+// Veranstaltungsdatum
+// Veranstaltungsuhrzeit
+// Veranstaltungsort
+
 ---
 
 <App>
@@ -24,7 +29,10 @@ console.log("🚀 ~ file: BlogPost.astro:11 ~ heroImage:", heroImage);
       <div class="prose mx-auto">
 		  <h1 class="text-4xl my-4">{title}</h1>
 		  <BadgeMini>
-			<FormattedDate date={pubDate} />
+			<strong>Am:</strong> <FormattedDate date={pubDate} /> ab 18:00 Uhr
+		  </BadgeMini>
+		  <BadgeMini>
+			<strong>Ort:</strong> Sportheim
 		  </BadgeMini>
         {
 			updatedDate && (
