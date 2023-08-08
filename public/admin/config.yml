@@ -27,7 +27,7 @@ collections:
     fields: # The fields for each document, usually in front matter
       - { label: "Titel", name: "title", widget: "string" }
       - { label: "Erstellungsdatum", name: "pubDate", widget: "datetime" }
-      - { label: "Veranstaltungsdatum und Start-Uhrzeit",  name: "eventDate", widget: "datetime", default: "", date_format: "MM.DD.YYYY", format: "MM.DD.YYYY HH:mm ZZ"}
+      - { label: "Veranstaltungsdatum und Start-Uhrzeit",  name: "eventDate", widget: "datetime"}
       - { label: "Veranstaltungsort", name: "location", widget: "string", required: false }
       - { label: "Titelbild", name: "heroImage", widget: "image" }
       - { label: "Body", name: "body", widget: "markdown" }

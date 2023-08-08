@@ -1,45 +1,82 @@
 ---
-import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
-import App from '../../layouts/App.astro';
+import { getCollection } from "astro:content";
+import FormattedDate from "../../components/FormattedDate.astro";
+import App from "../../layouts/App.astro";
+import { Picture } from "astro-imagetools/components";
+import BadgeMini from "../../components/BadgeMini.astro";
 
-const events = (await getCollection('veranstaltungen')).sort(
-	(a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-).reverse();
+const events = (await getCollection("veranstaltungen"))
+  .sort((a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf())
+  .reverse();
 ---
+
 <App>
-	<main class="container mx-auto px-2 py-4">
-		<section>
-			<ul>
-				{
-					events.map((event) => (
-						<li>
-							<FormattedDate date={event.data.eventDate} />
-							<a href={`/veranstaltungen/${event.slug}/`} title={event.data.title}>{event.data.title}</a>
-						</li>
-					))
-				}
-			</ul>
-		</section>
-	</main>
+  <main class="container mx-auto px-2 py-4">
+    <section>
+      <ul class="grid grid-cols-1">
+        {
+          events.map((event) => (
+            <li>
+              <a
+                class="flex gap-4 w-full bg-white rounded-lg p-4 my-4 border border-slate-200 hover:shadow"
+                href={`/veranstaltungen/${event.slug}/`}
+                title={event.data.title}
+              >
+                {event.data.heroImage && (
+                  <div class="rounded overflow-hidden">
+                    <Picture
+                      width="200"
+                      alt="Titelbild"
+                      src={event.data.heroImage}
+                    />
+                  </div>
+                )}
+                <div class="flex flex-col gap-2 w-full">
+                  <div class="prose">
+                    <h2 class="">{event.data.title}</h2>
+                  </div>
+                  <div class="flex flex-wrap gap-4 gap-y-2">
+                    <BadgeMini>
+                      <b>Am:</b>
+                      {event.data.eventDate.toLocaleDateString("de-DE", {
+                        weekday: "short",
+                      })},<FormattedDate date={event.data.eventDate} time={true} />
+                    </BadgeMini>
+                    {event.data.location && (
+                      <BadgeMini>
+                        <strong>Ort:</strong> {event.data.location}
+                      </BadgeMini>
+                    )}
+                  </div>
+                  <span class="justify-self-end self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200">
+                    ... mehr erfahren →
+                  </span>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
 </App>
 <style>
-	ul {
-		list-style-type: none;
-		padding: unset;
-	}
-	ul li {
-		display: flex;
-	}
-	ul li :global(time) {
-		flex: 0 0 130px;
-		font-style: italic;
-		color: #595959;
-	}
-	ul li a:visited {
-		color: #8e32dc;
-	}
-	section {
-		@apply container mx-auto;
-	}
+  ul {
+    list-style-type: none;
+    padding: unset;
+  }
+  ul li {
+    display: flex;
+  }
+  ul li :global(time) {
+    flex: 0 0 130px;
+    font-style: italic;
+    color: #595959;
+  }
+  ul li a:visited {
+    color: #8e32dc;
+  }
+  section {
+    @apply container mx-auto;
+  }
 </style>
