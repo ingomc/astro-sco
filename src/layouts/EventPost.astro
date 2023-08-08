@@ -1,13 +1,13 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import App from "../layouts/App.astro";
+import App from "./App.astro";
 import { Picture } from "astro-imagetools/components";
 import FormattedDate from "../components/FormattedDate.astro";
 import BadgeMini from "../components/BadgeMini.astro";
 
 // type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, eventDate, heroImage, location } = Astro.props;
 console.log("🚀 ~ file: BlogPost.astro:11 ~ heroImage:", heroImage);
 
 // Veranstaltungsdatum
@@ -29,22 +29,16 @@ console.log("🚀 ~ file: BlogPost.astro:11 ~ heroImage:", heroImage);
       <div class="prose mx-auto">
 		<div class="py-4">
 			<BadgeMini>
-			  <strong>Am:</strong> <FormattedDate date={pubDate} /> ab 18:00 Uhr
+			  <b>Am:</b> {eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},<FormattedDate date={eventDate} time={true} />
 			</BadgeMini>
-			<BadgeMini>
-				<strong>Ort:</strong> Sportheim
-			</BadgeMini>
+			{location && (
+				<BadgeMini>
+					<strong>Ort:</strong> {location}
+				</BadgeMini>
+			)}
 		</div>
 		<div>
 		  <h1 class="text-4xl my-0">{title}</h1>
-        {
-			updatedDate && (
-				<div class="last-updated-on">
-					Last updated on <FormattedDate date={updatedDate} />
-					</div>
-					)
-				}
-
 		</div>
 		<div>
 			<slot />
