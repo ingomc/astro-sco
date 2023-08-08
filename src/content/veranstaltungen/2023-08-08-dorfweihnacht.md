@@ -5,6 +5,8 @@ eventDate: 11.25.2023 18:00 +0100
 location: Feuerwehrhaus Oberfüllbach
 heroImage: /assets/dorfweihnacht-2022.jpg
 ---
+## O﻿berfüllbacher Weihnacht am Feuerwehrhaus
+
 Z﻿ur diesjährigen Dorfweihnacht laden die Freiw. Feuerwehr Oberfüllbach und  der S﻿CO/OGV Oberfüllbach recht herzlich ein
 
 **B﻿eginn ist um 17:00 Uhr am Feuerwehrhaus, um ca. 18:00 Uhr Andacht.**
