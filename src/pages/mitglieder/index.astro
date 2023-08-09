@@ -1,40 +1,58 @@
 ---
-import { getCollection } from 'astro:content';
-import App from '../../layouts/App.astro';
+import { getCollection } from "astro:content";
+import App from "../../layouts/App.astro";
 import { Picture } from "astro-imagetools/components";
 
-const members = (await getCollection('mitglieder'));
-console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage)
+const members = await getCollection("mitglieder");
+console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage);
 ---
+
 <App>
-	<main class="container mx-auto px-2 py-4">
-		<section>
-				{
-					members.map(({data:{ name,position,stammtisch, authorimage}}) => (
-						<div>{authorimage && <div  class="not-prose"><Picture alt={name} src={authorimage} /></div>}</div>
-						<div>{name}, {position}, {stammtisch}</div>
-					))
-				}
-		</section>
-	</main>
+  <main class="container mx-auto px-2 py-4">
+    <section>
+      <h2 class="text-2xl font-bold text-center py-4">Vorstand</h2>
+      <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 py-4">
+        {
+          members.map(
+            ({ data: { name, position, stammtisch, authorimage } }) => (
+              <li class="flex flex-col gap-2 align-center justify-start text-center">
+                <div class="flex justify-center align-center">
+                  <div class="img">
+                  {authorimage && (
+                      <Picture fit="cover" width="250" height="250" alt={name} src={authorimage} />
+                      )}
+                      </div>
+                </div>
+                <div>
+                  <div class="font-bold">{name}</div>
+                  {position && <div class="text-xs">{position}</div>}
+                  </div>
+              </li>
+            ),
+          )
+        }
+      </ul>
+    </section>
+  </main>
 </App>
 <style>
-	ul {
-		list-style-type: none;
-		padding: unset;
-	}
-	ul li {
-		display: flex;
-	}
-	ul li :global(time) {
-		flex: 0 0 130px;
-		font-style: italic;
-		color: #595959;
-	}
-	ul li a:visited {
-		color: #8e32dc;
-	}
-	section {
-		@apply container mx-auto;
-	}
+  ul {
+    list-style-type: none;
+    padding: unset;
+  }
+  ul li {
+    display: flex;
+  }
+  section {
+    @apply container mx-auto;
+  }
+
+  .img {
+    width:150px;
+    height:150px;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    overflow: hidden;
+    @apply bg-neutral-200;
+  }
 </style>
