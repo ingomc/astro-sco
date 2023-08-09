@@ -8,7 +8,7 @@ id: content
 Das Sportheim kann für Ihre Feste gebucht werden.
 Bitte wenden Sie sich für Details und Termine an die Vorstände.
 
-## Saune im Sportheim
+## Sauna im Sportheim
 
 Ab vier Personen kann die Sauna genutzt werden. Der Unkostenbeitrag beträgt für Mitglieder 3€ und für Nichtmitglieder 5€. Bitte wenden Sie sich für Details und Termine an die Vorstände.
 
