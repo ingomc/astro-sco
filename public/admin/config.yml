@@ -34,7 +34,7 @@ collections:
   - name: mitglieder
     label: Mitglieder
     folder: src/content/mitglieder/
-    media_folder: "public/assets/mitglieder"
+    media_folder: "public/assets/mitglieder/"
     create: true
     slug: "{{name}}"
     fields:
