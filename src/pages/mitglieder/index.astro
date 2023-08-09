@@ -11,7 +11,7 @@ console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage
 		<section>
 				{
 					members.map(({data:{ name,position,stammtisch, authorimage}}) => (
-						<div>{authorimage && <div  class="not-prose"><Picture alt={name} src={authorimage} alt="" /></div>}</div>
+						<div>{authorimage && <div  class="not-prose"><Picture alt={name} src={authorimage} /></div>}</div>
 						<div>{name}, {position}, {stammtisch}</div>
 					))
 				}
