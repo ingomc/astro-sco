@@ -1,5 +1,6 @@
 ---
 name: Andre Bellmann
 stammtisch: false
-authorimage: 909090.png
+dart: true
+authorimage: whatsapp-image-2023-05-27-at-14.21.21.jpeg
 ---
