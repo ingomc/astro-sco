@@ -57,11 +57,11 @@ collections:
               "Gartenbau",
               "Sportheimwart",
               "Schriftführer",
-              "Webmaster",
             ],
           required: false,
         }
       - { label: Stammtisch, name: stammtisch, widget: boolean, default: false }
+      - { label: Dart, name: dart, widget: boolean, default: false }
       - {
           label: Email,
           name: email,
