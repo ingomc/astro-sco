@@ -9,32 +9,95 @@ console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage
 
 <App>
   <main class="container mx-auto px-2 py-4">
-    <section>
-      <h2 class="text-4xl font-bold text-center py-4">Vorstand</h2>
+    <section class="pb-8">
+      <h2 class="text-3xl font-bold text-center py-4">Vorstand</h2>
       <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 py-4">
         {
           members.map(
-            ({ data: { name, position, stammtisch, authorimage } }) => (
-              <li class="flex flex-col gap-2 align-center justify-start text-center">
-                <div class="flex justify-center align-center">
-                  <div class="img">
-                    {authorimage && (
-                      <Picture
-                        fit="cover"
-                        width="250"
-                        height="250"
-                        alt={name}
-                        src={authorimage}
-                      />
-                    )}
+            ({ data: { name, position, stammtisch, authorimage } }) =>
+              !!position && (
+                <li class="flex flex-col gap-2 align-center justify-start text-center">
+                  <div class="flex justify-center align-center">
+                    <div class="img">
+                      {authorimage && (
+                        <Picture
+                          fit="cover"
+                          width="250"
+                          height="250"
+                          alt={name}
+                          src={authorimage}
+                        />
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div class="font-bold">{name}</div>
-                  {position && <div class="text-xs">{position}</div>}
-                </div>
-              </li>
-            ),
+                  <div>
+                    <div class="font-bold">{name}</div>
+                    {position && <div class="text-xs">{position}</div>}
+                  </div>
+                </li>
+              ),
+          )
+        }
+      </ul>
+    </section>
+    <section class="pb-8">
+      <h2 class="text-3xl font-bold text-center py-4">Stammtisch</h2>
+      <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 py-4">
+        {
+          members.map(
+            ({ data: { name, position, stammtisch, authorimage } }) =>
+              !!stammtisch && (
+                <li class="flex flex-col gap-2 align-center justify-start text-center">
+                  <div class="flex justify-center align-center">
+                    <div class="img">
+                      {authorimage && (
+                        <Picture
+                          fit="cover"
+                          width="250"
+                          height="250"
+                          alt={name}
+                          src={authorimage}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <div class="font-bold">{name}</div>
+                    {position && <div class="text-xs">{position}</div>}
+                  </div>
+                </li>
+              ),
+          )
+        }
+      </ul>
+    </section>
+    <section class="pb-8">
+      <h2 class="text-3xl font-bold text-center py-4">Mitglieder</h2>
+      <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 py-4">
+        {
+          members.map(
+            ({ data: { name, position, stammtisch, authorimage } }) =>
+              (!stammtisch || !position) && (
+                <li class="flex flex-col gap-2 align-center justify-start text-center">
+                  <div class="flex justify-center align-center">
+                    <div class="img">
+                      {authorimage && (
+                        <Picture
+                          fit="cover"
+                          width="250"
+                          height="250"
+                          alt={name}
+                          src={authorimage}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <div class="font-bold">{name}</div>
+                    {position && <div class="text-xs">{position}</div>}
+                  </div>
+                </li>
+              ),
           )
         }
       </ul>
