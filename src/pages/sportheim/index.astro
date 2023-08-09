@@ -5,7 +5,7 @@ import App from '../../layouts/App.astro';
 const posts = (await getCollection('sportheim'));
 ---
 <App>
-	<main class="container mx-auto prose py-6 lg:py-10">
+	<main class="container mx-auto prose p-4 lg:py-10">
 		{
 			posts.map(async (post) => {
             	const { Content } = await post.render();

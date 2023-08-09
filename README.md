@@ -4,11 +4,11 @@
 TODO:
 
  - [ ] Mobile Menu
+ - [ ] Gallery auf der Veranstaltungsseite
  - [ ] Startseite
  - [ ] Startseiten Beiträge
  - [ ] Veranstaltungen Übersicht
  - [ ] Mitglieder
- - [ ] Authoren
 
 Netlify CMS
  https://okaycloud.de/manage-and-display-authors-with-netlifycms-and-gatsby/

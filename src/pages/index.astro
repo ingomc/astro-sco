@@ -18,18 +18,20 @@ const events = (await getCollection('veranstaltungen')).sort(
 
 <App>
   <HpStage />
-  <div class="main container grid gap-4 mx-auto px-2 md:py-4 overflow-hidden">
+  <div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
 	<aside class="news">
 		<HpCard>
 			<div class="flex gap-2 justify-between items-center" slot="title">
-				<h2 class="font-bold text-lg">Aktuelles</h2>
+				<h2 class="font-bold">Aktuelles</h2>
 			</div>
 				<ul class="whitespace-nowrap">
 					<li class="">
-						<span class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-							<BadgeMini>
-								<span class="font-semibold"><span class="day">Fr,</span> <span>17.07.2023</span></span>
-							</BadgeMini>
+						<span class="inline-flex flex-col gap-2 overflow-hidden max-w-full block py-2">
+							<div>
+								<BadgeMini>
+									<span class="font-semibold"><span class="day">Fr,</span><span>17.07.2023</span></span>
+								</BadgeMini>
+							</div>
 							<span class="overflow-hidden text-ellipsis">Neue Website online langer Satz hier!</span>
 						</span>
 					</li>
@@ -37,8 +39,9 @@ const events = (await getCollection('veranstaltungen')).sort(
 		</HpCard>
 		<HpCard>
 			<div class="flex gap-2 justify-between items-center" slot="title">
-				<h2 class="font-bold text-lg">Veranstaltungen</h2>
-				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Termine →</a>
+				<h2 class="font-bold">Veranstaltungen</h2>
+				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Termine                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/></svg>                  </span>
+				</a>
 			</div>
 				<ul class="whitespace-nowrap">
 					{
@@ -56,7 +59,7 @@ const events = (await getCollection('veranstaltungen')).sort(
 				</ul>
 		</HpCard>
 	</aside>
-	<main class="content prose py-6 lg:py-10">
+	<main class="content prose py-4">
 		{
 			posts.map(async (post) => {
             	const { Content } = await post.render();
