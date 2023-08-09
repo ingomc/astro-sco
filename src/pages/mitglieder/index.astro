@@ -18,15 +18,21 @@ console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage
               <li class="flex flex-col gap-2 align-center justify-start text-center">
                 <div class="flex justify-center align-center">
                   <div class="img">
-                  {authorimage && (
-                      <Picture fit="cover" width="250" height="250" alt={name} src={authorimage} />
-                      )}
-                      </div>
+                    {authorimage && (
+                      <Picture
+                        fit="cover"
+                        width="250"
+                        height="250"
+                        alt={name}
+                        src={authorimage}
+                      />
+                    )}
+                  </div>
                 </div>
                 <div>
                   <div class="font-bold">{name}</div>
                   {position && <div class="text-xs">{position}</div>}
-                  </div>
+                </div>
               </li>
             ),
           )
@@ -48,8 +54,8 @@ console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage
   }
 
   .img {
-    width:150px;
-    height:150px;
+    width: 150px;
+    height: 150px;
     aspect-ratio: 1/1;
     border-radius: 50%;
     overflow: hidden;
