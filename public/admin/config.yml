@@ -6,11 +6,14 @@ backend:
 media_folder: "public/assets/" # Media files will be stored in the repo under static/images/uploads
 public_folder: "/assets/" # The src attribute for uploaded media will begin with /images/uploads
 locale: "de" # Deutsche Oberfläche
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "_"
 
 collections:
   - name: "start" # Used in routes, e.g., /admin/collections/blog
     label: "Startseite" # Used in the UI
-    publish_mode: editorial_workflow
     folder: "src/content/start" # The path to the folder where the documents are stored
     create: true # Allow users to create new documents in this collection
     slug: "{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
@@ -20,7 +23,6 @@ collections:
       - { label: "Body", name: "body", widget: "markdown" }
   - name: "veranstaltungen" # Used in routes, e.g., /admin/collections/veranstaltungen
     label: "Veranstaltungen" # Used in the UI
-    publish_mode: editorial_workflow
     folder: "src/content/veranstaltungen" # The path to the folder where the documents are stored
     create: true # Allow users to create new documents in this collection
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
