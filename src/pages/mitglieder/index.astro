@@ -11,7 +11,7 @@ console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage
   <main class="container mx-auto px-2 py-4">
     <section class="pb-8">
       <h2 class="text-3xl font-bold text-center py-4">Vorstand</h2>
-      <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 py-4">
+      <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 py-4">
         {
           members.map(
             ({ data: { name, position, stammtisch, authorimage } }) =>
@@ -42,7 +42,7 @@ console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage
     </section>
     <section class="pb-8">
       <h2 class="text-3xl font-bold text-center py-4">Stammtisch</h2>
-      <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 py-4">
+      <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 py-4">
         {
           members.map(
             ({ data: { name, position, stammtisch, authorimage } }) =>
@@ -73,7 +73,7 @@ console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage
     </section>
     <section class="pb-8">
       <h2 class="text-3xl font-bold text-center py-4">Mitglieder</h2>
-      <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 py-4">
+      <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 py-4">
         {
           members.map(
             ({ data: { name, position, stammtisch, authorimage } }) =>
