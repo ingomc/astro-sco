@@ -1,18 +1,82 @@
 ---
 import { getCollection } from 'astro:content';
 import App from '../../layouts/App.astro';
+import HpCard from '../../components/HpCard.astro';
+import BadgeMini from '../../components/BadgeMini.astro';
 
 const posts = (await getCollection('sportheim'));
 ---
 <App>
-	<main class="container mx-auto prose p-4 lg:py-10">
-		{
-			posts.map(async (post) => {
-            	const { Content } = await post.render();
-            	return (
-						<Content />
-				)
-          	})
-		}
-	</main>
+	<div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
+		<aside class="news">
+			<HpCard>
+				<div class="flex gap-2 justify-between items-center" slot="title">
+				<h2 class="font-bold">Öffnungszeiten</h2>
+				</div>
+				<ul class="prose list-disc pl-4 list-outside">
+					<li class="">
+						jeden Sonntag ab 18:30 Uhr 
+					</li>
+					<li class="">
+						jeden 1. Freitag im Monat ab 19:30 Uhr (ohne Gewähr)
+					</li>
+				</ul>
+			</HpCard>
+		</aside>
+		<main class="content prose max-w-none">
+			{
+				posts.map(async (post) => {
+					const { Content } = await post.render();
+					return (
+							<Content />
+					)
+				  })
+			}
+			<h1>Öffnungszeiten als eigene Collection machen, dann im Widget nur aufrufen und anzeigen</h1>
+		</main>
+	</div>
 </App>
+
+<style>
+
+.main {
+    grid-area: main;
+  }
+  @media (max-width: 767px) {
+    .main {
+      grid-template-areas:
+        "news"
+        "content"
+        "sidebar";
+      grid-template-columns: 1fr;
+      grid-template-rows: 2fr;
+    }
+    .content {
+      grid-area: content;
+    }
+    aside {
+      grid-area: sidebar;
+    }
+    aside.news {
+      grid-area: news;
+    }
+  }
+  @media (min-width: 768px) {
+    .main {
+      grid-template-areas: "content content sidebar";
+      grid-template-columns: 2fr 2fr 3fr;
+      grid-template-rows: 1fr;
+    }
+    .content {
+      grid-area: content;
+    }
+    aside {
+      grid-area: sidebar;
+    }
+  }
+  @media (min-width: 1280px) {
+    .main {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+</style>
