@@ -11,6 +11,9 @@ console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage
   <main class="container mx-auto px-2 py-4">
     <section class="pb-8">
       <h2 class="text-3xl font-bold text-center py-4">Vorstand</h2>
+      <p>
+        Idee: Collection machen.. 1.vorstand 2.vorstand etc. rollen, und dort kann man aus vorhandenen Mitglieder auswählen
+      </p>
       <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 py-4">
         {
           members.map(
@@ -77,7 +80,7 @@ console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage
         {
           members.map(
             ({ data: { name, position, stammtisch, authorimage } }) =>
-              (!stammtisch || !position) && (
+              (!stammtisch && !position) && (
                 <li class="flex flex-col gap-2 align-center justify-start text-center">
                   <div class="flex justify-center align-center">
                     <div class="img">
