@@ -9,6 +9,9 @@ TODO:
  - [ ] Startseiten Beiträge
  - [ ] Veranstaltungen Übersicht
  - [ ] Mitglieder
+ - [ ] Datenschutz
+ - [ ] Impressum
+ - [ ] Vercel deployment mit analytics?
 
 Netlify CMS
  https://okaycloud.de/manage-and-display-authors-with-netlifycms-and-gatsby/
