@@ -12,7 +12,7 @@ const posts = (await getCollection('start')).sort(
 
 // TODO Events + News
 const events = (await getCollection('veranstaltungen')).sort(
-	(a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+	(a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf()
 ).reverse();
 ---
 
