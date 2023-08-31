@@ -60,6 +60,22 @@ const events = (await getCollection('veranstaltungen')).sort(
 		</HpCard>
 	</aside>
 	<main class="content prose py-4">
+		<h1>Coletion site settings:</h1>
+		<h3>startseite</h3>
+		<ul>
+			<li>Generell der Title</li>
+			<li>title in der Bühne</li>
+			<li>Aktuelles (datum und richtext)</li>
+		</ul>
+		<h3>Öffnungszeiten</h3>
+		<ul>
+			<li>Richtext ul LIs</li>
+		</ul>
+		<h3>Kontakt</h3>
+	<p>Kommt in Sportheim, Footer, Impressum</p>
+		<ul>
+			<li>anschrift, straße, plz, ort, tel, mail</li>
+		</ul>
 		{
 			posts.map(async (post) => {
             	const { Content } = await post.render();
