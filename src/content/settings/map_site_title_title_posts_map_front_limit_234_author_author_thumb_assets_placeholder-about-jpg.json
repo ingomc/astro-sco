@@ -1,0 +1,8 @@
+{
+  "site_title": "title",
+  "posts": {
+    "front_limit": 234,
+    "author": "author",
+    "thumb": "/assets/placeholder-about.jpg"
+  }
+}
