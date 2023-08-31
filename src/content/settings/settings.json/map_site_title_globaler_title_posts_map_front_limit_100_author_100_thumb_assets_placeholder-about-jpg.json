@@ -1,0 +1,8 @@
+{
+  "site_title": "globaler title",
+  "posts": {
+    "front_limit": 100,
+    "author": "100",
+    "thumb": "/assets/placeholder-about.jpg"
+  }
+}
