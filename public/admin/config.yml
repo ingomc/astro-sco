@@ -74,7 +74,7 @@ collections:
       - { label: Image, name: authorimage, widget: image, required: false }
   - label: "Site Settings"
     name: "general"
-    folder: "src/content/settings/settings.json"
+    folder: "src/content/settings/"
     create: true
     extension: "json"
     description: "General Site Settings"
