@@ -9,9 +9,11 @@ import HpCard from "../../components/HpCard.astro";
 const events = (await getCollection("veranstaltungen"))
   .sort((a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf())
   .reverse();
+  
+const title = "Veranstaltungen - SCO-OGV Oberfüllbach";
+const description = "Überblick über alle Veranstaltungen des SCO-OGV Oberfüllbach";
 ---
-
-<App>
+<App title={title} description={description}>
   <div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
     <aside class="news">
       <HpCard>

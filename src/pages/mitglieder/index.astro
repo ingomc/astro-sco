@@ -4,10 +4,10 @@ import App from "../../layouts/App.astro";
 import { Picture } from "astro-imagetools/components";
 
 const members = await getCollection("mitglieder");
-console.log("🚀 ~ file: index.astro:7 ~ members:", members[0].data.authorimage);
+const title = "Mitglieder - SCO-OGV Oberfüllbach";
+const description = "Auflistung aller Mitglieder - SCO-OGV Oberfüllbach";
 ---
-
-<App>
+<App title={title} description={description}>
   <main class="container mx-auto px-2 py-4">
     <section class="pb-8">
       <h2 class="text-3xl font-bold text-center py-4">Vorstand</h2>

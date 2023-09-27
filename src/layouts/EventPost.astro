@@ -7,7 +7,7 @@ import BadgeMini from "../components/BadgeMini.astro";
 
 // type Props = CollectionEntry<'blog'>['data'];
 
-const { title, eventDate, heroImage, location } = Astro.props;
+const { title,description, eventDate, heroImage, location } = Astro.props;
 console.log("🚀 ~ file: BlogPost.astro:11 ~ heroImage:", heroImage);
 
 // Veranstaltungsdatum
@@ -16,7 +16,7 @@ console.log("🚀 ~ file: BlogPost.astro:11 ~ heroImage:", heroImage);
 
 ---
 
-<App>
+<App title={title} description={description} image={heroImage}>
   <main>
 	<div class="stripe-wrapper">
 	<div class="stripe bg-red-700 border-t-red-700 border-b-neutral-950">
