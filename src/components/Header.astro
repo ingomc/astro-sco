@@ -21,56 +21,56 @@ export const menuItems = [
   },
 ];
 
-const isMaintenanceMode = false;
+const isMaintenanceMode = true;
 ---
 
 <header>
   <div class="wrapper text-gray-700">
     <a href="/" title={SITE_TITLE}>
-      <img
-        width="68"
-        height="61"
-        src="/assets/logo_sco.png"
-        alt="SCO Logo"
-      />
+      <img width="68" height="61" src="/assets/logo_sco.png" alt="SCO Logo" />
     </a>
-    <nav class="pointer-events-none md:pointer-events-auto hidden md:block">
-      <div class="flex gap-4">
-        {
-          !isMaintenanceMode && menuItems.map((menuItem) => (
-            <HeaderLink href={menuItem.slug}>
-              <>
-                <span class="icon" set:html={menuItem.icon} />
-                <span>{menuItem.label}</span>
-              </>
-            </HeaderLink>
-          ))
-        }
-      </div>
-    </nav>
-    <nav class="md:hidden md:pointer-events-none">
-      <button
-        type="button"
-        class="open-btn inline-flex gap-2 items-center px-5 h-10 justify-center rounded-full md:hidden bg-neutral-100"
-      >
-        <span class="sr-only">Hauptmenü öffnen</span>
-        <svg
-          class="w-5 h-5"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 17 14"
-        >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M1 1h15M1 7h15M1 13h15"></path>
-        </svg>
-        <span class="font-semibold">Menü</span>
-      </button>
-    </nav>
+    {
+      !isMaintenanceMode && (
+        <>
+          <nav class="pointer-events-none md:pointer-events-auto hidden md:block">
+            <div class="flex gap-4">
+              {menuItems.map((menuItem) => (
+                <HeaderLink href={menuItem.slug}>
+                  <>
+                    <span class="icon" set:html={menuItem.icon} />
+                    <span>{menuItem.label}</span>
+                  </>
+                </HeaderLink>
+              ))}
+            </div>
+          </nav>
+          <nav class="md:hidden md:pointer-events-none">
+            <button
+              type="button"
+              class="open-btn inline-flex gap-2 items-center px-5 h-10 justify-center rounded-full md:hidden bg-neutral-100"
+            >
+              <span class="sr-only">Hauptmenü öffnen</span>
+              <svg
+                class="w-5 h-5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 17 14"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M1 1h15M1 7h15M1 13h15"
+                />
+              </svg>
+              <span class="font-semibold">Menü</span>
+            </button>
+          </nav>
+        </>
+      )
+    }
 
     <dialog
       class="mobile-menu md:pointer-events-none md:hidden bg-neutral-200 text-right top-0 right-0 w-[75vw] p-4 fixed h-full"
@@ -129,7 +129,7 @@ const isMaintenanceMode = false;
     display: block;
     max-width: none;
     max-height: none;
-    margin:0;
+    margin: 0;
     margin-left: auto;
     will-change: transform, opacity;
     box-shadow:
