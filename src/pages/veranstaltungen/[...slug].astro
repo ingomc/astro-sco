@@ -1,23 +1,23 @@
 ---
 import { CollectionEntry, getCollection } from 'astro:content';
-import BlogPost from '../../layouts/EventPost.astro';
+import EventPost from '../../layouts/EventPost.astro';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('veranstaltungen');
-	return posts.map((post) => ({
-		params: { slug: post.slug },
-		props: post,
+	const events = await getCollection('veranstaltungen');
+	return events.map((event) => ({
+		params: { slug: event.slug },
+		props: event,
 	}));
 }
 type Props = CollectionEntry<'veransaltungen'>;
 
-const post = Astro.props;
-const { Content, headings } = await post.render();
+const event = Astro.props;
+const { Content, headings } = await event.render();
 
 
 ---
 
-<BlogPost {...post.data}>
+<EventPost {...event.data}>
 	<!-- <h1>{post.data.title}</h1>
 	<ol>
 		{headings.map(heading => 
@@ -25,4 +25,4 @@ const { Content, headings } = await post.render();
 		)}
 	</ol> -->		
 	<Content />
-</BlogPost>
+</EventPost>
