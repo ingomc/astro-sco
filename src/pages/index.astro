@@ -1,143 +1,84 @@
 ---
-import { getCollection } from "astro:content";
 import HpStage from "../components/HpStage.astro";
 import App from "../layouts/App.astro";
-import HpCard from "../components/HpCard.astro";
-import BadgeMini from "../components/BadgeMini.astro";
+import { Picture } from "astro-imagetools/components";
 import FormattedDate from "../components/FormattedDate.astro";
+import BadgeMini from "../components/BadgeMini.astro";
 
-const posts = (await getCollection('start')).sort(
-	(a, b) => a.data.order.valueOf() - b.data.order.valueOf()
-);
-
-// TODO Events + News
-const events = (await getCollection('veranstaltungen')).sort(
-	(a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf()
-).reverse();
+const wanderTitle = "Wanderung für Kids";
+const wanderEventDate= new Date("2023-10-21T13:30:23.138Z");
+const wanderLocation = "Sportheim";
+const wanderHeroImage = "/assets/wanderung_fuer_kids.jpeg";
 ---
 
 <App>
   <HpStage />
   <div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
-	<aside class="news flex flex-col gap-4">
-		<HpCard>
-			<div class="flex gap-2 justify-between items-center" slot="title">
-				<h2 class="font-bold">Aktuelles</h2>
-			</div>
-				<ul class="whitespace-nowrap">
-					<li class="">
-						<span class="inline-flex flex-col gap-2 overflow-hidden max-w-full block py-2">
-							<div>
-								<BadgeMini>
-									<span class="font-semibold"><span class="day">Fr,</span><span>17.07.2023</span></span>
-								</BadgeMini>
-							</div>
-							<span class="overflow-hidden text-ellipsis">Neue Website online langer Satz hier!</span>
-						</span>
-					</li>
-				</ul>
-		</HpCard>
-		<HpCard>
-			<div class="flex gap-2 justify-between items-center" slot="title">
-				<h2 class="font-bold">Veranstaltungen</h2>
-				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Termine                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/></svg>                  </span>
-				</a>
-			</div>
-				<ul class="whitespace-nowrap">
-					{
-						events.map((event) => (
-							<li>
-								<a href={`/veranstaltungen/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-									<BadgeMini>
-										<span class="font-semibold"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={event.data.eventDate} /></span></span>
-									</BadgeMini>
-									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">{event.data.title}</span>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-		</HpCard>
-	</aside>
-	<main class="content prose py-4">
-		<h1>Coletion site settings:</h1>
-		<h3>startseite</h3>
-		<ul>
-			<li>Generell der Title</li>
-			<li>title in der Bühne</li>
-			<li>Aktuelles (datum und richtext)</li>
-		</ul>
-		<h3>Öffnungszeiten</h3>
-		<ul>
-			<li>Richtext ul LIs</li>
-		</ul>
-		<h3>Kontakt</h3>
-	<p>Kommt in Sportheim, Footer, Impressum</p>
-		<ul>
-			<li>anschrift, straße, plz, ort, tel, mail</li>
-		</ul>
-		{
-			posts.map(async (post) => {
-            	const { Content } = await post.render();
-            	return (
-						<Content />
-				)
-          	})
-		}
-	</main>
+	<main class="content prose py-4 mx-auto">
+        <h1>Die neue Webseite ist fast bereit</h1>
+        <p>Ihr seht die neue Webseite! Allerdings sind noch nicht alle Inhalte jetzt schon bereit. Deshalb kommt die Tage gerne noch einmal vorbei, sobald wir alles komplett veröffentlicht haben. Bis dahin seht ihr hier schonmal die kommenden Veranstaltungen:</p>
+        <h2>Kommende Veranstaltungen</h2>
+        <section class="not-prose">
+            <ul class="grid grid-cols-1 gap-4">
+                <li>
+                    <a
+                        class="flex gap-4 w-full bg-white rounded-lg p-4 border border-slate-200 hover:shadow"
+                        href="/veranstaltungen/2023-10-03-kinder-wanderung/"
+                        title={wanderTitle}
+                    >
+                        <div class="rounded overflow-hidden">
+                            <Picture
+                            fit="cover"
+                            width="250"
+                            height="250"
+                            alt={wanderTitle}
+                            src={wanderHeroImage}
+                            />
+                        </div>
+                        <div class="flex flex-col justify-between gap-2 w-full">
+                        <div class="flex flex-col gap-2">
+                            <h2 class="text-xl font-bold">{wanderTitle}</h2>
+                            <div class="flex flex-wrap gap-4 gap-y-2">
+                                <BadgeMini>
+                                    <b>Am:</b>
+                                    {wanderEventDate.toLocaleDateString("de-DE", {
+                                    weekday: "short",
+                                    })}
+                                    ,
+                                    <FormattedDate
+                                    date={wanderEventDate}
+                                    time={true}
+                                    />
+                                </BadgeMini>
+                                {wanderLocation && (
+                                    <BadgeMini>
+                                    <strong>Ort:</strong> {wanderLocation}
+                                    </BadgeMini>
+                                )}
+                            </div>
+                            <p>
+                                Wir möchten den Kindern ihre Heimat zeigen ...
+                            </p>
+                        </div>
+                        <span class="self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200">
+                            Mehr erfahren
+                            <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 256 256"
+                            >
+                            <path
+                                fill="currentColor"
+                                d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"
+                            />
+                            </svg>{" "}
+                        </span>
+                    </div>
+                </a>
+                </li>
+            </ul>
+          </section>
+    </main>
   </div>
 </App> 
-
-<style>
-	.day {
-		display: inline-block;
-		width: 3ch;
-	}
-	aside {
-		min-width: 0; /* grid hacky */
-	}
-
-	@media (max-width:767px) {
-		.main {
-			grid-area: main;
-			grid-template-areas:
-			  "news"
-			  "content"
-			  "sidebar";
-			grid-template-columns: 1fr;
-			grid-template-rows: 2fr;
-		  }
-		  .content {
-			grid-area: content;
-		  }
-		  aside {
-			grid-area: sidebar;
-		  }
-		  aside.news {
-			grid-area: news;
-		  }
-
-	}
-	@media (min-width: 768px) {
-		.main {
-			grid-area: main;
-			grid-template-areas:
-			  "content content sidebar";
-			grid-template-columns: 2fr 2fr 3fr;
-			grid-template-rows: 1fr;
-		  }
-		  .content {
-			  grid-area: content;
-			}
-			aside {
-				grid-area: sidebar;
-			}
-		}
-		
-		@media (min-width: 1280px) {
-		.main {
-			grid-template-columns: 1fr 1fr 1fr;
-		  }
-
-	}
-</style>
