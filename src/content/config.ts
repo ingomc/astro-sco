@@ -19,21 +19,21 @@ import { defineCollection, z } from "astro:content";
 // });
 
 
-const veransaltungen = defineCollection({
+const veranstaltungen = defineCollection({
   // Type-check frontmatter using a schema
   schema: z.object({
     title: z.string(),
-    location: z.string(),
     pubDate: z
-      .string()
-      .or(z.date())
-      .transform((val) => new Date(val)),
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val)),
     eventDate: z
-      .string()
-      .or(z.date())
-      .transform((val) => new Date(val)),
+    .string()
+    .or(z.date())
+    .transform((val) => new Date(val)),
+    location: z.string().optional(),
     heroImage: z.string().optional(),
   }),
 });
 
-export const collections = { veransaltungen };
+export const collections = { veranstaltungen };

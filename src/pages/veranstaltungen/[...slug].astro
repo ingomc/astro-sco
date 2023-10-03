@@ -9,7 +9,7 @@ export async function getStaticPaths() {
 		props: event,
 	}));
 }
-type Props = CollectionEntry<'veransaltungen'>;
+type Props = CollectionEntry<'veranstaltungen'>;
 
 const event = Astro.props;
 const { Content, headings } = await event.render();
