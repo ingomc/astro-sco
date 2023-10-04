@@ -6,7 +6,6 @@ type Props = HTMLAttributes<"a">;
 const { href, class: className, ...props } = Astro.props;
 
 const { pathname } = Astro.url;
-console.log(Astro.url);
 // Matches path and subpath for Events etc.
 const isActive = href && (href === pathname ) || (href && href !== '/' && pathname.includes(href.toString()));
 ---
