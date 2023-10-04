@@ -1,7 +1,7 @@
 ---
 title: "Veganes Mittagessen"
 pubDate: 2023-10-04T13:30:23.138Z
-eventDate: 2023-11-05T10:00:11.672Z
+eventDate: 2023-11-05T11:00:23.138Z
 heroImage: /assets/veganes-essen-23.jpg
 location: Sportheim
 ---
