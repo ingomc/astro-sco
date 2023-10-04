@@ -7,31 +7,43 @@ import BadgeMini from "../../components/BadgeMini.astro";
 import HpCard from "../../components/HpCard.astro";
 import HpStage from "../../components/HpStage.astro";
 
-const events = (await getCollection("veranstaltungen"))
-  .sort((a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf())
-  .reverse();
-  
+const events = (await getCollection("veranstaltungen")).sort(
+  (a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf(),
+);
+
 const title = "Veranstaltungen - SCO-OGV Oberfüllbach";
-const description = "Überblick über alle Veranstaltungen des SCO-OGV Oberfüllbach";
+const description =
+  "Überblick über alle Veranstaltungen des SCO-OGV Oberfüllbach";
+// Reihenfolge, noch kommende Events oben, in der reihenfolge das näheste zuerst
+// Bereits vergangene Events weiter unten mit trennstrich
 ---
+
 <App title={title} description={description}>
-  <HpStage image='/assets/buehne-events.jpg' title="Veranstaltungen" />
+  <HpStage image="/assets/buehne-events.jpg" title="Veranstaltungen" />
   <div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
     <aside class="news">
       <HpCard>
         <div class="flex gap-2 justify-between items-center" slot="title">
           <h2 class="font-bold">Regeltermine</h2>
         </div>
-          <ul class="whitespace-nowrap">
-            <li class="">
-              <div class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-                <BadgeMini>
-                  <span class="font-semibold">Mi, So: ab 17:00 Uhr</span>
-                </BadgeMini>
-                <span class="overflow-hidden text-ellipsis">Steeldarts</span>
-              </div>
-            </li>
-          </ul>
+        <table>
+          <tr>
+            <td>
+              <BadgeMini>
+                <span class="font-semibold">Mi, So: ab 17:00 Uhr</span>
+              </BadgeMini></td
+            >
+            <td>Steeldarts</td>
+          </tr>
+          <tr>
+            <td
+              ><BadgeMini>
+                <span class="font-semibold">So: ab 17:00 Uhr</span>
+              </BadgeMini></td
+            >
+            <td>Stammtisch</td>
+          </tr>
+        </table>
       </HpCard>
     </aside>
     <main class="content">
@@ -102,10 +114,15 @@ const description = "Überblick über alle Veranstaltungen des SCO-OGV Oberfüll
     </main>
   </div>
 </App>
-<style>	.day {
-  display: inline-block;
-  width: 3ch;
-}
+<style>
+  td {
+    padding: .5em 0;
+    padding-right: 1em;
+  }
+  .day {
+    display: inline-block;
+    width: 3ch;
+  }
   ul {
     list-style-type: none;
     padding: unset;
