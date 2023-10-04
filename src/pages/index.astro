@@ -9,6 +9,10 @@ const wanderTitle = "Wanderung für Kids";
 const wanderEventDate= new Date("2023-10-21T11:30:23.138Z");
 const wanderLocation = "Sportheim";
 const wanderHeroImage = "/assets/wanderung_fuer_kids_tel.jpeg";
+const essenTitle = "Veganes Mittagessen";
+const essenEventDate= new Date("2023-11-05T10:00:11.672Z");
+const essenLocation = "Sportheim";
+const essenHeroImage = "/assets/veganes-essen-23.jpg";
 ---
 
 <App>
@@ -36,46 +40,103 @@ const wanderHeroImage = "/assets/wanderung_fuer_kids_tel.jpeg";
                             />
                         </div>
                         <div class="flex flex-col justify-between gap-2 w-full">
-                        <div class="flex flex-col gap-2">
-                            <h2 class="text-xl font-bold">{wanderTitle}</h2>
-                            <div class="flex flex-wrap gap-4 gap-y-2">
-                                <BadgeMini>
-                                    <b>Am:</b>
-                                    {wanderEventDate.toLocaleDateString("de-DE", {
-                                    weekday: "short",
-                                    })}
-                                    ,
-                                    <FormattedDate
-                                    date={wanderEventDate}
-                                    time={true}
-                                    />
-                                </BadgeMini>
-                                {wanderLocation && (
+                            <div class="flex flex-col gap-2">
+                                <h2 class="text-xl font-bold">{wanderTitle}</h2>
+                                <div class="flex flex-wrap gap-4 gap-y-2">
                                     <BadgeMini>
-                                    <strong>Ort:</strong> {wanderLocation}
+                                        <b>Am:</b>
+                                        {wanderEventDate.toLocaleDateString("de-DE", {
+                                        weekday: "short",
+                                        })}
+                                        ,
+                                        <FormattedDate
+                                        date={wanderEventDate}
+                                        time={true}
+                                        />
                                     </BadgeMini>
-                                )}
+                                    {wanderLocation && (
+                                        <BadgeMini>
+                                        <strong>Ort:</strong> {wanderLocation}
+                                        </BadgeMini>
+                                    )}
+                                </div>
+                                <p>
+                                    Wir möchten den Kindern ihre Heimat zeigen ...
+                                </p>
                             </div>
-                            <p>
-                                Wir möchten den Kindern ihre Heimat zeigen ...
-                            </p>
+                            <span class="self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200">
+                                Mehr erfahren
+                                <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 256 256"
+                                >
+                                <path
+                                    fill="currentColor"
+                                    d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"
+                                />
+                                </svg>
+                            </span>
                         </div>
-                        <span class="self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200">
-                            Mehr erfahren
-                            <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 256 256"
-                            >
-                            <path
-                                fill="currentColor"
-                                d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"
+                    </a>
+                </li>
+                <li>
+                    <a
+                        class="flex gap-4 w-full bg-white rounded-lg p-4 border border-slate-200 hover:shadow"
+                        href="/veranstaltungen/2023-11-05-veganes-mittagessen/"
+                        title={essenTitle}
+                    >
+                        <div class="rounded overflow-hidden">
+                            <Picture
+                            fit="cover"
+                            width="250"
+                            height="250"
+                            alt={essenTitle}
+                            src={essenHeroImage}
                             />
-                            </svg>{" "}
-                        </span>
-                    </div>
-                </a>
+                        </div>
+                        <div class="flex flex-col justify-between gap-2 w-full">
+                            <div class="flex flex-col gap-2">
+                                <h2 class="text-xl font-bold">{essenTitle}</h2>
+                                <div class="flex flex-wrap gap-4 gap-y-2">
+                                    <BadgeMini>
+                                        <b>Am:</b>
+                                        {essenEventDate.toLocaleDateString("de-DE", {
+                                        weekday: "short",
+                                        })}
+                                        ,
+                                        <FormattedDate
+                                        date={essenEventDate}
+                                        time={true}
+                                        />
+                                    </BadgeMini>
+                                    {essenLocation && (
+                                        <BadgeMini>
+                                        <strong>Ort:</strong> {essenLocation}
+                                        </BadgeMini>
+                                    )}
+                                </div>
+                                <p>
+                                    Es erwartet Sie ein veganes Mittagessen im Oberfüllbacher Sportheim ...
+                                </p>
+                            </div>
+                            <span class="self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200">
+                                Mehr erfahren
+                                <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 256 256"
+                                >
+                                <path
+                                    fill="currentColor"
+                                    d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"
+                                />
+                                </svg>
+                            </span>
+                        </div>
+                    </a>
                 </li>
             </ul>
           </section>
