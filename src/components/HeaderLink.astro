@@ -6,7 +6,9 @@ type Props = HTMLAttributes<"a">;
 const { href, class: className, ...props } = Astro.props;
 
 const { pathname } = Astro.url;
-const isActive = href && pathname.includes(href.toString());
+console.log(Astro.url);
+// Matches path and subpath for Events etc.
+const isActive = href && (href === pathname ) || (href && href !== '/' && pathname.includes(href.toString()));
 ---
 
 <a href={href} class:list={[className, 'link', { active: isActive }]} {...props}>

@@ -18,7 +18,7 @@ const description = "Überblick über alle Veranstaltungen des SCO-OGV Oberfüll
     <aside class="news">
       <HpCard>
         <div class="flex gap-2 justify-between items-center" slot="title">
-          <h2 class="font-bold">Regeltermine (position:sticky machen)</h2>
+          <h2 class="font-bold">Regeltermine</h2>
         </div>
           <ul class="whitespace-nowrap">
             <li class="">
@@ -44,11 +44,11 @@ const description = "Überblick über alle Veranstaltungen des SCO-OGV Oberfüll
                   title={event.data.title}
                 >
                   {event.data.heroImage && (
-                    <div class="rounded overflow-hidden">
+                    <div class="w-32 md:w-80 rounded overflow-hidden">
                       <Picture
                         fit="cover"
-                        width="250"
-                        height="250"
+                        width="320"
+                        height="320"
                         alt={event.data.title}
                         src={event.data.heroImage}
                       />
