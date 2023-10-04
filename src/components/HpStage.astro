@@ -2,15 +2,22 @@
 import {
   BackgroundImage
 } from "astro-imagetools/components";
+
+interface Props {
+    image?: string;
+    title?: string;
+}
+
+const { image="/assets/sco-heim.jpg", title="SCO-OGV Oberfüllbach 1963 e.V." } = Astro.props;
 ---
 <div class="stage-wrapper">
     <BackgroundImage
-      src="/assets/sco-heim.jpg"
+      src={image}
       fallbackFormat="webp"
     >
         <div class="stage">
             <div class="content">
-                <h1 class="headline font-bold py-4 md:py-8">SCO-OGV Oberfüllbach 1963 e.V.</h1>
+                <h1 class="headline font-bold py-4 md:py-8">{title}</h1>
             </div>
         </div>
     </BackgroundImage>
