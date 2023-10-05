@@ -43,9 +43,11 @@ const isMaintenanceMode = false;
 
 <header>
   <div class="wrapper text-gray-700">
-    <a href="/" title={SITE_TITLE}>
-      <img width="68" height="61" src="/assets/logo_sco.png" alt="SCO Logo" />
-    </a>
+    <div class="w-24 md:w-24 h-12 md:h-16 relative">
+      <a class="block w-24 md:w-28 h-18 md:h-24 p-4 rounded-md shadow-sm hover:shadow-lg bg-white absolute top-0 left-0" href="/" title={SITE_TITLE}>
+        <img width="116" height="93" src="/assets/logo_sco.png" alt="SCO Logo" />
+      </a>
+    </div>
     {
       !isMaintenanceMode && (
         <>
@@ -126,7 +128,7 @@ const isMaintenanceMode = false;
 </header>
 <style>
   header {
-    @apply bg-white shadow-md sticky top-0 z-40;
+    @apply bg-white drop-shadow-md sticky top-0 z-40;
     grid-area: header;
   }
   .wrapper {
