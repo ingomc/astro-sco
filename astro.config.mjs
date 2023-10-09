@@ -11,5 +11,7 @@ export default defineConfig({
   site: "https://www.sc-oberfuellbach.de/",
   integrations: [mdx(), sitemap(), tailwind(), astroImageTools],
   output: 'static',
-  adapter: vercel({ analytics: true}),
+  adapter: vercel({ webAnalytics: {
+    enabled: true,
+  },}),
 });
