@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import vercel from "@astrojs/vercel/static";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { astroImageTools } from "astro-imagetools";
@@ -9,4 +10,6 @@ import tailwind from "@astrojs/tailwind";
 export default defineConfig({
   site: "https://www.sc-oberfuellbach.de/",
   integrations: [mdx(), sitemap(), tailwind(), astroImageTools],
+  output: 'server',
+  adapter: vercel({ analytics: true}),
 });
