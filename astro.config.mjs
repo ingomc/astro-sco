@@ -10,6 +10,6 @@ import tailwind from "@astrojs/tailwind";
 export default defineConfig({
   site: "https://www.sc-oberfuellbach.de/",
   integrations: [mdx(), sitemap(), tailwind(), astroImageTools],
-  output: 'server',
+  output: 'static',
   adapter: vercel({ analytics: true}),
 });
