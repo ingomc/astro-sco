@@ -6,6 +6,16 @@ heroImage: /assets/veganer-braten-23.jpg
 location: Sportheim
 ---
 
-## Veganes Mittagessen
+## Herzliche Einladung
 
-Am 5. November 2023 um 12 Uhr erwartet Sie ein veganes Mittagessen im Oberfüllbacher Sportheim. Genießen Sie köstliche Gerichte. Kommen Sie vorbei und lassen Sie sich von unserer veganen Vielfalt begeistern!
+Am 5. November 2023 ab 12:00 Uhr erwartet Sie ein veganes Mittagessen im Oberfüllbacher Sportheim. Außerdem gibt es Vorsuppe und Dessert.
+
+- veganer Schmorbraten (auf Weizenbasis) mit zwei Klößen, Gemüsebeilage
+- Linsenbraten mit zwei Klößen, Salatbeilage
+- Paprikagemüse in Soße mit zwei Klößen, Salatbeilage
+- Spaghetti Bolognese (auf Sojabasis), Salatbeilage
+
+**Anmeldeschluss:** Sonntag, 29.10.2023, 20 Uhr
+
+Anmeldungen/Bestellungen bitte bei:
+Familie Teuber (09560 8460) oder Familie Hüttner (09560 8559)
