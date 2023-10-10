@@ -1,7 +1,7 @@
 ---
 import HpStage from "../components/HpStage.astro";
 import App from "../layouts/App.astro";
-import { Picture } from "astro-imagetools/components";
+import { Img } from "astro-imagetools/components";
 import FormattedDate from "../components/FormattedDate.astro";
 import BadgeMini from "../components/BadgeMini.astro";
 
@@ -31,12 +31,14 @@ const essenHeroImage = "/assets/veganer-braten-23.jpg";
                         title={wanderTitle}
                     >
                         <div class="w-32 md:w-80 rounded overflow-hidden">
-                            <Picture
+                            <Img
                             fit="cover"
                             width="320"
                             height="320"
                             alt={wanderTitle}
                             src={wanderHeroImage}
+                            breakpoints={[100, 320]}
+                            sizes="(min-width: 900px) 320px, 80px"
                             />
                         </div>
                         <div class="flex flex-col justify-between gap-2 w-full">
@@ -88,12 +90,14 @@ const essenHeroImage = "/assets/veganer-braten-23.jpg";
                         title={essenTitle}
                     >
                         <div class="w-32 md:w-80 rounded overflow-hidden">
-                            <Picture
+                            <Img
                             fit="cover"
                             width="320"
                             height="320"
                             alt={essenTitle}
                             src={essenHeroImage}
+                            breakpoints={[100, 320]}
+                            sizes="(min-width: 900px) 320px, 80px"
                             />
                         </div>
                         <div class="flex flex-col justify-between gap-2 w-full">
