@@ -13,7 +13,7 @@ const { title, description, image } = Astro.props;
     <BaseHead title={title || SITE_TITLE} description={description || SITE_DESCRIPTION} image={image} />
   </head>
   <body>
-    <div class="app">
+    <div class="app overflow-x-hidden">
       <Header title={SITE_TITLE} />
       <div>
         <slot />
