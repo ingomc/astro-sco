@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import FormattedDate from "../../components/FormattedDate.astro";
 import App from "../../layouts/App.astro";
-import { Picture } from "astro-imagetools/components";
+import { Img } from "astro-imagetools/components";
 import BadgeMini from "../../components/BadgeMini.astro";
 import HpCard from "../../components/HpCard.astro";
 import HpStage from "../../components/HpStage.astro";
@@ -59,12 +59,14 @@ const description =
                 >
                   {event.data.heroImage && (
                     <div class="w-32 md:w-80 rounded overflow-hidden">
-                      <Picture
+                      <Img
                         fit="cover"
                         width="320"
                         height="320"
                         alt={event.data.title}
                         src={event.data.heroImage}
+                        breakpoints={[100, 320]}
+                        sizes="(min-width: 900px) 320px, 80px"
                       />
                     </div>
                   )}
