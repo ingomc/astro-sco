@@ -8,7 +8,7 @@ location: Sportheim
 
 ## Herzliche Einladung
 
-Am 5. November 2023 ab 12:00 Uhr erwartet Sie ein veganes Mittagessen im Oberfüllbacher Sportheim. Außerdem gibt es Vorsuppe und Dessert.
+Am **5. November 2023 ab 12:00 Uhr** erwartet Sie ein veganes Mittagessen im Oberfüllbacher Sportheim. Außerdem gibt es Vorsuppe und Dessert.
 
 Bitte auswählen:
 
