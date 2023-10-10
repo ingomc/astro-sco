@@ -20,4 +20,4 @@ Bitte auswählen:
 **Anmeldeschluss:** Sonntag, 29.10.2023, 20 Uhr
 
 Anmeldungen/Bestellungen bitte bei:
-Familie Teuber (09560 8460) oder Familie Hüttner (09560 8559)
+Familie Teuber [Tel: 09560 / 8460](tel:+4995608460) oder Familie Hüttner [Tel: 09560 / 8559](tel:+4995608559)
