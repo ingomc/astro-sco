@@ -3,7 +3,7 @@ title: Sportheim Oberfüllbach
 id: content
 ---
 
-## Steeldarts im Sportheim
+## Steel-Darts im Sportheim
 
 Jeden Mittwoch und Sonntag spielen wir im Sportheim Steeldarts auf 2 Boards mit Beleuchtung und Tablets. Jeder kann gerne vorbeischauen und mitspielen. Bitte vorher kurz via Tel. oder Mail anmelden.
 

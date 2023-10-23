@@ -8,5 +8,5 @@ order: 2
 Informationen zum Sportheim, seine Öffnungszeiten und vieles mehr.
 
 - Feiern im Sportheim
-- Steel-Dart
+- Steel-Darts
 - Sauna
