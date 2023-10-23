@@ -20,7 +20,7 @@ const events = (await getCollection('veranstaltungen')).sort(
   <HpStage />
   <div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
 	<aside class="news flex flex-col gap-4">
-		<HpCard>
+		<!-- <HpCard>
 			<div class="flex gap-2 justify-between items-center" slot="title">
 				<h2 class="font-bold">Aktuelles</h2>
 			</div>
@@ -36,7 +36,7 @@ const events = (await getCollection('veranstaltungen')).sort(
 						</span>
 					</li>
 				</ul>
-		</HpCard>
+		</HpCard> -->
 		<HpCard>
 			<div class="flex gap-2 justify-between items-center" slot="title">
 				<h2 class="font-bold">Veranstaltungen</h2>
@@ -60,6 +60,7 @@ const events = (await getCollection('veranstaltungen')).sort(
 		</HpCard>
 	</aside>
 	<main class="content prose py-4">
+<!-- 		
 		<h1>Coletion site settings:</h1>
 		<h3>startseite</h3>
 		<ul>
@@ -75,7 +76,8 @@ const events = (await getCollection('veranstaltungen')).sort(
 	<p>Kommt in Sportheim, Footer, Impressum</p>
 		<ul>
 			<li>anschrift, straße, plz, ort, tel, mail</li>
-		</ul>
+		</ul> -->
+
 		{
 			posts.map(async (post) => {
             	const { Content } = await post.render();
