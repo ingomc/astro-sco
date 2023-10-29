@@ -35,6 +35,6 @@ Freut euch drauf!
 
 ![Kurze Pause auf den Felsen](/assets/whatsapp_image_2023-10-29_at_07.33.24_2_.jpeg)
 
-![Auf der Suche nach dem Schatz](/assets/whatsapp_image_2023-10-29_at_07.33.25.jpeg)
+![Begegnung mit der Blindschleiche](/assets/whatsapp_image_2023-10-29_at_07.33.25.jpeg)
 
 ![Die Jungs](/assets/whatsapp_image_2023-10-29_at_07.33.25_3_.jpeg)
