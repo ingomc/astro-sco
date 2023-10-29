@@ -7,8 +7,6 @@ heroImage: /assets/title-wanderung.png
 ---
 ## Wanderung für Kids aus Oberfüllbach
 
-Bericht
-
 #### Ein gelungener Nachmittag schloss mit leckerer Pizza ab.
 
 Insgesamt 23 Teilnehmer, davon **17 Kinder** wanderten vom Sportheim zur Wildmeisterquelle und von dort weiter zum Wildmeisterstein. Unterwegs gab es viel zu entdecken. Neben den unzähligen herbstlich bunten Blättern des Mischwaldes auch Tiere, wie eine Blindschleiche. Bei einem Waldbingo durften die Kids ihren Spürsinn unter Beweis stellen. Alle waren begeistert dabei und konnten ihre Sammelbox füllen.
