@@ -1,0 +1,28 @@
+---
+import { CollectionEntry, getCollection } from 'astro:content';
+import EventPost from '../../layouts/EventPost.astro';
+
+export async function getStaticPaths() {
+	const events = await getCollection('berichte');
+	return events.map((event) => ({
+		params: { slug: event.slug },
+		props: event,
+	}));
+}
+type Props = CollectionEntry<'berichte'>;
+
+const event = Astro.props;
+const { Content, headings } = await event.render();
+
+
+---
+
+<EventPost {...event.data}>
+	<!-- <h1>{post.data.title}</h1>
+	<ol>
+		{headings.map(heading => 
+			heading.depth == 2 && (<li><a href={`#${heading.slug}`} title={heading.text}>{heading.text}</a></li>)
+		)}
+	</ol> -->		
+	<Content />
+</EventPost>

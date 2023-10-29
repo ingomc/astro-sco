@@ -33,6 +33,18 @@ collections:
       - { label: "Veranstaltungsort", name: "location", widget: "string", required: false }
       - { label: "Titelbild", name: "heroImage", widget: "image" }
       - { label: "Body", name: "body", widget: "markdown" }
+  - name: "berichte" # Used in routes, e.g., /admin/collections/veranstaltungen
+    label: "Berichte" # Used in the UI
+    folder: "src/content/berichte" # The path to the folder where the documents are stored
+    create: true # Allow users to create new documents in this collection
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
+    fields: # The fields for each document, usually in front matter
+      - { label: "Titel", name: "title", widget: "string" }
+      - { label: "Erstellungsdatum", name: "pubDate", widget: "datetime" }
+      - { label: "Veranstaltungsdatum und Start-Uhrzeit",  name: "eventDate", widget: "datetime"}
+      - { label: "Veranstaltungsort", name: "location", widget: "string", required: false }
+      - { label: "Titelbild", name: "heroImage", widget: "image" }
+      - { label: "Body", name: "body", widget: "markdown" }
   - name: mitglieder
     label: Mitglieder
     folder: src/content/mitglieder/
