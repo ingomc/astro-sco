@@ -19,8 +19,6 @@ Ein Spaß für groß und Klein!
 
 **Alle sind sich einig, 2024 muss es eine Wiederholung geben.**
 
-
-
 Freut euch drauf!
 
 ![Gruppenbild mit allen Kindern](/assets/whatsapp_image_2023-10-29_at_07.33.24_1_.jpeg)
@@ -32,3 +30,11 @@ Freut euch drauf!
 ![Kinder belegen zusammen die Pizza](/assets/whatsapp_image_2023-10-29_at_07.33.15.jpeg)
 
 ![Wanderweg](/assets/whatsapp_image_2023-10-29_at_07.33.26.jpeg)
+
+![Die Gruppe auf dem Heimweg zur Pizza](/assets/whatsapp_image_2023-10-29_at_07.33.19.jpeg "Auf dem Weg zurück ins Sportheim")
+
+![Kurze Pause auf den Felsen](/assets/whatsapp_image_2023-10-29_at_07.33.24_2_.jpeg)
+
+![Begegnung mit der Blindschleiche](/assets/whatsapp_image_2023-10-29_at_07.33.25.jpeg)
+
+![Die Jungs](/assets/whatsapp_image_2023-10-29_at_07.33.25_3_.jpeg)
