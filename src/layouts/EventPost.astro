@@ -7,60 +7,78 @@ import BadgeMini from "../components/BadgeMini.astro";
 
 // type Props = CollectionEntry<'blog'>['data'];
 
-const { title,description, eventDate, heroImage, location } = Astro.props;
-
+const { title, description, eventDate, heroImage, location } = Astro.props;
 ---
 
 <App title={title} description={description} image={heroImage}>
   <main>
-	<div class="stripe-wrapper">
-		<div class="stripe bg-red-700 border-t-red-700 border-b-neutral-950">
-		</div>
-	</div>
-    <article class="container mx-auto px-2 ">
-		<div class="prose mx-auto -mt-30 pt-1 md:pt-8 lg:pt-8">
-		  {heroImage && <div class="m-4 md:m-0 not-prose rounded overflow-hidden"><Picture alt="Titelbild" src={heroImage} /></div>}
+    <div class="stripe-wrapper">
+      <div class="stripe bg-red-700 border-t-red-700 border-b-neutral-950">
+      </div>
+    </div>
+    <article class="container mx-auto px-2">
+      <div
+        class="prose prose-img:rounded-xl mx-auto -mt-30 pt-1 md:pt-8 lg:pt-8"
+      >
+        {
+          heroImage && (
+            <div class="m-4 md:m-0 not-prose rounded overflow-hidden">
+              <Picture alt="Titelbild" src={heroImage} />
+            </div>
+          )
+        }
       </div>
       <div class="prose mx-auto">
-		<div class="py-4">
-			<BadgeMini>
-			  <b>Am:</b> {eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},<FormattedDate date={eventDate} time={true} />
-			</BadgeMini>
-			{location && (
-				<BadgeMini>
-					<strong>Ort:</strong> {location}
-				</BadgeMini>
-			)}
-		</div>
-		<div>
-		  <h1 class="text-4xl my-0">{title}</h1>
-		</div>
-		<div>
-			<slot />
-		</div>
+        <div class="py-4">
+          <BadgeMini>
+            <b>Am:</b>
+            {
+              eventDate.toLocaleDateString("de-DE", { weekday: "short" })
+            },<FormattedDate date={eventDate} time={true} />
+          </BadgeMini>
+          {
+            location && (
+              <BadgeMini>
+                <strong>Ort:</strong> {location}
+              </BadgeMini>
+            )
+          }
+        </div>
+        <div>
+          <h1 class="text-4xl my-0">{title}</h1>
+        </div>
+        <div>
+          <slot />
+        </div>
       </div>
     </article>
   </main>
 </App>
 
 <style>
-	.stripe-wrapper {
-		position: relative;
-	}
-	.stripe {
-		position: absolute;
-		top:0;
-		left:0;
-		right:0;
-		display:block;
-		height:12vw;
-		width:100%;
-		background-image: url('/stripe.svg');
-		background-size: 100% 8.1vw;
-		background-position: 50%;
-		background-repeat: no-repeat;
-		border-style: solid;
-		border-top-width: 2vw;
-		border-bottom-width: 2vw;
-	}
+  .stripe-wrapper {
+    position: relative;
+  }
+  .stripe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: block;
+    height: 12vw;
+    width: 100%;
+    background-image: url("/stripe.svg");
+    background-size: 100% 8.1vw;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    border-style: solid;
+    border-top-width: 2vw;
+    border-bottom-width: 2vw;
+  }
+</style>
+<style is:global>
+  .prose p > img {
+    width: 100%;
+    display: block;
+  }
 </style>
