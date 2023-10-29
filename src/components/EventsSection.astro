@@ -1,0 +1,74 @@
+---
+import { Img } from "astro-imagetools/components";
+import FormattedDate from "./FormattedDate.astro";
+import BadgeMini from "./BadgeMini.astro";
+
+const { data, path } = Astro.props;
+---
+
+<div>
+    <ul class="grid grid-cols-1 gap-4">
+      {
+        data.map((event) => (
+          <li>
+            <a
+              class="flex gap-4 w-full bg-white rounded-lg p-4 border border-slate-200 hover:shadow"
+              href={`/${path ? path : 'veranstaltungen' }/${event.slug}/`}
+              title={event.data.title}
+            >
+              {event.data.heroImage && (
+                <div class="w-32 md:w-80 rounded overflow-hidden">
+                  <Img
+                    fit="cover"
+                    width="320"
+                    height="320"
+                    alt={event.data.title}
+                    src={event.data.heroImage}
+                    breakpoints={[100, 320]}
+                    sizes="(min-width: 900px) 320px, 80px"
+                  />
+                </div>
+              )}
+              <div class="flex flex-col justify-between gap-2 w-full">
+                <div class="flex flex-col gap-2">
+                  <h2 class="text-xl font-bold">{event.data.title}</h2>
+                  <div class="flex flex-wrap gap-4 gap-y-2">
+                    <BadgeMini>
+                      <b>Am:</b>
+                      {event.data.eventDate.toLocaleDateString("de-DE", {
+                        weekday: "short",
+                      })}
+                      ,
+                      <FormattedDate
+                        date={event.data.eventDate}
+                        time={true}
+                      />
+                    </BadgeMini>
+                    {event.data.location && (
+                      <BadgeMini>
+                        <strong>Ort:</strong> {event.data.location}
+                      </BadgeMini>
+                    )}
+                  </div>
+                </div>
+                <span class="self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-200">
+                  Mehr erfahren
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 256 256"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"
+                    />
+                  </svg>{" "}
+                </span>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
