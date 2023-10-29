@@ -26,3 +26,11 @@ Ein Spaß für groß und Klein!
 Freut euch drauf!
 
 ![Gruppenbild mit allen Kindern](/assets/whatsapp_image_2023-10-29_at_07.33.24_1_.jpeg)
+
+![Gruppenbild auf Felsen](/assets/whatsapp_image_2023-10-29_at_07.33.21.jpeg)
+
+![Pizza wird in den Pizza-Lehm-Ofen geschoben](/assets/whatsapp_image_2023-10-29_at_07.33.18_1_.jpeg)
+
+![Kinder belegen zusammen die Pizza](/assets/whatsapp_image_2023-10-29_at_07.33.15.jpeg)
+
+![Wanderweg](/assets/whatsapp_image_2023-10-29_at_07.33.26.jpeg)
