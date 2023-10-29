@@ -1,9 +1,9 @@
 ---
-title: Bericht Wanderung für Kids
+title: "Bericht: Wanderung für Kids"
 pubDate: 2023-10-03T13:30:23.138Z
 eventDate: 2023-10-21T11:30:23.138Z
 location: Sportheim
-heroImage: /assets/wanderung_fuer_kids_tel.jpeg
+heroImage: /assets/title-wanderung.png
 ---
 ## Wanderung für Kids aus Oberfüllbach
 
