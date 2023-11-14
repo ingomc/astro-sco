@@ -17,7 +17,7 @@ const futureEvents = (await getCollection("veranstaltungen")).filter((ev) => dat
 
 const pastEvents = (await getCollection("berichte")).sort(
   (a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf(),
-);
+).reverse();
 
 const title = "Veranstaltungen - SCO-OGV Oberfüllbach";
 const description =
@@ -56,7 +56,7 @@ const description =
       <section>
         <EventsSection data={futureEvents} />
       </section>
-      <hr class="my-8">
+      {futureEvents.length > 0 && <hr class="my-8">} 
       <section>
         <h2 class="text-xl font-bold mb-4">Vergangene Veranstaltungen</h2>
         <EventsSection data={pastEvents} path="berichte" />
