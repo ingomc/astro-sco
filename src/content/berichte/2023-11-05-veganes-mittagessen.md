@@ -17,7 +17,8 @@ Bitte auswählen:
 - Paprikagemüse in Soße mit zwei Klößen, Salatbeilage
 - Spaghetti Bolognese (auf Sojabasis), Salatbeilage
 
-**Anmeldeschluss:** Sonntag, 29.10.2023, 20 Uhr
+<strike>**Anmeldeschluss:** Sonntag, 29.10.2023, 20 Uhr</strike>
 
+<!--
 Anmeldungen/Bestellungen bitte bei:
 Familie Teuber [Tel: 09560 / 8460](tel:+4995608460) oder Familie Hüttner [Tel: 09560 / 8559](tel:+4995608559)
