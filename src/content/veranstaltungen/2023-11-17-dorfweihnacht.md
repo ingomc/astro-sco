@@ -7,7 +7,7 @@ location: Sportheim
 
 ![Weihnachten](/assets/dorfweihnacht23.gif "Dorfweihnacht")
 
-Zur diesjährigen Dorfweihnacht laden die Feuerwehr Oberfüllbach und der SCO/OGV Oberfüllbach recht herzlich ein.
+Zur diesjährigen Dorfweihnacht am Samstag, den 2. Dezember, laden die Feuerwehr Oberfüllbach und der SCO/OGV Oberfüllbach recht herzlich ein.
 
 Beginn ist um **17:00 Uhr** am Sportheim, um ca. 18:00 Uhr Andacht.
 
