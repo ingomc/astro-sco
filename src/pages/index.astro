@@ -5,6 +5,7 @@ import App from "../layouts/App.astro";
 import HpCard from "../components/HpCard.astro";
 import BadgeMini from "../components/BadgeMini.astro";
 import FormattedDate from "../components/FormattedDate.astro";
+import EventsSection from "../components/EventsSection.astro";
 
 const posts = (await getCollection('start')).sort(
 	(a, b) => a.data.order.valueOf() - b.data.order.valueOf()
@@ -91,7 +92,15 @@ const events = (await getCollection('veranstaltungen')).filter((ev) => dateInPas
 				</ul>
 		</HpCard>
 	</aside>
-	<main class="content prose py-4">
+	<main class="content prose pb-4">
+		{
+			events.length > 0 && (
+				<section class="not-prose">
+					<EventsSection data={[events[0]]} />
+				  </section>
+
+			)
+		}
 <!-- 		
 		<h1>Coletion site settings:</h1>
 		<h3>startseite</h3>
