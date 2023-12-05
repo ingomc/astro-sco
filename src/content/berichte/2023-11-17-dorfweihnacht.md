@@ -1,7 +1,7 @@
 ---
 title: "Bericht: Oberfüllbacher Dorfweihnacht"
 pubDate: 2023-11-17T13:30:23.138Z
-eventDate: 2023-12-02T15:00:23.138Z
+eventDate: 2023-12-02T17:00:23.138Z
 location: Sportheim
 heroImage: /assets/dorfweihnacht23.png
 ---
