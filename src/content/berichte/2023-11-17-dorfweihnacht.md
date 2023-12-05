@@ -22,6 +22,9 @@ Die Dorfweihnacht in Oberfüllbach bot die perfekte Gelegenheit, sich in gemütl
 
 
 
+![](/assets/dorfweihnacht23_6.jpg)
 ![](/assets/dorfweihnacht23_1.jpg)
 ![](/assets/dorfweihnacht23_2.jpg)
 ![](/assets/dorfweihnacht23_3.jpg)
+![](/assets/dorfweihnacht23_4.jpg)
+![](/assets/dorfweihnacht23_5.jpg)
