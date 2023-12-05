@@ -8,7 +8,7 @@ heroImage: /assets/dorfweihnacht23.png
 
 ## 🎄 Dorfweihnacht in Oberfüllbach: Ein festlicher Abend für die ganze Familie!
 
-Am Samstag, den 2. Dezember, öffnete das idyllische Dorf Oberfüllbach seine Tore für die alljährliche Dorfweihnacht, veranstaltet von der Feuerwehr Oberfüllbach und dem SCO/OGV Oberfüllbach. Ein herzliches Willkommen an alle, die sich auf ein stimmungsvolles Event freuten!
+Am Samstag, den 2. Dezember, öffnete das idyllische Dorf Oberfüllbach seine Tore für die alljährliche Dorfweihnacht, veranstaltet von der Feuerwehr Oberfüllbach und dem SCO/OGV Oberfüllbach.
 
 ### 🕔 Beginn und Besinnlichkeit
 Um 17:00 Uhr startete das festliche Treiben am Sportheim, gefolgt von einer feierlichen Andacht um 18:00 Uhr. Die festliche Atmosphäre ließ die Herzen der Besucher höher schlagen und verbreitete vorweihnachtliche Freude.
