@@ -5,26 +5,30 @@ import sitemap from "@astrojs/sitemap";
 import { astroImageTools } from "astro-imagetools";
 
 import tailwind from "@astrojs/tailwind";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
-const deployTarget = process.env.DEPLOY_TARGET
+const deployTarget = process.env.DEPLOY_TARGET;
 
 console.log("Deploy Target: " + deployTarget);
 
 const deployadapter = () => {
-  if (deployTarget === 'netlify') {
+  if (deployTarget === "netlify") {
     return undefined;
   }
-  return (vercel({ webAnalytics: {
-    enabled: true,
-  },}))
-}
-
+  return vercel({
+    webAnalytics: {
+      enabled: true,
+    },
+    speedInsights: {
+      enabled: true,
+    },
+  });
+};
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://www.sc-oberfuellbach.de/",
   integrations: [mdx(), sitemap(), tailwind(), astroImageTools],
-  output: 'static',
+  output: "static",
   adapter: deployadapter(),
 });
