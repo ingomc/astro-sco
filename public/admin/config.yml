@@ -31,6 +31,7 @@ collections:
       - { label: "Erstellungsdatum", name: "pubDate", widget: "datetime" }
       - { label: "Veranstaltungsdatum und Start-Uhrzeit",  name: "eventDate", widget: "datetime"}
       - { label: "Veranstaltungsort", name: "location", widget: "string", required: false }
+      - { label: "Button-Beschriftung", name: "cta", widget: "string", required: false }
       - { label: "Titelbild", name: "heroImage", widget: "image" }
       - { label: "Body", name: "body", widget: "markdown" }
   - name: "berichte" # Used in routes, e.g., /admin/collections/veranstaltungen

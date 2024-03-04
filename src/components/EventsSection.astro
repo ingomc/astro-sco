@@ -4,6 +4,7 @@ import FormattedDate from "./FormattedDate.astro";
 import BadgeMini from "./BadgeMini.astro";
 
 const { data, path } = Astro.props;
+console.log(data)
 ---
 
 <div>
@@ -52,7 +53,7 @@ const { data, path } = Astro.props;
                   </div>
                 </div>
                 <span class="self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300">
-                  Mehr erfahren
+                  {event.data.cta ? event.data.cta : 'Mehr erfahren'}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"

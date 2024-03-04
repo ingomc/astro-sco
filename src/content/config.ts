@@ -33,6 +33,7 @@ const veranstaltungen = defineCollection({
     .transform((val) => new Date(val)),
     location: z.string().optional(),
     heroImage: z.string().optional(),
+    cta: z.string().optional(),
   }),
 });
 
