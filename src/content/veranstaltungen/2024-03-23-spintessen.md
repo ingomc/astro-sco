@@ -1,7 +1,7 @@
 ---
 title: Spintessen
-pubDate: 2023-03-01T13:30:23.138Z
-eventDate: 2024-03-23T16:00:23.138Z
+pubDate: 2024-03-04T11:14:18.197Z
+eventDate: 2024-03-23T16:00:00.000Z
 location: Sportheim
 heroImage: /assets/2024-03-23-spintessen.png
 ---
