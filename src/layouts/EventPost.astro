@@ -34,7 +34,7 @@ const { title, description, eventDate, heroImage, location } = Astro.props;
             <b>Am:</b>
             {
               eventDate.toLocaleDateString("de-DE", { weekday: "short" })
-            },<FormattedDate date={eventDate} time={true} />
+            },<FormattedDate date={eventDate} time={false} />
           </BadgeMini>
           {
             location && (
