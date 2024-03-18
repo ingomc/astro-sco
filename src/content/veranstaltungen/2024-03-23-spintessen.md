@@ -15,6 +15,3 @@ Erleben Sie ein besonderes kulinarisches Event beim Spintessen am **23. März 20
 **Anmeldeschluss**:
 16.03.2024 
 
-**Peter Hüttner**: 📞 [0151 53279439](tel:+4915153279439) / [Via Whatsapp](https://wa.me/+4915153279439)
-
-Die Plätze sind begrenzt, daher ist eine frühzeitige Anmeldung wichtig. Kontaktieren Sie Peter direkt, um sich für das Spintessen zu registrieren. Verpassen Sie nicht die Chance auf einen unvergesslichen Abend voller Genuss und Geselligkeit.
