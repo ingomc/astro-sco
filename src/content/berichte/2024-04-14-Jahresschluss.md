@@ -19,3 +19,5 @@ Am 14. April 2024 fand die festliche Jahresschlussveranstaltung des SC Oberfüll
 ## Ehrungen
 ![](/assets/2024-04-14-Ehrungen.jpg)
 
+## Abschließend
+Abschließend möchten wir uns bei allen Mitgliedern, Spendern und Unterstützern herzlich für ihr Engagement und ihre Unterstützung im vergangenen Jahr bedanken.
