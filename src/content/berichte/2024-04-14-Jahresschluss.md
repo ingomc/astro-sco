@@ -13,8 +13,8 @@ heroImage: /assets/2024-04-14-jahresschluss.jpg
  - Abschluss: Gemeinschaftlicher Ausklang der Veranstaltung
 
 ## Rouladenessen
-![](/assets/2024-04-14-rouladen.jpg)
 Am 14. April 2024 fand die festliche Jahresschlussveranstaltung des SC Oberfüllbach statt. Kulinarisch verwöhnt wurden die Gäste mit köstlichen Rouladen und Klößen, sowie einer alternativen Option, einer herzhaften Lasagne.
+![](/assets/2024-04-14-rouladen.jpg)
 
 ## Ehrungen
 ![](/assets/2024-04-14-Ehrungen.jpg)
