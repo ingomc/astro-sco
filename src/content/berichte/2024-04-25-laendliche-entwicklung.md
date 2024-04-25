@@ -2,7 +2,6 @@
 title: 'Bericht: Ländliche Entwicklung'
 pubDate: 2024-04-25T11:14:18.197Z
 eventDate: 2024-04-25T16:00:00.000Z
-location: Sportheim
 heroImage: /assets/2024-04-25-laendliche-entwicklung-1.jpeg
 ---
 ## Streuobst für alle: Beitrag zur Erhaltung des Obstbaumbestandes in Oberfranken
