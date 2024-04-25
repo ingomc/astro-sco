@@ -35,15 +35,27 @@ const events = (await getCollection('veranstaltungen')).filter((ev) => dateInPas
 				<h2 class="font-bold">Aktuelles</h2>
 			</div>
 				<ul class="whitespace-nowrap">
-					<li class="">
-						<span class="inline-flex flex-col gap-2 overflow-hidden max-w-full block py-2">
+					<li>
+						<span class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
 							<div>
-								<BadgeMini>
-									<span class="font-semibold"><span class="day">So,</span><span>20.10.2023</span></span>
+								<BadgeMini highlight>
+									<span class="font-semibold">NEU</span>
+								</BadgeMini>
+							</div>
+							<a href="/berichte/2024-04-25-laendliche-entwicklung/">
+								<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">Bericht: Ländliche Entwicklung</span>
+							</a>
+						</span>
+					</li>
+					<li>
+						<span class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
+							<div>
+								<BadgeMini highlight>
+									<span class="font-semibold">NEU</span>
 								</BadgeMini>
 							</div>
 							<a href="/berichte/2024-04-14-jahresschluss/">
-								<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">Bericht zum Jahresschluss ist online</span>
+								<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">Bericht: Jahresschluss-Veranstaltung</span>
 							</a>
 						</span>
 					</li>
