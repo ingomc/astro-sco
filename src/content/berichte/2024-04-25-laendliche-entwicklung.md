@@ -10,6 +10,6 @@ Im Zuge der Ländlichen Entwicklung Oberfranken gab es im letzten Jahr ein Förd
 
 Ein Dankeschön auch an Fabian Rosenbauer, der die Anschaffung organisierte.
 
-![Gruppenbild mit dem Vorstand und den Geehrten](/assets/2024-04-25-laendliche-entwicklung-2.jpeg)
+![Frisch gepflanzte Obstbäume](/assets/2024-04-25-laendliche-entwicklung-2.jpeg)
 
-![Gruppenbild mit dem Vorstand und den Geehrten](/assets/2024-04-25-laendliche-entwicklung-3.jpeg)
+![Fixieren eines Obstbaumes](/assets/2024-04-25-laendliche-entwicklung-3.jpeg)
