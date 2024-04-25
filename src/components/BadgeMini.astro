@@ -1,4 +1,9 @@
-<span class="text-neutral-950 text-xs inline-flex gap-1 py-1 px-2 rounded-full bg-slate-100">
+---
+const { highlight } = Astro.props;
+---
+
+<span class={`text-xs inline-flex gap-1 py-1 px-2 rounded-full ${highlight ? `bg-yellow-500
+    text-neutral-950`:`bg-slate-100 text-neutral-950`}`}>
     <slot />
 </span>
 
