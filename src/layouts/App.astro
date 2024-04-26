@@ -4,7 +4,6 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import HeaderLink from "../components/HeaderLink.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
-import {version} from "../../package.json";
 
 // Icons from Icones.js.org, Phosphor, Bold
 export const menuItems = [
@@ -51,7 +50,7 @@ const { title, description, image } = Astro.props;
   <head>
     <BaseHead title={title || SITE_TITLE} description={description || SITE_DESCRIPTION} image={image} />
   </head>
-  <body data-sco-version={version}>
+  <body>
     <div class="app">
       <Header title={SITE_TITLE} />
       <div>
