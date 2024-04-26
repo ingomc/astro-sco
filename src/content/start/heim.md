@@ -15,7 +15,7 @@ Informationen zum Sportheim, seine Öffnungszeiten und vieles mehr.
 Feiern Sie Ihre besonderen Anlässe im gemütlichen Ambiente unseres Sportheims. Unser Team steht Ihnen bei der Planung und Umsetzung Ihrer Feierlichkeiten gerne zur Seite. Von Geburtstagen über Hochzeiten bis hin zu Firmenveranstaltungen - wir bieten den perfekten Rahmen für unvergessliche Momente.
 
 ## Steel-Darts
-Treffen Sie uns jeden Mittwoch und Sonntag zum Steel-Dart-Spiel im SCO-OGV Oberfüllbach. Jeder ist herzlich eingeladen, ganz unverbindlich mitzuspielen. Bitte melden Sie sich vorher an, damit wir für genügend Spielmöglichkeiten sorgen können. Ob Anfänger oder erfahrener Spieler, bei uns steht der Spaß am gemeinsamen Spiel im Vordergrund. Kommen Sie vorbei und erleben Sie gesellige Dart-Abende in unserem Verein.
+Treffen Sie uns jeden Mittwoch und Sonntag zum Steel-Dart-Spiel im Sportheim. Jeder ist herzlich eingeladen, ganz unverbindlich mitzuspielen. Bitte melden Sie sich vorher an, damit wir für genügend Spielmöglichkeiten sorgen können. Ob Anfänger oder erfahrener Spieler, bei uns steht der Spaß am gemeinsamen Spiel im Vordergrund. Kommen Sie vorbei und erleben Sie gesellige Dart-Abende in unserem Verein.
 
 ## Sauna
-Entspannen Sie Körper und Geist in unserer Sauna im SCO-OGV Oberfüllbach. Genießen Sie nach einem anstrengenden Training oder einem langen Arbeitstag die wohltuende Wärme und lassen Sie den Stress des Alltags hinter sich. Unsere Sauna bietet Ihnen eine Ruheoase, um neue Energie zu tanken und sich rundum wohlzufühlen.
+Entspannen Sie Körper und Geist in unserer Sauna. Genießen Sie nach einem anstrengenden Training oder einem langen Arbeitstag die wohltuende Wärme und lassen Sie den Stress des Alltags hinter sich. Unsere Sauna bietet Ihnen eine Ruheoase, um neue Energie zu tanken und sich rundum wohlzufühlen.
