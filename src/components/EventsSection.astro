@@ -1,5 +1,5 @@
 ---
-import { Img } from "astro-imagetools/components";
+import { Image } from 'astro:assets';
 import FormattedDate from "./FormattedDate.astro";
 import BadgeMini from "./BadgeMini.astro";
 
@@ -18,7 +18,7 @@ const { data, path } = Astro.props;
             >
               {event.data.heroImage && (
                 <div class="w-32 md:w-80 rounded overflow-hidden">
-                  <Img
+                  <Image
                     fit="cover"
                     width="320"
                     height="200"
