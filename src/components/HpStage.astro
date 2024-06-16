@@ -1,33 +1,27 @@
 ---
-import {
-  BackgroundImage
-} from "astro-imagetools/components";
-
+import { getImage } from "astro:assets";
 interface Props {
     image?: string;
     title?: string;
 }
 
 const { image="/assets/sco-heim.jpg", title="SCO-OGV Oberfüllbach 1963 e.V." } = Astro.props;
+const optimizedBackground = await getImage({src: image, format: 'webp', width:'2000', height:'1056'});
 ---
-<div class="stage-wrapper">
-    <BackgroundImage
-      src={image}
-      fallbackFormat="webp"
-      placeholder="blurred"
-    >
-        <div class="stage">
-            <div class="content">
-                <h1 class="headline font-bold py-4 md:py-8">{title}</h1>
-            </div>
+<div class="stage-wrapper" style={`background-image: url(${optimizedBackground.src});`}>
+    <div class="stage">
+        <div class="content">
+            <h1 class="headline font-bold py-4 md:py-8">{title}</h1>
         </div>
-    </BackgroundImage>
+    </div>
 </div>
 
 <style>
     .stage-wrapper {
         grid-area: stage;
-        
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: 50% 50%;
     }
     .stage {
         min-height: min(40vw, 50vh);
