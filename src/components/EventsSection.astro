@@ -4,6 +4,7 @@ import FormattedDate from "./FormattedDate.astro";
 import BadgeMini from "./BadgeMini.astro";
 
 const { data, path } = Astro.props;
+const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*.{jpeg,jpg,png,gif}');
 ---
 
 <div>
@@ -23,9 +24,9 @@ const { data, path } = Astro.props;
                     width="320"
                     height="200"
                     alt={event.data.title}
-                    src={event.data.heroImage}
-                    breakpoints={[100, 320]}
-                    sizes="(min-width: 900px) 320px, 80px"
+                    src={images[`/public${event.data.heroImage}`]()}
+                    widths={[150, 300]}
+                    sizes={`(max-width: 360px) 150px, (max-width: 460px) 300px`}
                   />
                 </div>
               )}
