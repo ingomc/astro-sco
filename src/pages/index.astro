@@ -67,10 +67,11 @@ const events = (await getCollection('veranstaltungen')).filter((ev) => dateInPas
 				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Termine                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/></svg>                  </span>
 				</a>
 			</div>
-				<ul class="whitespace-nowrap">
-					{
-						events.length>0 ?
-						events.map((event) => (
+			{
+				events.length > 0 ? (
+					<ul class="whitespace-nowrap">
+						{
+							events.map((event) => (
 							<li>
 								<a href={`/veranstaltungen/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
 									<BadgeMini>
@@ -79,9 +80,11 @@ const events = (await getCollection('veranstaltungen')).filter((ev) => dateInPas
 									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">{event.data.title}</span>
 								</a>
 							</li>
-						)) : (<p class="py-2">Aktuell keine neue Veranstaltung geplant</p>)
-					}
-				</ul>
+						))
+						}
+					</ul>
+				) : (<p class="py-2">Aktuell keine neue Veranstaltung geplant</p>)
+			}	
 		</HpCard>
 		<HpCard>
 			<div class="flex gap-2 justify-between items-center" slot="title">
