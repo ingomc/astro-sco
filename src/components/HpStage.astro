@@ -5,8 +5,11 @@ interface Props {
     title?: string;
 }
 
-const { image="/assets/sco-heim.jpg", title="SCO-OGV Oberfüllbach 1963 e.V." } = Astro.props;
-const optimizedBackground = await getImage({src: image, format: 'webp', width:'2000', height:'1056'});
+const { image="/src/media/sco-heim.jpg", title="SCO-OGV Oberfüllbach 1963 e.V." } = Astro.props;
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/media/**/*.{jpeg,jpg,png,gif}');
+const finalImageUrl = image;
+if (!images[finalImageUrl]) throw new Error(`"${finalImageUrl}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`);
+const optimizedBackground = await getImage({src: images[finalImageUrl](), format: 'webp', width:'1000', height:'528'});
 ---
 <div class="stage-wrapper" style={`background-image: url(${optimizedBackground.src});`}>
     <div class="stage">
