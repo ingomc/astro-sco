@@ -6,6 +6,7 @@ import HpCard from "../components/HpCard.astro";
 import BadgeMini from "../components/BadgeMini.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import EventsSection from "../components/EventsSection.astro";
+import allshortevents from "../data/shortevents.json";
 
 const posts = (await getCollection('start')).sort(
 	(a, b) => a.data.order.valueOf() - b.data.order.valueOf()
@@ -24,6 +25,10 @@ const dateInPast = (date: Date) =>
 const events = (await getCollection('veranstaltungen')).filter((ev) => dateInPast(ev.data.eventDate)).sort(
 	(a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf()
 ).reverse();
+
+const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev.date))).sort(
+	(a, b) => new Date(a.date).valueOf() -  new Date(b.date).valueOf()
+)
 ---
 
 <App>
@@ -68,7 +73,7 @@ const events = (await getCollection('veranstaltungen')).filter((ev) => dateInPas
 				</a>
 			</div>
 			{
-				events.length > 0 ? (
+				events.length > 0 && (
 					<ul class="whitespace-nowrap">
 						{
 							events.map((event) => (
@@ -83,8 +88,29 @@ const events = (await getCollection('veranstaltungen')).filter((ev) => dateInPas
 						))
 						}
 					</ul>
-				) : (<p class="py-2">Aktuell keine neue Veranstaltung geplant</p>)
+				)
 			}	
+			{
+				shortevents.length > 0 && (
+					<ul class="whitespace-nowrap">
+						{
+							shortevents.map((event) => (
+							<li>
+								<div class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
+									<BadgeMini>
+										<span class="font-semibold"><span class="day">{new Date(event.date).toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={new Date(event.date)} /></span></span>
+									</BadgeMini>
+									<span class="overflow-hidden text-ellipsis">{event.title}</span>
+								</div>
+							</li>
+						))
+						}
+					</ul>
+				)
+			}	
+			{(!shortevents.length && !events.length) && (
+				<p class="py-2 overflow-hidden text-ellipsis">Aktuell keine neue Veranstaltung geplant</p>
+			)}
 		</HpCard>
 		<HpCard>
 			<div class="flex gap-2 justify-between items-center" slot="title">
