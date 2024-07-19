@@ -36,54 +36,52 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
   <div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
 	<!--  Veranstaltungen -->
 	<aside class="side1">
-		<div class="flex flex-col gap-4">
-			<HpCard>
-				<div class="flex gap-2 justify-between items-center" slot="title">
-					<h2 class="font-bold">Veranstaltungen</h2>
-					<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Termine                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/></svg>                  </span>
-					</a>
-				</div>
-				{
-					events.length > 0 && (
-						<ul class="whitespace-nowrap">
-							{
-								events.map((event) => (
-								<li>
-									<a href={`/veranstaltungen/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-										<BadgeMini>
-											<span class="font-semibold"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={event.data.eventDate} /></span></span>
-										</BadgeMini>
-										<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">{event.data.title}</span>
-									</a>
-								</li>
-							))
-							}
-						</ul>
-					)
-				}	
-				{
-					shortevents.length > 0 && (
-						<ul class="whitespace-nowrap">
-							{
-								shortevents.map((event) => (
-								<li>
-									<div class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-										<BadgeMini>
-											<span class="font-semibold"><span class="day">{new Date(event.date).toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={new Date(event.date)} /></span></span>
-										</BadgeMini>
-										<span class="overflow-hidden text-ellipsis">{event.title}</span>
-									</div>
-								</li>
-							))
-							}
-						</ul>
-					)
-				}	
-				{(!shortevents.length && !events.length) && (
-					<p class="py-2 overflow-hidden text-ellipsis">Aktuell keine neue Veranstaltung geplant</p>
-				)}
-			</HpCard>
-		</div>
+		<HpCard>
+			<div class="flex gap-2 justify-between items-center" slot="title">
+				<h2 class="font-bold">Veranstaltungen</h2>
+				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Termine                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/></svg>                  </span>
+				</a>
+			</div>
+			{
+				events.length > 0 && (
+					<ul class="whitespace-nowrap">
+						{
+							events.map((event) => (
+							<li>
+								<a href={`/veranstaltungen/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
+									<BadgeMini>
+										<span class="font-semibold"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={event.data.eventDate} /></span></span>
+									</BadgeMini>
+									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">{event.data.title}</span>
+								</a>
+							</li>
+						))
+						}
+					</ul>
+				)
+			}	
+			{
+				shortevents.length > 0 && (
+					<ul class="whitespace-nowrap">
+						{
+							shortevents.map((event) => (
+							<li>
+								<div class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
+									<BadgeMini>
+										<span class="font-semibold"><span class="day">{new Date(event.date).toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={new Date(event.date)} /></span></span>
+									</BadgeMini>
+									<span class="overflow-hidden text-ellipsis">{event.title}</span>
+								</div>
+							</li>
+						))
+						}
+					</ul>
+				)
+			}	
+			{(!shortevents.length && !events.length) && (
+				<p class="py-2 overflow-hidden text-ellipsis">Aktuell keine neue Veranstaltung geplant</p>
+			)}
+		</HpCard>
 	</aside>
 	<!-- /  Veranstaltungen -->
 	<main class="content prose pb-4">
@@ -148,6 +146,24 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 		</HpCard>
 	</aside>
 	<!-- / Berichte  -->
+
+	 <!-- Öffnungszeiten  -->
+	<aside class="side3">
+		<HpCard>
+			<div class="flex gap-2 justify-between items-center" slot="title">
+			<h2 class="font-bold">Öffnungszeiten</h2>
+			</div>
+			<ul class="prose list-disc pl-4 list-outside">
+				<li class="">
+					jeden Sonntag ab 18:30 Uhr 
+				</li>
+				<li class="">
+					jeden 1. Freitag im Monat ab 19:30 Uhr (ohne Gewähr)
+				</li>
+			</ul>
+		</HpCard>
+	</aside>
+	<!-- / Öffnungszeiten  -->
   </div>
 </App> 
 
@@ -156,10 +172,6 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 		display: inline-block;
 		width: 3ch;
 	}
-	.main {
-		background-color: red;
-	}
-
 	@media (max-width:767px) {
 		.main {
 			grid-area: main;
@@ -172,18 +184,28 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 			grid-area: main;
 			grid-template-areas:
 			  "content side1"
-			  "content side2";
-			grid-template-columns: 5fr 3fr;
-			grid-template-rows: auto 1fr;
+			  "content side2"
+			  "content side3";
+			grid-template-columns: 60% 40%;
+			grid-template-rows: auto auto 1fr;
 		}
 		.content {
 			grid-area: content;
+		}
+		.side1 {
+			grid-area: side1;
+		}
+		.side2 {
+			grid-area: side2;
+		}
+		.side3 {
+			grid-area: side3;
 		}
 	}
 		
 	@media (min-width: 1280px) {
 		.main {
-grid-template-columns: 6fr 3fr;
-}
+			grid-template-columns: 66% 34%;
+		}
 	}
 </style>
