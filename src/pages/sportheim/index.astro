@@ -42,44 +42,40 @@ const description = "Überblick über Aktivitäten in und um unser Sportheim in 
 
 <style>
 
-.main {
-    grid-area: main;
-  }
-  @media (max-width: 767px) {
-    .main {
-      grid-template-areas:
-        "news"
-        "content"
-        "sidebar";
-      grid-template-columns: 1fr;
-      grid-template-rows: 2fr;
-    }
-    .content {
-      grid-area: content;
-    }
-    aside {
-      grid-area: sidebar;
-    }
-    aside.news {
-      grid-area: news;
-    }
-  }
-  @media (min-width: 768px) {
-    .main {
-      grid-template-areas: "content content sidebar";
-      grid-template-columns: 2fr 2fr 3fr;
-      grid-template-rows: 1fr;
-    }
-    .content {
-      grid-area: content;
-    }
-    aside {
-      grid-area: sidebar;
-    }
-  }
-  @media (min-width: 1280px) {
-    .main {
-      grid-template-columns: 1fr 1fr 1fr;
-    }
-  }
+	@media (max-width:767px) {
+		.main {
+			grid-area: main;
+			display: flex;
+			flex-direction: column;
+		}
+	}
+	@media (min-width: 768px) {
+		.main {
+			grid-area: main;
+			grid-template-areas:
+			  "content side1"
+			  "content side2"
+			  "content side3";
+			grid-template-columns: 60% 40%;
+			grid-template-rows: auto auto 1fr;
+		}
+		.content {
+			grid-area: content;
+		}
+		.side1 {
+			grid-area: side1;
+		}
+		.side2 {
+			grid-area: side2;
+		}
+		.side3 {
+			grid-area: side3;
+		}
+	}
+		
+	@media (min-width: 1280px) {
+		.main {
+			grid-template-columns: 66% 34%;
+		}
+	}
 </style>

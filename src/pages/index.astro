@@ -34,40 +34,8 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 <App>
   <HpStage />
   <div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
-	<aside class="news flex flex-col gap-4">
-		<!--
-			<HpCard>
-				<div class="flex gap-2 justify-between items-center" slot="title">
-					<h2 class="font-bold">Aktuelles</h2>
-				</div>
-					<ul class="whitespace-nowrap">
-						<li>
-							<span class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-								<div hidden>
-									<BadgeMini highlight>
-										<span class="font-semibold">NEU</span>
-									</BadgeMini>
-								</div>
-								<a href="/berichte/2024-04-25-laendliche-entwicklung/">
-									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">Bericht: Ländliche Entwicklung</span>
-								</a>
-							</span>
-						</li>
-						<li>
-							<span class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-								<div hidden>
-									<BadgeMini highlight>
-										<span class="font-semibold">NEU</span>
-									</BadgeMini>
-								</div>
-								<a href="/berichte/2024-04-14-jahresschluss/">
-									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">Bericht: Jahresschluss-Veranstaltung</span>
-								</a>
-							</span>
-						</li>
-					</ul>
-			</HpCard>
-		 -->
+	<!--  Veranstaltungen -->
+	<aside class="side1">
 		<HpCard>
 			<div class="flex gap-2 justify-between items-center" slot="title">
 				<h2 class="font-bold">Veranstaltungen</h2>
@@ -114,28 +82,8 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 				<p class="py-2 overflow-hidden text-ellipsis">Aktuell keine neue Veranstaltung geplant</p>
 			)}
 		</HpCard>
-		<HpCard>
-			<div class="flex gap-2 justify-between items-center" slot="title">
-				<h2 class="font-bold">Berichte</h2>
-				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Berichte                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/></svg>                  </span>
-				</a>
-			</div>
-				<ul class="whitespace-nowrap">
-					{
-						pastEvents.slice(0,2).map((event) => (
-							<li>
-								<a href={`/berichte/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-									<BadgeMini>
-										<span class="font-semibold"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={event.data.eventDate} /></span></span>
-									</BadgeMini>
-									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">{event.data.title}</span>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-		</HpCard>
 	</aside>
+	<!-- /  Veranstaltungen -->
 	<main class="content prose pb-4">
 		{
 			events.length > 0 && (
@@ -172,6 +120,50 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
           	})
 		}
 	</main>
+
+	 <!-- Berichte  -->
+	 <aside class="side2">
+		<HpCard>
+			<div class="flex gap-2 justify-between items-center" slot="title">
+				<h2 class="font-bold">Berichte</h2>
+				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Berichte                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/></svg>                  </span>
+				</a>
+			</div>
+				<ul class="whitespace-nowrap">
+					{
+						pastEvents.slice(0,2).map((event) => (
+							<li>
+								<a href={`/berichte/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
+									<BadgeMini>
+										<span class="font-semibold"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={event.data.eventDate} /></span></span>
+									</BadgeMini>
+									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">{event.data.title}</span>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+		</HpCard>
+	</aside>
+	<!-- / Berichte  -->
+
+	 <!-- Öffnungszeiten  -->
+	<aside class="side3">
+		<HpCard>
+			<div class="flex gap-2 justify-between items-center" slot="title">
+			<h2 class="font-bold">Öffnungszeiten</h2>
+			</div>
+			<ul class="prose list-disc pl-4 list-outside">
+				<li class="">
+					jeden Sonntag ab 18:30 Uhr 
+				</li>
+				<li class="">
+					jeden 1. Freitag im Monat ab 19:30 Uhr (ohne Gewähr)
+				</li>
+			</ul>
+		</HpCard>
+	</aside>
+	<!-- / Öffnungszeiten  -->
   </div>
 </App> 
 
@@ -180,51 +172,40 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 		display: inline-block;
 		width: 3ch;
 	}
-	aside {
-		min-width: 0; /* grid hacky */
-	}
-
 	@media (max-width:767px) {
 		.main {
 			grid-area: main;
-			grid-template-areas:
-			  "news"
-			  "content"
-			  "sidebar";
-			grid-template-columns: 1fr;
-			grid-template-rows: 2fr;
-		  }
-		  .content {
-			grid-area: content;
-		  }
-		  aside {
-			grid-area: sidebar;
-		  }
-		  aside.news {
-			grid-area: news;
-		  }
-
+			display: flex;
+			flex-direction: column;
+		}
 	}
 	@media (min-width: 768px) {
 		.main {
 			grid-area: main;
 			grid-template-areas:
-			  "content content sidebar";
-			grid-template-columns: 2fr 2fr 3fr;
-			grid-template-rows: 1fr;
-		  }
-		  .content {
-			  grid-area: content;
-			}
-			aside {
-				grid-area: sidebar;
-			}
+			  "content side1"
+			  "content side2"
+			  "content side3";
+			grid-template-columns: 60% 40%;
+			grid-template-rows: auto auto 1fr;
 		}
+		.content {
+			grid-area: content;
+		}
+		.side1 {
+			grid-area: side1;
+		}
+		.side2 {
+			grid-area: side2;
+		}
+		.side3 {
+			grid-area: side3;
+		}
+	}
 		
-		@media (min-width: 1280px) {
+	@media (min-width: 1280px) {
 		.main {
-			grid-template-columns: 1fr 1fr 1fr;
-		  }
-
+			grid-template-columns: 66% 34%;
+		}
 	}
 </style>
