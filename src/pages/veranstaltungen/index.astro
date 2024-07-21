@@ -30,7 +30,7 @@ const description =
 ---
 
 <App title={title} description={description}>
-  <HpStage image="/src/media/buehne-events.jpg" title="Veranstaltungen" />
+  <HpStage image="/src/media/buehne-events.jpg" blurred="data:image/webp;base64,UklGRgYBAABXRUJQVlA4IPoAAABwBACdASoZAAoAPm0qkkWkIqGYBABABsS0AF2ZQBLQjLSHSZqoLYG0lZBreAD+8SP5f+H37iScqNsfO7t3T3M6D7bJJ/095u0MlixbjdMRUUsgmJjBRF6d5fXpdLEoTLlgwIJjOMqaokWIF42tx1waF+xHjTghBwiwmea7lY5vD8mzZvBg4ReAZt6tZ4Ljj2WU7P/nI/1Hv+VKoEYnU007oq/+JjLbrPvexj2eC6/2N8mcLZsIMZ45XSUVCYZn+WnMzWcfZ/ZfXpU0f/3/sFnSgf3/Dpf/3x7T7jMD61Kz6RuT2CreK4JFBj/gdPE0vmwNNC7YEU+AAAAA" title="Veranstaltungen" />
   <div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
     <!-- Regeltermine -->
     <aside class="sidebar1">
@@ -134,7 +134,7 @@ const description =
 			grid-template-areas:
 			  "content side1"
 			  "content side2";
-			grid-template-columns: 60% 40%;
+      grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
 			grid-template-rows: auto 1fr;
 		}
 		.content {
@@ -150,7 +150,7 @@ const description =
 		
 	@media (min-width: 1280px) {
 		.main {
-			grid-template-columns: 66% 34%;
+			grid-template-columns: minmax(0, 4fr) minmax(0, 2fr);
 		}
 	}
 </style>
