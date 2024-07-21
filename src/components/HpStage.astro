@@ -11,9 +11,11 @@ const finalImageUrl = image;
 if (!images[finalImageUrl]) throw new Error(`"${finalImageUrl}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`);
 const optimizedBackgroundXs = await getImage({src: images[finalImageUrl](), format: 'webp', width:'500', height:'264'});
 const optimizedBackgroundSm = await getImage({src: images[finalImageUrl](), format: 'webp', width:'1000', height:'528'});
+const optimizedBackgroundMd = await getImage({src: images[finalImageUrl](), format: 'webp', width:'1500', height:'792'});
 const optimizedBackgroundLg = await getImage({src: images[finalImageUrl](), format: 'webp', width:'2000', height:'1056'});
 const optimizedBackgroundXsSrc = `url('${ optimizedBackgroundXs.src}')`;
 const optimizedBackgroundSmSrc = `url('${ optimizedBackgroundSm.src}')`;
+const optimizedBackgroundMdSrc = `url('${ optimizedBackgroundMd.src}')`;
 const optimizedBackgroundLgSrc = `url('${ optimizedBackgroundLg.src}')`;
 ---
 <div class="stage-wrapper">
@@ -24,7 +26,7 @@ const optimizedBackgroundLgSrc = `url('${ optimizedBackgroundLg.src}')`;
     </div>
 </div>
 
-<style define:vars={{ optimizedBackgroundXsSrc, optimizedBackgroundSmSrc, optimizedBackgroundLgSrc}}>
+<style define:vars={{ optimizedBackgroundXsSrc, optimizedBackgroundSmSrc, optimizedBackgroundMdSrc, optimizedBackgroundLgSrc}}>
     .stage-wrapper {
         background-repeat: no-repeat;
         background-size: cover;
@@ -34,6 +36,9 @@ const optimizedBackgroundLgSrc = `url('${ optimizedBackgroundLg.src}')`;
             background-image: var(--optimizedBackgroundXsSrc);
         }
         @media (min-width:1024px) {
+            background-image: var(--optimizedBackgroundMdSrc);
+        }
+        @media (min-width:1440px) {
             background-image: var(--optimizedBackgroundLgSrc);
         }
     }
