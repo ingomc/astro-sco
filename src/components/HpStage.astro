@@ -9,9 +9,14 @@ const { image="/src/media/sco-heim.jpg", title="SCO-OGV Oberfüllbach 1963 e.V."
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/media/**/*.{jpeg,jpg,png,gif}');
 const finalImageUrl = image;
 if (!images[finalImageUrl]) throw new Error(`"${finalImageUrl}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`);
-const optimizedBackground = await getImage({src: images[finalImageUrl](), format: 'webp', width:'1000', height:'528'});
+const optimizedBackgroundXs = await getImage({src: images[finalImageUrl](), format: 'webp', width:'500', height:'264'});
+const optimizedBackgroundSm = await getImage({src: images[finalImageUrl](), format: 'webp', width:'1000', height:'528'});
+const optimizedBackgroundLg = await getImage({src: images[finalImageUrl](), format: 'webp', width:'2000', height:'1056'});
+const optimizedBackgroundXsSrc = `url('${ optimizedBackgroundXs.src}')`;
+const optimizedBackgroundSmSrc = `url('${ optimizedBackgroundSm.src}')`;
+const optimizedBackgroundLgSrc = `url('${ optimizedBackgroundLg.src}')`;
 ---
-<div class="stage-wrapper" style={`background-image: url(${optimizedBackground.src});`}>
+<div class="stage-wrapper">
     <div class="stage">
         <div class="content">
             <h1 class="headline font-bold py-4 md:py-8">{title}</h1>
@@ -19,11 +24,18 @@ const optimizedBackground = await getImage({src: images[finalImageUrl](), format
     </div>
 </div>
 
-<style>
+<style define:vars={{ optimizedBackgroundXsSrc, optimizedBackgroundSmSrc, optimizedBackgroundLgSrc}}>
     .stage-wrapper {
         background-repeat: no-repeat;
         background-size: cover;
         background-position: 50% 50%;
+        background-image: var(--optimizedBackgroundSmSrc);
+        @media (max-width:425px) {
+            background-image: var(--optimizedBackgroundXsSrc);
+        }
+        @media (min-width:1024px) {
+            background-image: var(--optimizedBackgroundLgSrc);
+        }
     }
     .stage {
         min-height: min(40vw, 50vh);
