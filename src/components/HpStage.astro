@@ -3,16 +3,20 @@ import { getImage } from "astro:assets";
 interface Props {
     image?: string;
     title?: string;
+    blurred?: string;
 }
 
-const { image="/src/media/sco-heim.jpg", title="SCO-OGV Oberfüllbach 1963 e.V." } = Astro.props;
+const { image="/src/media/sco-heim.jpg", blurred="", title="SCO-OGV Oberfüllbach 1963 e.V." } = Astro.props;
+const blurredSportheim = 'data:image/webp;base64,UklGRugAAABXRUJQVlA4INwAAACwBACdASoZAA0APm0skkWkIqGYBABABsSzAE6ZQj5LdKAov1q6nHGy+Xpl27uwAP7Q/7o/Tslx3+h84WLMaigrzFsyK3vAjPwBA+VZPeoQhqyZrVinctCuLQNbjVT0z4kXGzp7KVeOy1AlRl2c3U+kX2/P/JAi0KvugkzcYSoT/A3j83815YB9jnTVHp3wEdDvyahD2xr6EmjG1RcESn4yD93xkojNl2AONqK4ZKS5qzedZi3K9diKr+62EgMe2lFdD9I8VMaRaYK3HE1et9Uak/l9M4tgXlKHmAAA';
+const blurredBg = blurred ? `url('${blurred}')` : `url('${blurredSportheim}')`;
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/media/**/*.{jpeg,jpg,png,gif}');
 const finalImageUrl = image;
 if (!images[finalImageUrl]) throw new Error(`"${finalImageUrl}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`);
-const optimizedBackgroundXs = await getImage({src: images[finalImageUrl](), format: 'webp', width:'500', height:'264'});
-const optimizedBackgroundSm = await getImage({src: images[finalImageUrl](), format: 'webp', width:'1000', height:'528'});
-const optimizedBackgroundMd = await getImage({src: images[finalImageUrl](), format: 'webp', width:'1500', height:'792'});
-const optimizedBackgroundLg = await getImage({src: images[finalImageUrl](), format: 'webp', width:'2000', height:'1056'});
+// const optimizedBackgroundXs = await getImage({src: images[finalImageUrl](), width:'50', height:'26'});
+const optimizedBackgroundXs = await getImage({src: images[finalImageUrl](), width:'500', height:'264'});
+const optimizedBackgroundSm = await getImage({src: images[finalImageUrl](), width:'1000', height:'528'});
+const optimizedBackgroundMd = await getImage({src: images[finalImageUrl](), width:'1500', height:'792'});
+const optimizedBackgroundLg = await getImage({src: images[finalImageUrl](), width:'2000', height:'1056'});
 const optimizedBackgroundXsSrc = `url('${ optimizedBackgroundXs.src}')`;
 const optimizedBackgroundSmSrc = `url('${ optimizedBackgroundSm.src}')`;
 const optimizedBackgroundMdSrc = `url('${ optimizedBackgroundMd.src}')`;
@@ -26,27 +30,51 @@ const optimizedBackgroundLgSrc = `url('${ optimizedBackgroundLg.src}')`;
     </div>
 </div>
 
-<style define:vars={{ optimizedBackgroundXsSrc, optimizedBackgroundSmSrc, optimizedBackgroundMdSrc, optimizedBackgroundLgSrc}}>
+<style define:vars={{ blurredBg, optimizedBackgroundXsSrc, optimizedBackgroundSmSrc, optimizedBackgroundMdSrc, optimizedBackgroundLgSrc}}>
     .stage-wrapper {
         background-repeat: no-repeat;
         background-size: cover;
         background-position: 50% 50%;
-        background-image: var(--optimizedBackgroundSmSrc);
-        @media (max-width:425px) {
-            background-image: var(--optimizedBackgroundXsSrc);
-        }
-        @media (min-width:1024px) {
-            background-image: var(--optimizedBackgroundMdSrc);
-        }
-        @media (min-width:1440px) {
-            background-image: var(--optimizedBackgroundLgSrc);
-        }
+        background-image: var(--blurredBg);
     }
     .stage {
         min-height: min(40vw, 50vh);
         display:flex;
         align-items: flex-end;
         position: relative;
+        overflow: hidden;
+        z-index: 2;
+        background-color: transparent;
+        backdrop-filter: blur(30px);
+    }
+    .stage::before {
+        content:"";
+        display:block;
+        z-index:1;
+        bottom:0;
+        left:0;
+        right:0;
+        height:100%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: 50% 50%;
+        position: absolute;
+        background-image: var(--optimizedBackgroundSmSrc);
+    }
+    @media (max-width:425px) {
+        .stage::before {
+            background-image: var(--optimizedBackgroundXsSrc);
+        }
+    }
+    @media (min-width:1024px) {
+        .stage::before {
+        background-image: var(--optimizedBackgroundMdSrc);
+    }
+    }
+    @media (min-width:1440px) {
+        .stage::before {
+        background-image: var(--optimizedBackgroundLgSrc);
+    }
     }
     .stage::after {
         content:"";

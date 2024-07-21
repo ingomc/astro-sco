@@ -186,7 +186,7 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 			  "content side1"
 			  "content side2"
 			  "content side3";
-			grid-template-columns: 60% 40%;
+			  grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
 			grid-template-rows: auto auto 1fr;
 		}
 		.content {
@@ -205,7 +205,7 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 		
 	@media (min-width: 1280px) {
 		.main {
-			grid-template-columns: 66% 34%;
+			grid-template-columns: minmax(0, 4fr) minmax(0, 2fr);
 		}
 	}
 </style>
