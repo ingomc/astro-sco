@@ -18,3 +18,6 @@ Der **SCO&OGV** laden herzlich zur Kirchweih und zum diesjährigen Weinfest ein!
 Freut euch auf einen unvergesslichen Abend beim Kerwa Weinfest in Oberfüllbach! Am 14.09.2024 ab 19:00 Uhr erwartet euch am Sportheim eine stimmungsvolle Atmosphäre mit köstlichen Snacks, regionalen Weinspezialitäten und bester Musik. Genießt die Stimmung und lasst euch von der Vielfalt der fränkischen Weine verwöhnen. Kommt vorbei, bringt Freunde mit und erlebt einen Abend voller Genuss und Geselligkeit. 
 
 **Wir freuen uns auf euch!**
+
+
+![Weinfest in Oberfüllbach](./kerwa-24-einladung-weinfest.png)
