@@ -24,7 +24,7 @@ const dateInPast = (date: Date) =>
 // TODO Events + News
 const events = (await getCollection('veranstaltungen')).filter((ev) => dateInPast(ev.data.eventDate)).sort(
 	(a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf()
-).reverse();
+);
 
 const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev.date))).sort(
 	(a, b) => new Date(a.date).valueOf() -  new Date(b.date).valueOf()
@@ -48,12 +48,12 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 						pastEvents.slice(0,1).map((event) => (
 							<li>
 								<a href={`/berichte/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-									<div>
+									{/* <div>
 										<BadgeMini highlight>
 											<span class="font-semibold">NEU</span>
 										</BadgeMini>
 									</div>
-									
+									*/}
 										{/* <BadgeMini>
 											<span class="font-semibold"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={event.data.eventDate} /></span></span>
 										</BadgeMini>
@@ -123,7 +123,7 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 		{
 			events.length > 0 && (
 				<section class="not-prose">
-					<EventsSection data={[events[0]]} />
+					<EventsSection data={events} />
 				  </section>
 
 			)
