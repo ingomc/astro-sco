@@ -23,6 +23,7 @@ const veranstaltungen = defineCollection({
   // Type-check frontmatter using a schema
   schema: z.object({
     title: z.string(),
+    description: z.string(),
     pubDate: z
     .string()
     .or(z.date())

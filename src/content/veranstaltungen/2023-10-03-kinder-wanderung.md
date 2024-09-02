@@ -4,6 +4,7 @@ pubDate: 2023-10-03T13:30:23.138Z
 eventDate: 2023-10-21T11:30:23.138Z
 location: Sportheim
 heroImage: /assets/wanderung_fuer_kids_tel.jpeg
+description: 'Unsere Wanderung mit den Kids und anschließenden Pizza-Backen war ein voller erfolgen. Lest hier mehr dazu.'
 ---
 ## Wanderung für Kids aus Oberfüllbach
 
