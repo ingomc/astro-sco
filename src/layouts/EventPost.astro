@@ -14,7 +14,7 @@ const finalImageUrl = `/public${heroImage}`
 if (!images[finalImageUrl]) throw new Error(`"${finalImageUrl}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`);
 ---
 
-<App title={title} description={description} image={finalImageUrl}>
+<App title={title} description={description} image={heroImage}>
   <main>
     <div class="stripe-wrapper">
       <div class="stripe bg-red-700 border-t-red-700 border-b-neutral-950">
@@ -54,6 +54,9 @@ if (!images[finalImageUrl]) throw new Error(`"${finalImageUrl}" does not exist i
           }
         </div>
         <div>
+
+    {title}
+    {description}
           <h1 class="text-4xl my-0">{title}</h1>
         </div>
         <div>
