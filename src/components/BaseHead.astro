@@ -19,6 +19,7 @@ const { title, description, image = '/logo_sco.png' } = Astro.props;
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico">
 <meta name="generator" content={Astro.generator} />
+<meta property="og:logo" content={new URL("/assets/logo_sco_min.png", Astro.url)} />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
