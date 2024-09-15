@@ -7,7 +7,7 @@ heroImage: /assets/2024-09-14-orientierungslauf.jpg
 description: 'Am 29. September 2024 finden rund um den Wildmeisterstein die 50. Turngau-Meisterschaften im Orientierungslauf statt. Siegerehrung im Sportheim des SC Oberfüllbach.'
 ---
 
-Am **29. September 2024** finden rund um den Wildmeisterstein die 50. Turngau-Meisterschaften im Orientierungslauf statt. Veranstalter ist das Projekt30j, und es werden etwa 50-60 Teilnehmer erwartet.
+Am **29. September 2024** finden rund um den Wildmeisterstein die 50. Turngau-Meisterschaften im Orientierungslauf statt. Veranstalter ist **Turngau Coburg-Frankenwald**, und es werden etwa 50-60 Teilnehmer erwartet.
 
 ## Siegerehrung im Sportheim des SC Oberfüllbachs
 **Die Siegerehrung wird im Sportheim des SC Oberfüllbach stattfinden. Der SCO wird auch vor Ort Getränke und kleine Snacks anbieten.**
