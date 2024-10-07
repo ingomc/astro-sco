@@ -48,12 +48,12 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 						pastEvents.slice(0,1).map((event) => (
 							<li>
 								<a href={`/berichte/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-									{/* <div>
+									<div>
 										<BadgeMini highlight>
 											<span class="font-semibold">NEU</span>
 										</BadgeMini>
 									</div>
-									*/}
+									
 										{/* <BadgeMini>
 											<span class="font-semibold"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={event.data.eventDate} /></span></span>
 										</BadgeMini>
