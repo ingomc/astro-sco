@@ -6,7 +6,7 @@ heroImage: /assets/2024-10-07-sitzbaenke.jpeg
 ---
 ## 🏞️ Neue Sitzbänke am Füllbach: Ein Ort der Ruhe und Entspannung
 
-Vor gut einer Woche konnten die vom **SCO&OGV Oberfüllbach** gestifteten Sitzbänke eingeweiht werden. 
+Vor gut zwei Woche konnten die vom **SCO&OGV Oberfüllbach** gestifteten Sitzbänke eingeweiht werden. 
 
 Die beiden Sitzgelegenheiten stehen entlang der **Füllbach** am Fuß- und Radweg zwischen „An der Linde“ und der „Schafgasse“. Durch die Erweiterung der Sitzmöglichkeiten soll allen Dorfbewohnern und Durchreisenden eine zusätzliche Möglichkeit für eine kurze Ruhepause mit Blick ins Grüne und entspannendem Bachgeplätscher geboten werden. 
 
