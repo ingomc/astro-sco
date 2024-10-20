@@ -4,6 +4,7 @@ pubDate: 2024-10-04T13:30:23.138Z
 eventDate: 2024-11-10T11:00:23.138Z
 heroImage: /assets/veganer-braten-23.jpg
 location: Sportheim
+cta: Jetzt anmelden!
 description: SCO-OVG Oberfüllbach lädt zum veganem Mittagessen am 10.11.2024! Wählen Sie zwischen Kartoffelgulasch, Thailändischem Gemüsecurry oder Linsenbraten mit Coburger Klößen. Jetzt anmelden!
 ---
 
