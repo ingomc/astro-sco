@@ -11,9 +11,6 @@ description: SCO-OVG Oberfüllbach lädt zum veganem Mittagessen am 10.11.2024! 
 
 am **Sonntag, den 10. November 2024 ab 12:00 Uhr** laden wir euch herzlich zu unserem veganem Mittagessen ein. Wir haben wieder köstliche Gerichte zur Auswahl, die für jeden Geschmack etwas bieten.
 
-
-Am **10. November 2024 ab 12:00 Uhr** erwartet Sie ein veganes Mittagessen im Oberfüllbacher Sportheim. Außerdem gibt es Vorsuppe und Dessert.
-
 #### Menüauswahl:
  - 🥔 Kartoffelgulasch mit Salatbeilage
  - 🍛 Thailändisches Gemüsecurry mit Salatbeilage
