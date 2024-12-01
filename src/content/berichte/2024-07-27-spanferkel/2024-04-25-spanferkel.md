@@ -3,6 +3,7 @@ title: 'Bericht: Spanferkelessen'
 pubDate: 2024-07-27T11:14:18.197Z
 eventDate: 2024-07-27T16:00:00.000Z
 heroImage: /assets/2024-07-27-spanferkel-titel.jpg
+description: 'Spanferkel-Essen 2024 beim SC-Oberfüllbach: Geselligkeit, köstliches Spanferkel, und stimmungsvolle Atmosphäre – organisiert von den Dartern für Mitglieder und Familien.'
 ---
 ## 🐖 Spanferkel-Essen beim SC-Oberfüllbach
 Am 27. Juli fand unser zweites Spanferkel-Essen am Sportheim in Oberfüllbach statt. Bereits ab 10 Uhr morgens begannen die Vorbereitungen. Nachdem alles aufgebaut war, begann Christoph mit dem Grillen des Spanferkels, das den ganzen Tag über einen köstlichen Duft verbreitete.
