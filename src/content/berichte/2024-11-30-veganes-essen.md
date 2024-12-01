@@ -4,7 +4,7 @@ pubDate: 2024-10-04T13:30:23.138Z
 eventDate: 2024-11-10T11:00:23.138Z
 heroImage: /assets/veganer-braten-23.jpg
 location: Sportheim
-description: Ein Bericht über unser diesjähriges veganes Essen.
+description: "Erfolgreiches veganes Mittagessen 2024 im Sportheim SCO & OGV: Vielfältige Gerichte, große Resonanz, und ein engagiertes Team."
 ---
 
 Am 10. November fand das diesjährige vegane Mittagessen im Sportheim SCO&OGV statt, es war wieder ein toller Erfolg für das Team „Veganes Essen“. Bei diesem Event  standen mehrere Gerichte zur Auswahl.
