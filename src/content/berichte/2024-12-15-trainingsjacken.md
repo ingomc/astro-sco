@@ -7,7 +7,7 @@ location: Sportheim
 description: "Der SCO & OGV bedankt sich herzlich beim ortsansässigen Familienbetrieb „Kompostbetrieb Herbst“ für die großzügige Sachspende neuer Trainingsjacken."
 ---
 
-Der **SCO & OGV** bedankt sich herzlich beim ortsansässigen Familienbetrieb „Kompostbetrieb Herbst“ für die großzügige **Sachspende** neuer **Trainingsjacken**.
+Der **SCO & OGV** bedankt sich herzlich beim ortsansässigen Familienbetrieb „Kompostbetrieb Herbst“ für die **Sachspende** neuer **Trainingsjacken**.
 
 Unser Bewirtungsteam und die Darter freuen sich über die einheitliche und professionelle Ausstattung, die künftig bei Vereinsveranstaltungen und Turnieren zum Einsatz kommen wird.
 
