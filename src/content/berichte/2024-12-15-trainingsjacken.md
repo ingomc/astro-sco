@@ -11,4 +11,4 @@ Der **SCO & OGV** bedankt sich herzlich beim ortsansässigen Familienbetrieb „
 
 Unser Bewirtungsteam und die Darter freuen sich über die einheitliche und professionelle Ausstattung, die künftig bei Vereinsveranstaltungen und Turnieren zum Einsatz kommen wird.
 
-Ein großes Dankeschön im Namen der **Vorstandschaft**, des **Bewirtungsteams** und unserer **Darter** für diese tolle Unterstützung!
+Ein herzliches Dankeschön im Namen der **Vorstandschaft**, des **Bewirtungsteams** und unserer **Darter** für diese Unterstützung!
