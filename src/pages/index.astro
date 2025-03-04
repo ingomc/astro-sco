@@ -106,9 +106,9 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 										<span class="font-semibold"><span class="day">{new Date(event.date).toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={new Date(event.date)} /></span></span>
 									</BadgeMini>
 									<span class="overflow-hidden text-ellipsis">{event.title}</span>
-									<BadgeMini highlight>
+									{/* <BadgeMini highlight>
 											<span class="font-semibold">NEU</span>
-										</BadgeMini>
+										</BadgeMini> */}
 								</div>
 							</li>
 						))
