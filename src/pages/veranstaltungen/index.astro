@@ -61,13 +61,13 @@ const description =
     <!-- / Regeltermine -->
 
     <!-- Vorschau -->
+        {
+          shortevents.length > 0 && (
     <aside class="sidebar2">
       <HpCard>
         <div class="flex gap-2 justify-between items-center" slot="title">
           <h2 class="font-bold">Vorschau</h2>
         </div>
-        {
-          shortevents.length > 0 && (
             <ul class="whitespace-nowrap">
               {
                 shortevents.map((event) => (
@@ -82,10 +82,10 @@ const description =
               ))
               }
             </ul>
-          )
-        }	
       </HpCard>
     </aside>
+          )
+        }	
     <!-- / Vorschau -->
     <main class="content">
       <section>
