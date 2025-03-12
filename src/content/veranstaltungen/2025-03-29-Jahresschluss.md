@@ -9,7 +9,7 @@ description: 'Einladung zur Jahreshauptversammlung! Neuwahlen, Berichte & gemein
 
 ## Einladung
 
-Unsere Jahreshauptversammlung findet am **Smastag, den 29.03.2025 um 18:30 Uhr** im Sportheim Oberfüllbach statt. Wir hoffen auf ein zahlreiches Erscheinen, da in diesem Jahr wieder Neuwahlen anstehen. 
+Unsere Jahreshauptversammlung findet am **Samstag, den 29.03.2025 um 18:30 Uhr** im Sportheim Oberfüllbach statt. Wir hoffen auf ein zahlreiches Erscheinen, da in diesem Jahr wieder Neuwahlen anstehen. 
 Hierzu ergeht herzliche Einladung an alle Mitglieder und Dorfbewohner die an einem
 Fortbestand des SCO&amp;OGV und der Aufrechterhaltung des Sportheimes interessiert sind.
 
