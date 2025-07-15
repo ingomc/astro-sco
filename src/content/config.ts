@@ -81,9 +81,14 @@ const sportheim = defineCollection({
 });
 
 const settings = defineCollection({
+  type: 'data',
   schema: z.object({
-    title: z.string(),
-    type: z.string(),
+    site_title: z.string(),
+    posts: z.object({
+      front_limit: z.number(),
+      author: z.string(),
+      thumb: z.string(),
+    }),
   }),
 });
 

@@ -2,14 +2,14 @@
 title: "Familiengottesdienst in Oberfüllbach"
 pubDate: 2025-07-15T10:00:00.000Z
 eventDate: 2025-07-20T10:00:00.000Z
-location: Oberfüllbach
+location: Sportheim
 heroImage: /assets/2025-07-15-familiengottesdienst.jpeg
 cta: Kommt und seht!
 featured: true
-description: 'Familiengottesdienst der evangelischen Kirchengemeinden Ebersdorf und Großgarnstadt am 20. Juli 2025 um 10 Uhr in Oberfüllbach. Mit Kinderchor, Band und vielen Aktionen für Kinder!'
+description: 'Familiengottesdienst der evangelischen Kirchengemeinden Ebersdorf und Großgarnstadt am 20. Juli 2025 um 10 Uhr im Sportheim. Mit Kinderchor, Band und vielen Aktionen für Kinder!'
 ---
 
-## 20. Juli 2025 – 10 Uhr in Oberfüllbach
+## 20. Juli 2025 – 10 Uhr im Sportheim in Oberfüllbach
 
 ### Kommt und seht
 
