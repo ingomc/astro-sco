@@ -6,6 +6,7 @@ import HpCard from "../components/HpCard.astro";
 import BadgeMini from "../components/BadgeMini.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import EventsSection from "../components/EventsSection.astro";
+import EventBanner from "../components/EventBanner.astro";
 import allshortevents from "../data/shortevents.json";
 
 const posts = (await getCollection('start')).sort(
@@ -29,6 +30,10 @@ const events = (await getCollection('veranstaltungen')).filter((ev) => dateInPas
 const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev.date))).sort(
 	(a, b) => new Date(a.date).valueOf() -  new Date(b.date).valueOf()
 )
+
+// Featured Event - bevorzugt Events mit featured: true, sonst erstes Event mit CTA
+const featuredEvent = events.find(event => event.data.featured) || events.find(event => event.data.cta);
+const regularEvents = featuredEvent ? events.filter(event => event.slug !== featuredEvent.slug) : events;
 ---
 
 <App>
@@ -124,9 +129,16 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 	<!-- /  Veranstaltungen -->
 	<main class="content prose pb-4">
 		{
-			events.length > 0 && (
+			featuredEvent && (
+				<section class="not-prose mb-8">
+					<EventBanner event={featuredEvent} highlight={true} />
+				</section>
+			)
+		}
+		{
+			regularEvents.length > 0 && (
 				<section class="not-prose">
-					<EventsSection data={events} />
+					<EventsSection data={regularEvents} />
 				  </section>
 
 			)
