@@ -44,7 +44,7 @@ const isMaintenanceMode = false;
     {
       !isMaintenanceMode && (
         <>
-          <nav class="pointer-events-none md:pointer-events-auto hidden md:block" role="navigation" aria-label="Hauptnavigation">
+          <nav id="navigation" class="pointer-events-none md:pointer-events-auto hidden md:block" role="navigation" aria-label="Hauptnavigation">
             <ul class="flex gap-4" role="list">
               {menuItems.map((menuItem) => (
                 <li role="none">
