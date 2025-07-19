@@ -1,53 +1,123 @@
 # GitHub Copilot Instructions für Astro SCO Projekt
 
 ## Projektübersicht
-Dies ist eine Astro-basierte Website für den **SCO-OGV Oberfüllbach 1963 e.V.** (Sportverein) mit DecapCMS als Git-basiertes Content Management System. Die Website wird auf Vercel deployt und verwendet Tailwind CSS für das Styling.
+Dies ist eine Astro-basierte Website für den **SCO-OGV Oberfüllbach 1963 e.V.** (Sportverein) mit DecapCMS als Git-basiertes Content Management System.
 
 ## Technologie-Stack
 - **Framework**: Astro 4.11.3 mit TypeScript
-- **CMS**: DecapCMS (Git-basiert) für Content-Management
+- **CMS**: DecapCMS 3.0+ (Git-basiert) für Content-Management
 - **Styling**: Tailwind CSS mit Typography Plugin
 - **Deployment**: Vercel (primär) / Netlify (alternativ)
 - **Sprache**: Deutsch (de-DE)
 
-## Projektstruktur & Architektur
+## Kritische Entwicklungsrichtlinien
 
-### Content Collections (src/content/)
-Das Projekt nutzt Astro Content Collections für strukturierte Inhalte:
+### Content Collections Konsistenz
+⚠️ **WICHTIG**: Alle DecapCMS Collections in `/public/admin/config.yml` müssen exakt mit den Astro Content Schemas in `/src/content/config.ts` übereinstimmen!
 
-- **`veranstaltungen/`**: Zukünftige Events mit Schema (title, eventDate, location, heroImage, cta, featured)
-- **`berichte/`**: Vergangene Events/Berichte mit ähnlichem Schema
-- **`start/`**: Homepage-Inhalte mit Reihenfolge (order-Feld)
-- **`mitglieder/`**: Vereinsmitglieder mit Positionen und Bildern
-- **`sportheim/`**: Sportheim-spezifische Inhalte
-- **`settings/`**: JSON-basierte Site-Einstellungen
+### Bekannte gelöste Probleme
+1. ✅ **Fehlende sportheim Collection** in DecapCMS wurde hinzugefügt
+2. ✅ **Fehlende Felder** (`dart`, `email`, `description`) wurden ergänzt
+3. ✅ **YAML-Syntax-Fehler** (fehlende Anführungszeichen) wurden korrigiert
+4. ✅ **Media Folder Pfade** korrigiert (`/public/` → `public/`)
 
-### Komponenten-Architektur (src/components/)
-- **`App.astro`**: Main Layout mit Header, Footer, Navigation
-- **`HpStage.astro`**: Hero-Bereich mit optimierten Hintergrundbildern
-- **`EventsSection.astro`**: Wiederverwendbare Event-Listing-Komponente
-- **`HpCard.astro`**: Card-Layout für Sidebar-Bereiche
-- **`EventBanner.astro`**: Featured Event Darstellung
-- **`BadgeMini.astro`**: Kleine Badge-Komponenten für Daten/Infos
-- **`FormattedDate.astro`**: Deutsche Datumsformatierung
+### Content Collections Schema-Mapping
 
-### Layouts (src/layouts/)
-- **`App.astro`**: Hauptlayout mit Grid-System und responsive Navigation
-- **`EventPost.astro`**: Template für Event-Detailseiten
+#### veranstaltungen/ (Events)
+```typescript
+// DecapCMS → Astro Schema
+title: string          // ✅ "Titel"
+pubDate: Date          // ✅ "Erstellungsdatum" 
+eventDate: Date        // ✅ "Veranstaltungsdatum"
+location?: string      // ✅ "Veranstaltungsort" (optional)
+heroImage?: string     // ✅ "Titelbild" (optional)
+cta?: string          // ✅ "Button-Beschriftung" (optional)
+description?: string   // ❌ FEHLT in DecapCMS - sollte hinzugefügt werden
+featured?: boolean     // ❌ FEHLT in DecapCMS - sollte hinzugefügt werden
+```
 
-### Seiten-Routing (src/pages/)
-- **`index.astro`**: Homepage mit Event-Übersicht und Sidebar-Bereiche
-- **`veranstaltungen/`**: Event-Listing und dynamische Event-Seiten `[...slug].astro`
-- **`berichte/`**: Bericht-Listing und dynamische Bericht-Seiten `[...slug].astro`
-- **`sportheim/`**: Sportheim-Infoseite
-- **`mitglieder/`**: Mitglieder-Übersicht (aktuell nicht in Navigation)
+#### berichte/ (Reports)
+```typescript
+// DecapCMS → Astro Schema  
+title: string          // ✅ "Titel"
+description?: string   // ✅ "Beschreibung" (neu hinzugefügt)
+pubDate: Date          // ✅ "Erstellungsdatum"
+eventDate: Date        // ✅ "Veranstaltungsdatum"
+location?: string      // ✅ "Veranstaltungsort" (optional)
+heroImage?: string     // ✅ "Titelbild" (optional)
+```
 
-## DecapCMS Integration
+#### mitglieder/ (Members)
+```typescript
+// DecapCMS → Astro Schema
+name: string           // ✅ "Name"
+position?: string      // ✅ "Rolle" (select widget)
+stammtisch?: boolean   // ✅ "Stammtisch" (boolean)
+dart?: boolean         // ✅ "Dart" (neu hinzugefügt)
+email?: string         // ✅ "Email" (neu hinzugefügt)
+authorimage?: string   // ✅ "Image" (optional)
+```
 
-### CMS-Konfiguration (public/admin/config.yml)
-Das CMS ist für deutsche Benutzer konfiguriert mit folgenden Collections:
+#### start/ (Homepage)
+```typescript
+// DecapCMS → Astro Schema
+title: string          // ✅ "Title"
+order: number          // ✅ "Reihenfolge"
+```
 
-- **Backend**: Git Gateway für Netlify
+#### sportheim/ (Club House)
+```typescript
+// DecapCMS → Astro Schema (neu hinzugefügt)
+title: string          // ✅ "Title"
+order?: number         // ✅ "Reihenfolge" (optional)
+```
+
+### DecapCMS Best Practices
+1. **YAML-Syntax**: Alle Labels in Anführungszeichen setzen
+2. **Media Paths**: `media_folder: "public/assets/"` (ohne führenden /)
+3. **Slug Templates**: `"{{year}}-{{month}}-{{day}}-{{slug}}"` für Events/Berichte
+4. **Required Fields**: Sparsam verwenden, nur essenzielle Felder
+5. **Widget Types**: 
+   - `datetime` für alle Datum/Zeit-Felder
+   - `boolean` mit `default: false`
+   - `select` für Rollen mit vordefinierten Optionen
+
+### Deployment-Konfiguration
+```typescript
+// Dual-Deployment Setup
+const deployTarget = process.env.DEPLOY_TARGET;
+// "netlify" → undefined adapter
+// default → vercel adapter mit Analytics
+```
+
+### Häufige Aufgaben
+
+#### Neue Content Collection hinzufügen
+1. Schema in `/src/content/config.ts` definieren
+2. Collection in `/public/admin/config.yml` hinzufügen
+3. Export im collections object ergänzen
+4. ⚠️ **Beide Dateien MÜSSEN synchron bleiben!**
+
+#### Neue Felder hinzufügen
+1. Zuerst in Astro Schema (`config.ts`) definieren
+2. Dann in DecapCMS (`config.yml`) hinzufügen
+3. Testen mit DecapCMS Admin Interface
+
+#### Media Handling
+- Upload-Ordner: `/public/assets/`
+- Referenz in Content: `/assets/filename.jpg`
+- Spezielle Ordner: `/assets/mitglieder/` für Member-Bilder
+
+### Performance & SEO
+- Statische Site Generation (SSG)
+- Responsive Images mit optimierten Formaten
+- Deutsche Meta-Tags und Structured Data
+- Sitemap-Generation aktiviert
+
+### Debugging
+- DecapCMS Admin: `/admin/` URL
+- Content Validation: Astro Dev Server zeigt Schema-Fehler
+- Build-Zeit: TypeScript-Checks für Content-Schema-Inkonsistenzen
 - **Media**: Speicherung in `public/assets/`
 - **Slug-Format**: ASCII mit Unterstrichen
 - **Sprache**: Deutsch
