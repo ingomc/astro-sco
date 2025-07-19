@@ -10,7 +10,12 @@ const { pathname } = Astro.url;
 const isActive = href && (href === pathname ) || (href && href !== '/' && pathname.includes(href.toString()));
 ---
 
-<a href={href} class:list={[className, 'link', { active: isActive }]} {...props}>
+<a 
+  href={href} 
+  class:list={[className, 'link', { active: isActive }]} 
+  aria-current={isActive ? 'page' : undefined}
+  {...props}
+>
   <slot />
 </a>
 <style>
@@ -18,9 +23,31 @@ const isActive = href && (href === pathname ) || (href && href !== '/' && pathna
     @apply flex gap-1 overflow-hidden; 
   }
   a.link {
-    @apply inline-flex items-center rounded-full px-4 py-2 font-semibold hover:bg-slate-100 bg-neutral-50;
+    @apply inline-flex items-center rounded-full px-4 py-2 font-semibold hover:bg-slate-100 bg-neutral-50 
+           transition-colors duration-200 ease-in-out
+           focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2;
+    /* Ensure minimum touch target size for mobile accessibility */
+    min-height: 44px;
+    min-width: 44px;
   }
   a.link.active {
-	@apply bg-red-700 font-semibold text-neutral-100
+    @apply bg-red-700 font-semibold text-neutral-100 hover:bg-red-800;
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    a.link {
+      @apply border border-gray-600;
+    }
+    a.link.active {
+      @apply border-white;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    a.link {
+      @apply transition-none;
+    }
   }
 </style>

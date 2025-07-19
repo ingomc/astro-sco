@@ -40,30 +40,57 @@ const regularEvents = featuredEvent ? events.filter(event => event.slug !== feat
   <HpStage />
   <div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
 
+	<!-- MAIN CONTENT - kommt jetzt ZUERST im DOM für korrekte Tab-Reihenfolge -->
+	<main class="content prose pb-4">
+		<h1 class="sr-only">Startseite - Aktuelle Veranstaltungen und Neuigkeiten</h1>
+		
+		{
+			featuredEvent && (
+				<section class="not-prose mb-6">
+					<h2 class="sr-only">Featured Veranstaltung</h2>
+					<EventBanner event={featuredEvent} highlight={true} />
+				</section>
+			)
+		}
+		{
+			regularEvents.length > 0 && (
+				<section class="not-prose">
+					<h2 class="sr-only">Weitere Veranstaltungen</h2>
+					<EventsSection data={regularEvents} />
+				  </section>
+
+			)
+		}
+
+		{
+			posts.map(async (post) => {
+            	const { Content } = await post.render();
+            	return (
+						<Content />
+				)
+          	})
+		}
+	</main>
+
 	 <!-- Berichte  -->
-	 <aside class="side1">
+	 <aside class="side1" aria-labelledby="berichte-heading">
 		<HpCard>
 			<div class="flex gap-2 justify-between items-center" slot="title">
-				<h2 class="font-bold">Berichte</h2>
-				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Berichte                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/></svg>                  </span>
+				<h2 id="berichte-heading" class="font-bold">Berichte</h2>
+				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2" href="/veranstaltungen/" aria-label="Alle Berichte anzeigen">
+					Alle Berichte
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" aria-hidden="true">
+						<path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/>
+					</svg>
 				</a>
 			</div>
 				<ul class="whitespace-nowrap">
 					{
 						pastEvents.slice(0,1).map((event) => (
 							<li>
-								<a href={`/berichte/${event.slug}/`} title={event.data.title} class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-									 {/* <div>
-										<BadgeMini highlight>
-											<span class="font-semibold">NEU</span>
-										</BadgeMini>
-									</div> */}
-									
-										{/* <BadgeMini>
-											<span class="font-semibold"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={event.data.eventDate} /></span></span>
-										</BadgeMini>
-									
-									 */}
+								<a href={`/berichte/${event.slug}/`} 
+								   class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-1 rounded"
+								   aria-label={`Bericht lesen: ${event.data.title}`}>
 									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">{event.data.title}</span>
 								</a>
 							</li>
@@ -75,11 +102,15 @@ const regularEvents = featuredEvent ? events.filter(event => event.slug !== feat
 	<!-- / Berichte  -->
 	 
 	<!--  Veranstaltungen -->
-	<aside class="side2">
+	<aside class="side2" aria-labelledby="veranstaltungen-heading">
 		<HpCard>
 			<div class="flex gap-2 justify-between items-center" slot="title">
-				<h2 class="font-bold">Veranstaltungen</h2>
-				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300" href="/veranstaltungen/" title="Alle Veranstaltungen anzeigen">Alle Termine                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256"><path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/></svg>                  </span>
+				<h2 id="veranstaltungen-heading" class="font-bold">Veranstaltungen</h2>
+				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2" href="/veranstaltungen/" aria-label="Alle Veranstaltungen anzeigen">
+					Alle Termine
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" aria-hidden="true">
+						<path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/>
+					</svg>
 				</a>
 			</div>
 			{
@@ -88,9 +119,14 @@ const regularEvents = featuredEvent ? events.filter(event => event.slug !== feat
 						{
 							events.map((event) => (
 							<li>
-								<a href={`/veranstaltungen/${event.slug}/`} title={event.data.title} class="inline-flex flex-row items-start gap-2 overflow-hidden max-w-full block py-2">
+								<a href={`/veranstaltungen/${event.slug}/`} 
+								   class="inline-flex flex-row items-start gap-2 overflow-hidden max-w-full block py-2 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-1 rounded"
+								   aria-label={`Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`}>
 									<BadgeMini>
-										<span class="font-semibold whitespace-nowrap"><span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={event.data.eventDate} /></span></span>
+										<span class="font-semibold whitespace-nowrap">
+											<span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span>
+											<span><FormattedDate date={event.data.eventDate} /></span>
+										</span>
 									</BadgeMini>
 									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">{event.data.title}</span>
 								</a>
@@ -127,56 +163,12 @@ const regularEvents = featuredEvent ? events.filter(event => event.slug !== feat
 		</HpCard>
 	</aside>
 	<!-- /  Veranstaltungen -->
-	<main class="content prose pb-4">
-		{
-			featuredEvent && (
-				<section class="not-prose mb-6">
-					<EventBanner event={featuredEvent} highlight={true} />
-				</section>
-			)
-		}
-		{
-			regularEvents.length > 0 && (
-				<section class="not-prose">
-					<EventsSection data={regularEvents} />
-				  </section>
-
-			)
-		}
-<!-- 		
-		<h1>Coletion site settings:</h1>
-		<h3>startseite</h3>
-		<ul>
-			<li>Generell der Title</li>
-			<li>title in der Bühne</li>
-			<li>Aktuelles (datum und richtext)</li>
-		</ul>
-		<h3>Öffnungszeiten</h3>
-		<ul>
-			<li>Richtext ul LIs</li>
-		</ul>
-		<h3>Kontakt</h3>
-	<p>Kommt in Sportheim, Footer, Impressum</p>
-		<ul>
-			<li>anschrift, straße, plz, ort, tel, mail</li>
-		</ul> -->
-
-		{
-			posts.map(async (post) => {
-            	const { Content } = await post.render();
-            	return (
-						<Content />
-				)
-          	})
-		}
-	</main>
-
 
 	 <!-- Öffnungszeiten  -->
-	<aside class="side3">
+	<aside class="side3" aria-labelledby="oeffnungszeiten-heading">
 		<HpCard>
 			<div class="flex gap-2 justify-between items-center" slot="title">
-			<h2 class="font-bold">Öffnungszeiten</h2>
+			<h2 id="oeffnungszeiten-heading" class="font-bold">Öffnungszeiten</h2>
 			</div>
 			<ul class="prose list-disc pl-4 list-outside">
 				<li class="">

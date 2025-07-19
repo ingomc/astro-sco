@@ -1,0 +1,49 @@
+---
+// Skip Links für bessere Keyboard-Navigation und Screen Reader Unterstützung
+---
+
+<nav class="skip-links" aria-label="Sprungnavigation">
+  <a href="#main-content" class="skip-link">
+    Zum Hauptinhalt springen
+  </a>
+  <a href="#navigation" class="skip-link">
+    Zur Navigation springen
+  </a>
+  <a href="#footer" class="skip-link">
+    Zum Footer springen
+  </a>
+</nav>
+
+<style>
+  .skip-links {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+  }
+  
+  .skip-link {
+    @apply absolute -top-96 left-4 bg-red-700 text-white px-4 py-2 rounded-md font-semibold;
+    @apply focus:top-4 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-red-700;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .skip-link {
+      @apply border-2 border-white;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .skip-link {
+      transition: none;
+    }
+  }
+</style>

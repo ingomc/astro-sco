@@ -12,6 +12,87 @@ Dies ist eine Astro-basierte Website für den **SCO-OGV Oberfüllbach 1963 e.V.*
 
 ## Kritische Entwicklungsrichtlinien
 
+### Accessibility (a11y) Standards
+🌐 **VERPFLICHTEND**: Alle Komponenten müssen den WCAG 2.1 AA Standards entsprechen:
+
+#### Semantisches HTML
+- **Landmark-Rollen**: `<header role="banner">`, `<nav role="navigation">`, `<main role="main">`, `<footer role="contentinfo">`
+- **Heading-Hierarchie**: Logische Struktur h1 → h2 → h3, niemals Ebenen überspringen
+- **Listen**: `<ul>`, `<ol>` für Navigation und Gruppierungen
+- **Formulare**: `<label>` für alle Eingabefelder, `<fieldset>` für Gruppierungen
+
+#### ARIA-Attribute
+- **aria-label**: Beschreibende Labels für Buttons ohne Text
+- **aria-labelledby**: Referenz zu beschreibenden Elementen
+- **aria-describedby**: Zusätzliche Beschreibungen
+- **aria-expanded**: Für ausklappbare Menüs (true/false)
+- **aria-current**: Für aktuelle Seite ("page") oder Schritt
+- **aria-hidden**: Für dekorative Elemente (true)
+- **aria-live**: Für dynamische Inhalte ("polite"/"assertive")
+
+#### Keyboard Navigation
+- **Tab-Reihenfolge**: Logische Sequenz durch tabindex oder DOM-Reihenfolge
+- **Focus Management**: Sichtbare Focus-Indikatoren (2px solid #dc2626)
+- **Skip Links**: Zum Hauptinhalt, Navigation, Footer
+- **Escape-Key**: Schließt Dialoge und Menüs
+- **Enter/Space**: Aktiviert Buttons und Links
+
+#### Touch & Mobile
+- **Mindestgröße**: 44px × 44px für Touch-Targets
+- **Abstände**: Mindestens 8px zwischen klickbaren Elementen
+- **Responsive**: Funktioniert ab 320px Breite
+
+#### Farbkontrast
+- **Normaler Text**: Mindestens 4.5:1 Kontrastverhältnis
+- **Großer Text**: Mindestens 3:1 (ab 18pt oder 14pt bold)
+- **UI-Komponenten**: Mindestens 3:1 für Buttons, Icons
+- **High Contrast Mode**: Unterstützung für Windows High Contrast
+
+#### Bilder & Medien
+- **Alt-Texte**: Beschreibend für informative Bilder, leer für dekorative
+- **Loading**: `loading="lazy"` für Below-the-fold Bilder
+- **Responsive**: Verschiedene Größen für verschiedene Viewports
+
+#### Testing
+```bash
+# Accessibility Tests ausführen
+npm run test:a11y              # Vollständige Tests
+npm run test:a11y:headed       # Mit Browser-UI
+npm run test:a11y:ui           # Interaktiver Modus
+```
+
+#### Code-Beispiele
+```astro
+<!-- Korrekte Button-Implementierung -->
+<button 
+  type="button"
+  aria-expanded="false"
+  aria-controls="menu-id"
+  class="focus:outline-none focus:ring-2 focus:ring-red-700"
+>
+  <span class="sr-only">Menü öffnen</span>
+  <svg aria-hidden="true">...</svg>
+</button>
+
+<!-- Korrekte Navigation -->
+<nav role="navigation" aria-label="Hauptnavigation">
+  <ul role="list">
+    <li role="none">
+      <a href="/" aria-current="page">Startseite</a>
+    </li>
+  </ul>
+</nav>
+
+<!-- Korrekte Heading-Struktur -->
+<main>
+  <h1>Seitentitel</h1>
+  <section>
+    <h2>Bereichstitel</h2>
+    <h3>Untertitel</h3>
+  </section>
+</main>
+```
+
 ### Content Collections Konsistenz
 ⚠️ **WICHTIG**: Alle DecapCMS Collections in `/public/admin/config.yml` müssen exakt mit den Astro Content Schemas in `/src/content/config.ts` übereinstimmen!
 

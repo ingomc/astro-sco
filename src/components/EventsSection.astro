@@ -13,20 +13,20 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
         data.map((event) => (
           <li>
             <a
-              class="flex gap-4 w-full bg-white rounded-lg p-4 border border-slate-300 hover:shadow"
+              class="flex gap-4 w-full bg-white rounded-lg p-4 border border-slate-300 hover:shadow focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 transition-all duration-200"
               href={`/${path ? path : 'veranstaltungen' }/${event.slug}/`}
-              title={event.data.title}
+              aria-label={`Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`}
             >
               {event.data.heroImage && (
                 <div class="w-32 md:w-80 rounded overflow-hidden">
                   <Image
-                    fit="cover"
                     width="320"
                     height="200"
                     alt={event.data.title}
                     src={images[`/public${event.data.heroImage}`]()}
                     widths={[150, 300]}
                     sizes={`(max-width: 360px) 150px, (max-width: 460px) 300px`}
+                    class="object-cover w-full h-full"
                   />
                 </div>
               )}
@@ -60,6 +60,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
                     width="16"
                     height="16"
                     viewBox="0 0 256 256"
+                    aria-hidden="true"
                   >
                     <path
                       fill="currentColor"
