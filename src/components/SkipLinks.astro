@@ -23,14 +23,9 @@
   }
   
   .skip-link {
-    @apply absolute -top-96 left-4 bg-red-700 text-white px-4 py-2 rounded-md font-semibold;
+    @apply absolute -top-40 left-4 px-4 py-2 bg-red-700 text-white rounded-md 
+           text-sm font-medium transition-all duration-200;
     @apply focus:top-4 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-red-700;
-    transform: translateY(-100%);
-    transition: transform 0.3s ease-in-out;
-  }
-  
-  .skip-link:focus {
-    transform: translateY(0);
   }
   
   /* High contrast mode support */

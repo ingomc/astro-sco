@@ -9,8 +9,8 @@ const finalImageUrl = `/public${event.data.heroImage}`
 ---
 
 <a 
-  href={`/veranstaltungen/${event.slug}/`} 
-  class="block focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2 rounded-xl transition-all duration-200 hover:shadow-xl"
+  href={`/veranstaltungen/${event.slug}/`}
+  class="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 rounded-xl transition-all duration-200 hover:shadow-xl"
   aria-label={`Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`}
 >
   <div class="relative overflow-hidden rounded-xl bg-white border border-gray-200 shadow-lg">
