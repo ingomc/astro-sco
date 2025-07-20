@@ -1,6 +1,6 @@
 # Visual Regression Testing für UI-Komponenten
 
-Dieses Setup schützt kritische UI-Komponenten wie Header und Side-Drawer vor ungewollten optischen Änderungen.
+Dieses Setup schützt kritische UI-Komponenten vor ungewollten optischen Änderungen.
 
 ## Setup
 
@@ -26,40 +26,34 @@ npm run test:visual:ui
 
 # Tests mit sichtbarem Browser
 npm run test:visual:headed
+
+# Test Report anzeigen
+npm run test:visual:report
 ```
 
 ## Was wird getestet
 
-### Desktop Header
-- ✅ Navigation im normalen Zustand
-- ✅ Active States (z.B. auf Sportheim-Seite)
-- ✅ Hover States
-- ✅ Focus States (Tastaturnavigation)
-
 ### Mobile Side-Drawer
-- ✅ Geschlossener Zustand
-- ✅ Geöffneter Side-Drawer mit Backdrop
-- ✅ Button-Styles (weiße Buttons wie gewünscht!)
-- ✅ Focus Management
+- ✅ Geöffneter Side-Drawer mit weißen Buttons
+- ✅ Korrekte Navigation Links
+- ✅ Button-Styles bleiben unverändert
 
-### Skip Links
-- ✅ Sichtbarkeit bei Focus
-- ✅ Korrekte Positionierung
+### Desktop Header
+- ✅ Kompletter Header-Bereich
+- ✅ Navigation im normalen Zustand
+- ✅ Logo und Layout
 
-## Automatisierung
+## Konfiguration
 
-### CI/CD Integration
-- Tests laufen automatisch bei Pull Requests
-- Nur wenn Header/Navigation-Dateien geändert werden
-- Fail bei optischen Regressionen
+### Multi-Browser Testing
+Tests laufen automatisch in:
+- Desktop Chrome, Firefox, Safari
+- Mobile Chrome, Safari
 
-### Protected Components
-Diese Komponenten sind durch Visual Tests geschützt:
-- `Header.astro`
-- `HeaderLink.astro` 
-- `SkipLinks.astro`
-- `App.astro`
-- Navigation-relevante Styles
+### Geschützte Dateien
+Diese Dateien sind durch die Tests abgedeckt:
+- `src/components/Header.astro`
+- `src/components/HeaderLink.astro`
 
 ## Troubleshooting
 
@@ -81,8 +75,8 @@ threshold: 0.2, // 20% Unterschied erlaubt
 ## Best Practices
 
 1. **Baseline Updates**: Nur nach bewussten Design-Änderungen
-2. **Browser Testing**: Tests laufen in Chrome, Firefox, Safari
-3. **Mobile Testing**: Separate Tests für responsive Breakpoints
-4. **Animation Handling**: Automatisch deaktiviert für konsistente Screenshots
+2. **Lokale Tests**: Vor wichtigen Änderungen lokal testen
+3. **Animation Handling**: Automatisch deaktiviert für konsistente Screenshots
+4. **Minimal Testing**: Nur kritische Komponenten, nicht die ganze Seite
 
-Das verhindert, dass jemand (auch AI 😉) versehentlich deine Side-Drawer Buttons wieder kaputt macht!
+Das verhindert, dass jemand (auch AI 😉) versehentlich die kritischen UI-Komponenten kaputt macht!

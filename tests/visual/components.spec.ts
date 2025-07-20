@@ -63,4 +63,32 @@ test.describe('Visual Regression Tests - Critical Components', () => {
       animations: 'disabled'
     });
   });
+
+  test('BadgeMini Component on Events Page', async ({ page }) => {
+    await page.goto('http://localhost:4321/veranstaltungen/');
+    await page.waitForLoadState('networkidle');
+    
+    // Set desktop viewport
+    await page.setViewportSize({ width: 1200, height: 800 });
+    
+    // Disable animations
+    await page.addStyleTag({
+      content: `
+        *, *::before, *::after {
+          animation-duration: 0s !important;
+          animation-delay: 0s !important;
+          transition-duration: 0s !important;
+          transition-delay: 0s !important;
+        }
+      `
+    });
+    
+    // Screenshot nur den ersten Event-Artikel mit den Badges
+    const firstEvent = page.locator('article').first();
+    await firstEvent.waitFor({ state: 'visible' });
+    await expect(firstEvent).toHaveScreenshot('badge-mini-in-event.png', {
+      threshold: 0.2,
+      animations: 'disabled'
+    });
+  });
 });
