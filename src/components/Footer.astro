@@ -2,17 +2,18 @@
 const today = new Date();
 ---
 
-<footer>
+<footer id="footer" role="contentinfo">
   <div class="bg-slate-100 mt-12 py-4">
     <div class="container mx-auto px-4 flex gap-2 justify-between items-start">
       <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="flex gap-2">
-          <div class="mt-1">
+        <section class="flex gap-2">
+          <div class="mt-1" aria-hidden="true">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"
               viewBox="0 0 256 256"
+              aria-hidden="true"
               ><path
                 fill="currentColor"
                 d="M240 204h-12v-88.45a20.07 20.07 0 0 0-6.44-14.7l-79.95-75.47l-.16-.15a19.93 19.93 0 0 0-26.91 0l-.17.15l-79.93 75.47a20.07 20.07 0 0 0-6.44 14.7V204H16a12 12 0 0 0 0 24h224a12 12 0 0 0 0-24ZM52 117.28l76-71.75l76 71.75V204h-40v-44a20 20 0 0 0-20-20h-32a20 20 0 0 0-20 20v44H52ZM140 204h-24v-40h24Z"
@@ -20,22 +21,23 @@ const today = new Date();
             </svg>
           </div>
           <div class="flex flex-col gap-1">
-            <!-- TODO: Address tag -->
-            <strong>Adresse</strong>
+            <h3 class="font-bold text-sm">Adresse</h3>
             <address class="not-italic text-neutral-600">
               SCO-OGV Oberfüllbach 1963 e.V. Sportheim<br />
                Lützelbucher Str. 7<br />
                96237 Ebersdorf-Oberfüllbach
             </address>
           </div>
-        </div>
-        <div class="flex gap-2">
-          <div class="mt-1">
+        </section>
+        
+        <section class="flex gap-2">
+          <div class="mt-1" aria-hidden="true">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"
               viewBox="0 0 256 256"
+              aria-hidden="true"
               ><path
                 fill="currentColor"
                 d="M224 44H32a12 12 0 0 0-12 12v136a20 20 0 0 0 20 20h176a20 20 0 0 0 20-20V56a12 12 0 0 0-12-12Zm-30.85 24L128 127.72L62.85 68ZM44 188V83.28l75.89 69.57a12 12 0 0 0 16.22 0L212 83.28V188Z"
@@ -43,22 +45,34 @@ const today = new Date();
             </svg>
           </div>
           <div class="flex flex-col gap-1">
-            <strong>Kontakt</strong>
+            <h3 class="font-bold text-sm">Kontakt</h3>
             <div class="text-neutral-600">
-              <a href="tel:095608609">09560 / 8609</a><br />
-              <a href="mailto:info@sc-oberfuellbach.de"
-                >info@sc-oberfuellbach.de</a
+              <a 
+                href="tel:+495605608609" 
+                class="hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-1 rounded"
+                aria-label="Telefonnummer 09560 8609 anrufen"
               >
+                09560 / 8609
+              </a><br />
+              <a 
+                href="mailto:info@sc-oberfuellbach.de"
+                class="hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-1 rounded"
+                aria-label="E-Mail an info@sc-oberfuellbach.de senden"
+              >
+                info@sc-oberfuellbach.de
+              </a>
             </div>
           </div>
-        </div>
-        <div class="flex gap-2">
-          <div class="mt-1">
+        </section>
+        
+        <section class="flex gap-2">
+          <div class="mt-1" aria-hidden="true">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"
               viewBox="0 0 256 256"
+              aria-hidden="true"
               ><path
                 fill="currentColor"
                 d="m87.5 151.52l64-64a12 12 0 0 1 17 17l-64 64a12 12 0 0 1-17-17Zm131-114a60.08 60.08 0 0 0-84.87 0l-30.12 30.09a12 12 0 0 0 17 17l30.07-30.06a36 36 0 0 1 50.93 50.92l-30.11 30.05a12 12 0 1 0 17 17l30.08-30.06a60.09 60.09 0 0 0-.03-84.91ZM135.52 171.4l-30.07 30.08a36 36 0 0 1-50.92-50.93l30.06-30.07a12 12 0 0 0-17-17l-30.04 30.1a60 60 0 0 0 84.88 84.87l30.06-30.07a12 12 0 0 0-17-17Z"
@@ -66,27 +80,48 @@ const today = new Date();
             </svg>
           </div>
           <div class="flex flex-col gap-1">
-            <strong>Links</strong>
-            <div class="text-neutral-600">
-              <a href="/datenschutz">Datenschutz</a><br />
-              <a href="/impressum">Impressum</a><br />
-            </div>
+            <h3 class="font-bold text-sm">Rechtliches</h3>
+            <nav class="text-neutral-600" aria-label="Rechtliche Links">
+              <ul class="space-y-1">
+                <li>
+                  <a 
+                    href="/datenschutz" 
+                    class="hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-1 rounded"
+                  >
+                    Datenschutz
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="/impressum" 
+                    class="hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-1 rounded"
+                  >
+                    Impressum
+                  </a>
+                </li>
+              </ul>
+            </nav>
           </div>
-        </div>
+        </section>
       </div>
-      <div>
+      
+      <div class="ml-4">
         <img
           width="68"
           height="56"
           src="/assets/logo_sco_min.png"
-          alt="SCO Logo"
+          alt="SCO-OGV Oberfüllbach 1963 e.V. Logo"
+          loading="lazy"
         />
       </div>
     </div>
-    <div class="container mx-auto">
-      <hr class="my-4" />
+    
+    <div class="container mx-auto px-4">
+      <hr class="my-4 border-gray-300" />
       <div class="text-center mx-auto">
-        <small>&copy; {today.getFullYear()}</small>
+        <small class="text-neutral-600">
+          &copy; {today.getFullYear()} SCO-OGV Oberfüllbach 1963 e.V. Alle Rechte vorbehalten.
+        </small>
       </div>
     </div>
   </div>

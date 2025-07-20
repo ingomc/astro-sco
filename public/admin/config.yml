@@ -41,15 +41,25 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
     fields: # The fields for each document, usually in front matter
       - { label: "Titel", name: "title", widget: "string" }
+      - { label: "Beschreibung", name: "description", widget: "string", required: false }
       - { label: "Erstellungsdatum", name: "pubDate", widget: "datetime" }
       - { label: "Veranstaltungsdatum und Start-Uhrzeit",  name: "eventDate", widget: "datetime"}
       - { label: "Veranstaltungsort", name: "location", widget: "string", required: false }
       - { label: "Titelbild", name: "heroImage", widget: "image" }
       - { label: "Body", name: "body", widget: "markdown" }
+  - name: "sportheim"
+    label: "Sportheim"
+    folder: "src/content/sportheim/"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Reihenfolge", name: "order", widget: "number", required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
   - name: mitglieder
-    label: Mitglieder
-    folder: src/content/mitglieder/
-    media_folder: "/public/assets/mitglieder" 
+    label: "Mitglieder"
+    folder: "src/content/mitglieder/"
+    media_folder: "public/assets/mitglieder" 
     public_folder: "/assets/mitglieder" 
     create: true
     slug: "{{name}}"
@@ -61,8 +71,8 @@ collections:
           hint: "Vor- und Nachname",
         }
       - {
-          label: Rolle,
-          name: position,
+          label: "Rolle",
+          name: "position",
           widget: "select",
           options:
             [
@@ -75,16 +85,16 @@ collections:
             ],
           required: false,
         }
-      - { label: Stammtisch, name: stammtisch, widget: boolean, default: false }
-      - { label: Dart, name: dart, widget: boolean, default: false }
+      - { label: "Stammtisch", name: "stammtisch", widget: "boolean", default: false }
+      - { label: "Dart", name: "dart", widget: "boolean", default: false }
       - {
-          label: Email,
-          name: email,
-          widget: string,
+          label: "Email",
+          name: "email",
+          widget: "string",
           hint: "Wird nicht öffentlich angezeigt",
           required: false,
         }
-      - { label: Image, name: authorimage, widget: image, required: false }
+      - { label: "Image", name: "authorimage", widget: "image", required: false }
   - label: "Site Settings"
     name: "general"
     folder: "src/content/settings/"
