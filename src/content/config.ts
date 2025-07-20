@@ -69,6 +69,8 @@ const mitglieder = defineCollection({
     name: z.string(),
     position: z.string().optional(),
     stammtisch: z.boolean().optional(),
+    dart: z.boolean().optional(),
+    email: z.string().optional(),
     authorimage: z.string().optional(),
   }),
 });

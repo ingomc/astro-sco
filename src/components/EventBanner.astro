@@ -8,9 +8,12 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
 const finalImageUrl = `/public${event.data.heroImage}`
 ---
 
-<div class="relative overflow-hidden rounded-xl bg-white border border-gray-200 shadow-lg">
-  
-  <a href={`/veranstaltungen/${event.slug}/`} class="block">
+<a 
+  href={`/veranstaltungen/${event.slug}/`}
+  class="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 rounded-xl transition-all duration-200 hover:shadow-xl"
+  aria-label={`Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`}
+>
+  <div class="relative overflow-hidden rounded-xl bg-white border border-gray-200 shadow-lg">
     <div class="flex flex-col lg:flex-row">
       {event.data.heroImage && finalImageUrl && images[finalImageUrl] && (
         <div class="lg:w-1/3 overflow-hidden">
@@ -53,7 +56,7 @@ const finalImageUrl = `/public${event.data.heroImage}`
           <div class="pt-2">
             <span class="inline-flex items-center gap-2 px-5 py-2 rounded-full font-semibold bg-red-600 text-white hover:bg-red-700 transition-colors text-sm">
               {event.data.cta || 'Mehr erfahren'}
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" aria-hidden="true">
                 <path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/>
               </svg>
             </span>
@@ -61,5 +64,5 @@ const finalImageUrl = `/public${event.data.heroImage}`
         </div>
       </div>
     </div>
-  </a>
-</div>
+  </div>
+</a>

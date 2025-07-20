@@ -1,0 +1,114 @@
+---
+// A11yUtils.astro - Accessibility Utility Komponente
+// Bietet wiederverwendbare a11y-Funktionen und -Komponenten
+
+interface VisuallyHiddenProps {
+  as?: keyof HTMLElementTagNameMap;
+  [key: string]: any;
+}
+
+const { as: Element = 'span', ...props } = Astro.props as VisuallyHiddenProps;
+---
+
+<!-- Screen Reader Only Text -->
+<Element class="sr-only" {...props}>
+  <slot />
+</Element>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
+  .sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+</style>
+
+<script>
+  // Accessibility utilities for JavaScript
+  class A11yUtils {
+    /**
+     * Announce text to screen readers
+     */
+    static announce(message: string, priority: 'polite' | 'assertive' = 'polite') {
+      const announcer = document.createElement('div');
+      announcer.setAttribute('aria-live', priority);
+      announcer.setAttribute('aria-atomic', 'true');
+      announcer.className = 'sr-only';
+      announcer.textContent = message;
+      
+      document.body.appendChild(announcer);
+      
+      // Clean up after announcement
+      setTimeout(() => {
+        document.body.removeChild(announcer);
+      }, 1000);
+    }
+    
+    /**
+     * Get the first focusable element within a container
+     */
+    static getFirstFocusable(container: Element): HTMLElement | null {
+      const focusableSelector = [
+        'a[href]',
+        'button:not([disabled])',
+        'textarea:not([disabled])',
+        'input:not([disabled]):not([type="hidden"])',
+        'select:not([disabled])',
+        '[tabindex]:not([tabindex="-1"])'
+      ].join(', ');
+      
+      return container.querySelector(focusableSelector);
+    }
+    
+    /**
+     * Trap focus within a container
+     */
+    static trapFocus(container: Element, event: KeyboardEvent) {
+      if (event.key !== 'Tab') return;
+      
+      const focusableElements = container.querySelectorAll([
+        'a[href]',
+        'button:not([disabled])',
+        'textarea:not([disabled])',
+        'input:not([disabled]):not([type="hidden"])',
+        'select:not([disabled])',
+        '[tabindex]:not([tabindex="-1"])'
+      ].join(', '));
+      
+      const firstElement = focusableElements[0] as HTMLElement;
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+      
+      if (event.shiftKey) {
+        if (document.activeElement === firstElement) {
+          event.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          event.preventDefault();
+          firstElement.focus();
+        }
+      }
+    }
+  }
+  
+  // Make A11yUtils globally available
+  (window as any).A11yUtils = A11yUtils;
+</script>

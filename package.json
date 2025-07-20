@@ -1,5 +1,5 @@
 {
-  "name": "Astro SCO",
+  "name": "astro-sco",
   "type": "module",
   "version": "0.9.2",
   "scripts": {
@@ -10,7 +10,15 @@
     "build:netlify": "cross-env DEPLOY_TARGET=netlify astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "tailwind": "npx tailwindcss -i ./src/styles/global.css -o ./public/admin/admin.css"
+    "tailwind": "npx tailwindcss -i ./src/styles/global.css -o ./public/admin/admin.css",
+    "test:a11y": "playwright test tests/a11y.test.js",
+    "test:a11y:headed": "playwright test tests/a11y.test.js --headed",
+    "test:a11y:ui": "playwright test tests/a11y.test.js --ui",
+    "test:visual": "playwright test tests/visual/ --config=playwright.visual.config.ts",
+    "test:visual:update": "playwright test tests/visual/ --config=playwright.visual.config.ts --update-snapshots",
+    "test:visual:headed": "playwright test tests/visual/ --config=playwright.visual.config.ts --headed",
+    "test:visual:ui": "playwright test tests/visual/ --config=playwright.visual.config.ts --ui",
+    "test:visual:report": "playwright show-report"
   },
   "dependencies": {
     "@astrojs/mdx": "^3.1.2",
@@ -24,7 +32,10 @@
     "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.54.1",
     "@tailwindcss/typography": "^0.5.13",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "prettier": "^3.3.2",
     "prettier-plugin-astro": "^0.14.0"
   }
