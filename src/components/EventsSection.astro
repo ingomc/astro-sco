@@ -26,7 +26,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
                     src={images[`/public${event.data.heroImage}`]()}
                     widths={[150, 300]}
                     sizes={`(max-width: 360px) 150px, (max-width: 460px) 300px`}
-                    class="object-cover w-full h-full"
+                    class="object-contain object-top w-full h-full"
                   />
                 </div>
               )}
