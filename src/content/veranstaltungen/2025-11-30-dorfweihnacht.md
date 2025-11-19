@@ -4,7 +4,7 @@ pubDate: 2025-11-16T13:30:23.138Z
 eventDate: 2025-11-30T15:00:23.138Z
 location: Sportheim
 heroImage: "/assets/2025-dorfweihnacht.avif"
-description: 'Erleben Sie die Dorfweihnacht in Oberfüllbach am Sonntag, 30. November ab 17 Uhr. Mit Andacht, Glühwein, Kuchen und gemütlicher Atmosphäre für die ganze Familie!'
+description: 'Erleben Sie die Dorfweihnacht in Oberfüllbach am Sonntag, 30. November ab 16 Uhr. Mit Andacht, Glühwein, Kuchen und gemütlicher Atmosphäre für die ganze Familie!'
 ---
 Am **📅 Sonntag, den 30. November**, laden die Feuerwehr Oberfüllbach sowie der SCO/OGV Oberfüllbach herzlich zur diesjährigen Oberfüllbacher Weihnacht am Sportheim ein.
 
