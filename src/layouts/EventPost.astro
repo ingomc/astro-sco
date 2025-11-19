@@ -9,7 +9,7 @@ import BadgeMini from "../components/BadgeMini.astro";
 // type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, eventDate, heroImage, location } = Astro.props;
-const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*.{jpeg,jpg,png,gif}');
+const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*.{jpeg,jpg,png,gif,avif}');
 const finalImageUrl = `/public${heroImage}`
 if (!images[finalImageUrl]) throw new Error(`"${finalImageUrl}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`);
 ---

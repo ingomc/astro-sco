@@ -4,7 +4,7 @@ import FormattedDate from "./FormattedDate.astro";
 import BadgeMini from "./BadgeMini.astro";
 
 const { data, path } = Astro.props;
-const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*.{jpeg,jpg,png,gif}');
+const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*.{jpeg,jpg,png,gif,avif}');
 ---
 
 <div>
