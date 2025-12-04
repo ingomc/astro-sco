@@ -7,7 +7,8 @@ interface Props {
 }
 
 const { image="/src/media/sco-heim.jpg", blurred="", title="SCO-OGV Oberfüllbach 1963 e.V." } = Astro.props;
-const blurredSportheim = 'data:image/webp;base64,UklGRugAAABXRUJQVlA4INwAAACwBACdASoZAA0APm0skkWkIqGYBABABsSzAE6ZQj5LdKAov1q6nHGy+Xpl27uwAP7Q/7o/Tslx3+h84WLMaigrzFsyK3vAjPwBA+VZPeoQhqyZrVinctCuLQNbjVT0z4kXGzp7KVeOy1AlRl2c3U+kX2/P/JAi0KvugkzcYSoT/A3j83815YB9jnTVHp3wEdDvyahD2xr6EmjG1RcESn4yD93xkojNl2AONqK4ZKS5qzedZi3K9diKr+62EgMe2lFdD9I8VMaRaYK3HE1et9Uak/l9M4tgXlKHmAAA';
+const blurredSportheim = 'data:image/webp;base64,UklGRiABAABXRUJQVlA4IBQBAAAwBgCdASogABEAPpE6mEelo6KhMAgAsBIJQBOmZJPM2AYb5oUZfdNHhBAq4yMoaEf2yQBQih8SlFwAAP723OqtTKJWDavbbQMhH6NkPJTz5v0WH1xy5poQ8lubretaAmVhUnci0cjkYZli7fbfkL+S6lWRRKYDBntZ6fm412BYmciysp5/9PEUB1uXBKB1an6OYJGvzx4//k1vWYmQS205ljiQCfeaXYRXXsGtaQddMMT6q+nVfZ3DBYF9UJ5LqesE1LANH1F1EHu8OaZn488oxgEgB2YOq4+EvtIKQXxjrYmfPc9cIEHEtBFzWF6Mp6ukUVy15lL4YRHfO/0kFxfnMwUKj5Fp7u8vl1yqSbiZs0gAAAA=';
+const blurredSportheim_summer = 'data:image/webp;base64,UklGRugAAABXRUJQVlA4INwAAACwBACdASoZAA0APm0skkWkIqGYBABABsSzAE6ZQj5LdKAov1q6nHGy+Xpl27uwAP7Q/7o/Tslx3+h84WLMaigrzFsyK3vAjPwBA+VZPeoQhqyZrVinctCuLQNbjVT0z4kXGzp7KVeOy1AlRl2c3U+kX2/P/JAi0KvugkzcYSoT/A3j83815YB9jnTVHp3wEdDvyahD2xr6EmjG1RcESn4yD93xkojNl2AONqK4ZKS5qzedZi3K9diKr+62EgMe2lFdD9I8VMaRaYK3HE1et9Uak/l9M4tgXlKHmAAA';
 const blurredBg = blurred ? `url('${blurred}')` : `url('${blurredSportheim}')`;
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/media/**/*.{jpeg,jpg,png,gif}');
 const finalImageUrl = image;
