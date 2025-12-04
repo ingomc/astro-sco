@@ -3,19 +3,26 @@ import { Image } from 'astro:assets';
 import FormattedDate from "./FormattedDate.astro";
 import BadgeMini from "./BadgeMini.astro";
 
-const { data, path } = Astro.props;
+const { data, path, isPast } = Astro.props;
 const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*.{jpeg,jpg,png,gif,avif}');
 ---
 
 <div>
     <ul class="grid grid-cols-1 gap-4">
       {
-        data.map((event) => (
+        data.map((event) => {
+          const Element = isPast ? 'div' : 'a';
+          const href = isPast ? undefined : `/${path ? path : 'veranstaltungen' }/${event.slug}/`;
+          return (
           <li>
-            <a
-              class="flex gap-4 w-full bg-white rounded-lg p-4 border border-slate-300 hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 transition-all duration-200"
-              href={`/${path ? path : 'veranstaltungen' }/${event.slug}/`}
-              aria-label={`Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`}
+            <Element
+              class:list={[
+                "flex gap-4 w-full bg-white rounded-lg p-4 border border-slate-300 transition-all duration-200",
+                !isPast && "hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2",
+                isPast && "opacity-60 grayscale cursor-not-allowed"
+              ]}
+              href={href}
+              aria-label={!isPast ? `Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}` : undefined}
             >
               {event.data.heroImage && (
                 <div class="w-32 md:w-80 rounded overflow-hidden">
@@ -53,8 +60,12 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
                   </div>
                 </div>
                 <p><small>{event.data.description}</small></p>
-                <span class="self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300">
-                  {event.data.cta ? event.data.cta : 'Mehr erfahren'}
+                <span class:list={[
+                  "self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full",
+                  isPast ? "bg-slate-200 text-slate-500" : "bg-slate-100 hover:bg-slate-300"
+                ]}>
+                  {isPast ? "Vergangen" : (event.data.cta ? event.data.cta : 'Mehr erfahren')}
+                  {!isPast && (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -66,12 +77,13 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
                       fill="currentColor"
                       d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"
                     />
-                  </svg>{" "}
+                  </svg>
+                  )}
                 </span>
               </div>
-            </a>
+            </Element>
           </li>
-        ))
+        )})
       }
     </ul>
   </div>
