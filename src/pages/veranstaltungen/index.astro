@@ -9,12 +9,26 @@ import FormattedDate from "../../components/FormattedDate.astro";
 import allshortevents from "../../data/shortevents.json";
 
 const now = new Date().setHours(0, 0, 0, 0);
+const threeMonthsAgo = new Date();
+threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+threeMonthsAgo.setHours(0, 0, 0, 0);
 
 const dateInPast = (date: Date) =>
-  date.setHours(0, 0, 0, 0) >= now;
+  new Date(date).setHours(0, 0, 0, 0) >= now;
 
-const futureEvents = (await getCollection("veranstaltungen")).filter((ev) => dateInPast(ev.data.eventDate)).sort(
+const isRecentPast = (date: Date) => {
+  const d = new Date(date).setHours(0, 0, 0, 0);
+  return d < now && d >= threeMonthsAgo.getTime();
+};
+
+const allEvents = await getCollection("veranstaltungen");
+
+const futureEvents = allEvents.filter((ev) => dateInPast(ev.data.eventDate)).sort(
   (a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf(),
+);
+
+const recentPastEvents = allEvents.filter((ev) => isRecentPast(ev.data.eventDate)).sort(
+  (a, b) => b.data.eventDate.valueOf() - a.data.eventDate.valueOf(),
 );
 
 const pastEvents = (await getCollection("berichte")).sort(
@@ -91,9 +105,18 @@ const description =
       <section>
         <EventsSection data={futureEvents} />
       </section>
-      {futureEvents.length > 0 && <hr class="my-8">} 
+      
+      {recentPastEvents.length > 0 && (
+        <hr class="my-8">
+        <section>
+          <h2 class="text-xl font-bold mb-4">Vergangene Veranstaltungen (letzte 3 Monate)</h2>
+          <EventsSection data={recentPastEvents} isPast={true} />
+        </section>
+      )}
+
+      {(futureEvents.length > 0 || recentPastEvents.length > 0) && <hr class="my-8">} 
       <section>
-        <h2 class="text-xl font-bold mb-4">Vergangene Veranstaltungen / Berichte</h2>
+        <h2 class="text-xl font-bold mb-4">Berichte</h2>
         <EventsSection data={pastEvents} path="berichte" />
       </section>
     </main>
