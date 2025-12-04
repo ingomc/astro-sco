@@ -31,9 +31,15 @@ const recentPastEvents = allEvents.filter((ev) => isRecentPast(ev.data.eventDate
   (a, b) => b.data.eventDate.valueOf() - a.data.eventDate.valueOf(),
 );
 
-const pastEvents = (await getCollection("berichte")).sort(
-  (a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf(),
-).reverse();
+const currentYear = new Date().getFullYear();
+const pastEvents = (await getCollection("berichte"))
+  .filter((ev) => {
+    const eventYear = ev.data.eventDate.getFullYear();
+    return eventYear === currentYear || eventYear === currentYear - 1;
+  })
+  .sort(
+    (a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf(),
+  ).reverse();
 
 const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev.date))).sort(
 	(a, b) => new Date(a.date).valueOf() -  new Date(b.date).valueOf()
