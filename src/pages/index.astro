@@ -39,6 +39,10 @@ const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev
 // Featured Event - bevorzugt Events mit featured: true, sonst erstes Event mit CTA
 const featuredEvent = events.find(event => event.data.featured) || events.find(event => event.data.cta);
 const regularEvents = featuredEvent ? events.filter(event => event.slug !== featuredEvent.slug) : events;
+
+// Neuester Bericht, wenn er in den letzten 3 Wochen veröffentlicht wurde
+const latestBericht = pastEvents[0];
+const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
 ---
 
 <App>
@@ -62,8 +66,19 @@ const regularEvents = featuredEvent ? events.filter(event => event.slug !== feat
 				<section class="not-prose">
 					<h2 class="sr-only">Weitere Veranstaltungen</h2>
 					<EventsSection data={regularEvents} />
-				  </section>
+				</section>
+			)
+		}
 
+		{
+			showLatestBericht && (
+				<section class="not-prose mt-6">
+					<h2 class="text-lg font-bold mb-3 flex items-center gap-2">
+						<BadgeMini highlight><span class="font-semibold">NEU</span></BadgeMini>
+						Aktueller Bericht
+					</h2>
+					<EventsSection data={[latestBericht]} path="berichte" />
+				</section>
 			)
 		}
 
