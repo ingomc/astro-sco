@@ -21,7 +21,7 @@ const isRecentPast = (date: Date) => {
   return d < now && d >= threeMonthsAgo.getTime();
 };
 
-const allEvents = await getCollection("veranstaltungen");
+const allEvents = (await getCollection("veranstaltungen")).filter((ev) => ev.data.pubDate <= new Date());
 
 const futureEvents = allEvents.filter((ev) => dateInPast(ev.data.eventDate)).sort(
   (a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf(),

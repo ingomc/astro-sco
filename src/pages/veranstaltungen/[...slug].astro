@@ -3,7 +3,7 @@ import { type CollectionEntry, getCollection } from 'astro:content';
 import EventPost from '../../layouts/EventPost.astro';
 
 export async function getStaticPaths() {
-	const events = await getCollection('veranstaltungen');
+	const events = (await getCollection('veranstaltungen')).filter((ev) => ev.data.pubDate <= new Date());
 	return events.map((event) => ({
 		params: { slug: event.slug },
 		props: event,
