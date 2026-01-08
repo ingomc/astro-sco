@@ -16,22 +16,22 @@ if (!images[finalImageUrl]) throw new Error(`"${finalImageUrl}" does not exist i
 
 <App title={title} description={description} image={heroImage}>
   <main>
-    <div class="stripe-wrapper">
-      <div class="stripe bg-red-700 border-t-red-700 border-b-neutral-950">
+    <div class="hero-header">
+      <div class="hero-bg">
+        <div class="hero-pattern"></div>
       </div>
     </div>
     <article class="container mx-auto px-2">
-      <div
-        class="prose prose-img:rounded-xl mx-auto -mt-30 pt-1 md:pt-8 lg:pt-8"
-      >
+      <div class="hero-image-wrapper">
         {
           finalImageUrl && (
-            <div class="m-4 md:m-0 not-prose rounded overflow-hidden">
+            <div class="hero-image not-prose rounded-xl overflow-hidden shadow-xl">
               <Image
                 src={images[finalImageUrl]()}
                 widths={[100, 200, 300, 500, 800]}
                 sizes={`(max-width: 360px) 100px, (max-width: 460px) 200px,(max-width: 560px) 300px,(max-width: 660px) 500px, 800px`}
                 alt=""
+                class="w-full h-auto"
               />
             </div>
           )
@@ -66,25 +66,74 @@ if (!images[finalImageUrl]) throw new Error(`"${finalImageUrl}" does not exist i
 </App>
 
 <style>
-  .stripe-wrapper {
+  .hero-header {
     position: relative;
+    height: 14rem;
+    overflow: visible;
   }
-  .stripe {
+
+  .hero-bg {
     position: absolute;
-    top: 0;
+    inset: 0;
+    background: linear-gradient(135deg, #b91c1c 0%, #b91c1c 50%, #171717 50%, #171717 100%);
+    overflow: hidden;
+  }
+
+  .hero-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: url('/assets/logo_sco_min.png');
+    background-size: 60px 60px;
+    background-repeat: space;
+    opacity: 0.06;
+    filter: grayscale(100%) brightness(1);
+  }
+
+  .hero-bg::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
     left: 0;
     right: 0;
-    display: block;
-    height: 12vw;
-    width: 100%;
-    z-index: -1;
-    background-image: url("/stripe.svg");
-    background-size: 100% 8.1vw;
-    background-position: 50%;
-    background-repeat: no-repeat;
-    border-style: solid;
-    border-top-width: 2vw;
-    border-bottom-width: 2vw;
+    height: 14rem;
+    background: linear-gradient(to bottom, transparent, white);
+  }
+
+  .hero-image-wrapper {
+    max-width: 90ch;
+    margin: 0 auto;
+    margin-top: -10rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .hero-image {
+    border: 4px solid white;
+    background-color:silver;
+  }
+
+  @media (min-width: 768px) {
+    .hero-header {
+      height: 18rem;
+    }
+
+    .hero-image-wrapper {
+      margin-top: -13rem;
+    }
+
+    .hero-pattern {
+      background-size: 100px 100px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-header {
+      height: 22rem;
+    }
+
+    .hero-image-wrapper {
+      margin-top: -16rem;
+    }
   }
 </style>
 <style is:global>
