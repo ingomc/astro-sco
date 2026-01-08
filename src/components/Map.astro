@@ -1,0 +1,294 @@
+---
+interface Location {
+  name: string;
+  lat: number;
+  lon: number;
+  type?: "fire_station" | "default" | "sportheim" | "event";
+  osmUrl?: string;
+  description?: string;
+}
+
+interface Props {
+  locations: Location[];
+  zoom?: number;
+  height?: string;
+}
+
+const { locations, zoom = 15, height = "400px" } = Astro.props;
+
+// Generate a unique ID for this map instance
+const mapId = `map-${Math.random().toString(36).substring(2, 9)}`;
+
+// Calculate center from locations
+const centerLat = locations.reduce((sum, loc) => sum + loc.lat, 0) / locations.length;
+const centerLon = locations.reduce((sum, loc) => sum + loc.lon, 0) / locations.length;
+
+// Marker icons based on type
+const markerColors: Record<string, string> = {
+  fire_station: "#dc2626", // red
+  sportheim: "#16a34a",    // green
+  event: "#2563eb",        // blue
+  default: "#6366f1",      // indigo
+};
+---
+
+<div class="map-container my-6 rounded-lg overflow-hidden shadow-lg border border-gray-200">
+  <div id={mapId} class="map-placeholder" style={`height: ${height}; width: 100%;`}>
+    <div class="map-loading">
+      <svg class="animate-spin h-8 w-8 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span class="text-gray-500 mt-2">Karte wird geladen...</span>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ mapId, locations, zoom, centerLat, centerLon, markerColors }}>
+  let mapInitialized = false;
+
+  // Load Leaflet CSS dynamically
+  function loadLeafletCSS() {
+    if (document.querySelector('link[href*="leaflet"]')) return Promise.resolve();
+    return new Promise((resolve) => {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      link.integrity = "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=";
+      link.crossOrigin = "";
+      link.onload = resolve;
+      document.head.appendChild(link);
+    });
+  }
+
+  // Load Leaflet JS dynamically
+  async function loadLeaflet() {
+    await loadLeafletCSS();
+    if (window.L) return;
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      script.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
+      script.crossOrigin = "";
+      script.onload = resolve;
+      document.head.appendChild(script);
+    });
+  }
+
+  // Initialize the map
+  async function initMap() {
+    if (mapInitialized) return;
+    mapInitialized = true;
+
+    await loadLeaflet();
+    const L = window.L;
+    
+    const mapElement = document.getElementById(mapId);
+    if (!mapElement) return;
+
+    // Remove loading placeholder
+    mapElement.classList.remove("map-placeholder");
+    mapElement.innerHTML = "";
+
+    // Initialize the map
+    const map = L.map(mapId).setView([centerLat, centerLon], zoom);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Custom marker icon function
+    function createMarkerIcon(color) {
+      return L.divIcon({
+        className: "custom-marker",
+        html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="32" height="32">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      });
+    }
+
+    // Collect all markers for fitBounds
+    const markers = [];
+
+    // Add markers for each location
+    locations.forEach((location) => {
+      const color = markerColors[location.type || "default"] || markerColors.default;
+      const marker = L.marker([location.lat, location.lon], {
+        icon: createMarkerIcon(color),
+      }).addTo(map);
+      
+      markers.push(marker);
+
+      // Generate OSM URL if not provided
+      const osmUrl = location.osmUrl || 
+        `https://www.openstreetmap.org/?mlat=${location.lat}&mlon=${location.lon}#map=18/${location.lat}/${location.lon}`;
+
+      // Create popup content with styled OSM link
+      const popupContent = `
+        <div class="map-popup">
+          <strong class="popup-title">${location.name}</strong>
+          ${location.description ? `<p class="popup-desc">${location.description}</p>` : ""}
+          <a href="${osmUrl}" target="_blank" rel="noopener noreferrer" class="popup-osm-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Auf OpenStreetMap ansehen
+          </a>
+        </div>
+      `;
+
+      marker.bindPopup(popupContent, {
+        maxWidth: 280,
+        className: "custom-popup"
+      });
+    });
+
+    // Auto-fitBounds: Always fit to show all markers
+    if (markers.length > 0) {
+      const group = L.featureGroup(markers);
+      map.fitBounds(group.getBounds(), { 
+        padding: [40, 40],
+        maxZoom: locations.length === 1 ? zoom : 16
+      });
+    }
+
+    // Fix map size after container becomes visible
+    setTimeout(() => map.invalidateSize(), 100);
+  }
+
+  // Lazy Load: Use Intersection Observer
+  function setupLazyLoad() {
+    const mapElement = document.getElementById(mapId);
+    if (!mapElement) return;
+
+    // Check if IntersectionObserver is supported
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              initMap();
+              observer.disconnect();
+            }
+          });
+        },
+        {
+          rootMargin: "100px", // Start loading slightly before visible
+          threshold: 0.01
+        }
+      );
+      observer.observe(mapElement);
+    } else {
+      // Fallback for older browsers
+      initMap();
+    }
+  }
+
+  // Initialize lazy loading when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupLazyLoad);
+  } else {
+    setupLazyLoad();
+  }
+</script>
+
+<style>
+  .map-container {
+    position: relative;
+    z-index: 0;
+  }
+
+  .map-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  }
+
+  .map-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+
+  :global(.custom-marker) {
+    background: transparent;
+    border: none;
+  }
+
+  :global(.custom-popup .leaflet-popup-content-wrapper) {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  :global(.custom-popup .leaflet-popup-content) {
+    margin: 0;
+    padding: 0;
+  }
+
+  :global(.custom-popup .leaflet-popup-tip) {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  :global(.map-popup) {
+    padding: 12px 14px;
+    min-width: 180px;
+  }
+
+  :global(.map-popup .popup-title) {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+  }
+
+  :global(.map-popup .popup-desc) {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 6px 0 10px 0;
+    line-height: 1.4;
+  }
+
+  :global(.map-popup .popup-osm-link) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: #2563eb;
+    text-decoration: none;
+    padding: 6px 10px;
+    background: #eff6ff;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin-top: 4px;
+  }
+
+  :global(.map-popup .popup-osm-link:hover) {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  :global(.map-popup .popup-osm-link svg) {
+    flex-shrink: 0;
+  }
+</style>
