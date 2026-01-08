@@ -30,7 +30,7 @@ const dateInPast = (date: Date) =>
 // TODO Events + News
 const events = (await getCollection('veranstaltungen'))
 .filter((ev) => dateInPast(ev.data.eventDate))
-.filter((ev) => ev.data.pubDate <= new Date())
+.filter((ev) => ev.data.pubDate <= new Date() && !ev.data.hidden)
 .sort(
 	(a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf()
 );
