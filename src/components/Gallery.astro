@@ -1,0 +1,225 @@
+---
+interface Image {
+  src: string;
+  alt: string;
+}
+
+interface Props {
+  images: Image[];
+  columns?: 2 | 3 | 4;
+}
+
+const { images, columns = 3 } = Astro.props;
+
+const gridCols = {
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-2 lg:grid-cols-3",
+  4: "sm:grid-cols-2 lg:grid-cols-4",
+};
+
+const galleryId = `gallery-${Math.random().toString(36).substring(2, 9)}`;
+---
+
+<div class="gallery-container not-prose my-6">
+  <div class={`gallery-grid grid grid-cols-1 ${gridCols[columns]} gap-3`}>
+    {images.map((image, index) => (
+      <button
+        type="button"
+        class="gallery-item group relative overflow-hidden rounded-lg aspect-[3/2] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+        data-gallery={galleryId}
+        data-index={index}
+        aria-label={`Bild öffnen: ${image.alt}`}
+      >
+        <img
+          src={image.src}
+          alt={image.alt}
+          class="not-prose absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+        />
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <span class="text-white text-sm">{image.alt}</span>
+        </div>
+      </button>
+    ))}
+  </div>
+</div>
+
+<!-- Lightbox Modal -->
+<div
+  id={`${galleryId}-lightbox`}
+  class="lightbox fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-sm"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Bildergalerie"
+>
+  <button
+    type="button"
+    class="lightbox-close absolute top-4 right-4 z-10 p-2 text-white/80 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-full"
+    aria-label="Galerie schließen"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+
+  <button
+    type="button"
+    class="lightbox-prev absolute left-4 top-1/2 -translate-y-1/2 p-2 text-white/80 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-full"
+    aria-label="Vorheriges Bild"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
+
+  <button
+    type="button"
+    class="lightbox-next absolute right-4 top-1/2 -translate-y-1/2 p-2 text-white/80 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-full"
+    aria-label="Nächstes Bild"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </button>
+
+  <div class="lightbox-content max-w-5xl max-h-[85vh] mx-4">
+    <img
+      class="lightbox-image max-w-full max-h-[80vh] object-contain rounded-lg"
+      src=""
+      alt=""
+    />
+    <p class="lightbox-caption text-white text-center mt-3 text-sm"></p>
+  </div>
+
+  <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60 text-sm">
+    <span class="lightbox-counter"></span>
+  </div>
+</div>
+
+<script define:vars={{ galleryId, images }}>
+  function initGallery() {
+    const lightbox = document.getElementById(`${galleryId}-lightbox`);
+    if (!lightbox) return;
+
+    const lightboxImage = lightbox.querySelector(".lightbox-image");
+    const lightboxCaption = lightbox.querySelector(".lightbox-caption");
+    const lightboxCounter = lightbox.querySelector(".lightbox-counter");
+    const closeBtn = lightbox.querySelector(".lightbox-close");
+    const prevBtn = lightbox.querySelector(".lightbox-prev");
+    const nextBtn = lightbox.querySelector(".lightbox-next");
+    const galleryItems = document.querySelectorAll(`[data-gallery="${galleryId}"]`);
+
+    let currentIndex = 0;
+
+    function showImage(index) {
+      if (index < 0) index = images.length - 1;
+      if (index >= images.length) index = 0;
+      currentIndex = index;
+
+      const image = images[index];
+      lightboxImage.src = image.src;
+      lightboxImage.alt = image.alt;
+      lightboxCaption.textContent = image.alt;
+      lightboxCounter.textContent = `${index + 1} / ${images.length}`;
+    }
+
+    function openLightbox(index) {
+      showImage(index);
+      lightbox.classList.remove("hidden");
+      lightbox.classList.add("flex");
+      document.body.style.overflow = "hidden";
+      // Push state for browser back button support
+      history.pushState({ lightbox: galleryId }, "");
+      closeBtn.focus();
+    }
+
+    function closeLightbox() {
+      lightbox.classList.add("hidden");
+      lightbox.classList.remove("flex");
+      document.body.style.overflow = "";
+      galleryItems[currentIndex]?.focus();
+    }
+
+    // Handle browser back button
+    window.addEventListener("popstate", (e) => {
+      if (!lightbox.classList.contains("hidden")) {
+        closeLightbox();
+      }
+    });
+
+    // Event listeners
+    galleryItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        openLightbox(parseInt(item.dataset.index));
+      });
+    });
+
+    closeBtn?.addEventListener("click", () => {
+      history.back();
+    });
+    prevBtn?.addEventListener("click", () => showImage(currentIndex - 1));
+    nextBtn?.addEventListener("click", () => showImage(currentIndex + 1));
+
+    // Close on backdrop click
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) history.back();
+    });
+
+    // Keyboard navigation
+    lightbox.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") history.back();
+      if (e.key === "ArrowLeft") showImage(currentIndex - 1);
+      if (e.key === "ArrowRight") showImage(currentIndex + 1);
+    });
+
+    // Touch swipe support
+    let touchStartX = 0;
+    lightbox.addEventListener("touchstart", (e) => {
+      touchStartX = e.touches[0].clientX;
+    });
+    lightbox.addEventListener("touchend", (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) showImage(currentIndex + 1);
+        else showImage(currentIndex - 1);
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initGallery);
+  } else {
+    initGallery();
+  }
+</script>
+
+<style>
+  .gallery-container {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .gallery-item {
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: none;
+  }
+
+  .gallery-item img {
+    margin: 0 !important;
+    padding: 0;
+  }
+
+  .lightbox {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
