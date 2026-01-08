@@ -36,6 +36,7 @@ const veranstaltungen = defineCollection({
     heroImage: z.string().optional(),
     cta: z.string().optional(),
     featured: z.boolean().optional(),
+    hidden: z.boolean().optional(),
   }),
 });
 
