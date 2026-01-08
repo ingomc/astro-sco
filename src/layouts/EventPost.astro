@@ -82,11 +82,11 @@ if (!images[finalImageUrl]) throw new Error(`"${finalImageUrl}" does not exist i
   .hero-pattern {
     position: absolute;
     inset: 0;
-    background-image: url('/assets/logo_sco_min.png');
-    background-size: 60px 60px;
+    background-image: url('/assets/bg-pattern.avif');
     background-repeat: space;
-    opacity: 0.06;
-    filter: grayscale(100%) brightness(1);
+    opacity: 0.1;
+    filter: grayscale(100%) brightness(1) invert(1);
+    mix-blend-mode: screen;
   }
 
   .hero-bg::after {
