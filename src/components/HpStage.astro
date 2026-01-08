@@ -39,7 +39,7 @@ const optimizedBackgroundLgSrc = `url('${ optimizedBackgroundLg.src}')`;
         background-image: var(--blurredBg);
     }
     .stage {
-        min-height: min(40vw, 50vh);
+        min-height: 50vw;
         display:flex;
         align-items: flex-end;
         position: relative;
@@ -47,6 +47,11 @@ const optimizedBackgroundLgSrc = `url('${ optimizedBackgroundLg.src}')`;
         z-index: 2;
         background-color: transparent;
         backdrop-filter: blur(30px);
+    }
+    @media (min-width: 640px) {
+        .stage {
+            min-height: min(40vw, 50vh);
+        }
     }
     .stage::before {
         content:"";
