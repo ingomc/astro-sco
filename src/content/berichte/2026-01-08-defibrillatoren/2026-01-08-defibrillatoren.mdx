@@ -8,6 +8,7 @@ description: "Dank der großen Unterstützung aus der Ortsbevölkerung konnten z
 ---
 
 import Map from '../../../components/Map.astro';
+import Gallery from '../../../components/Gallery.astro';
 
 Dank der großen Unterstützung aus der Ortsbevölkerung konnten für die Dorfgemeinschaft Oberfüllbach zwei Defibrillatoren angeschafft werden. Dieses wichtige Projekt wurde gemeinsam von den Ortsvereinen SCO & OGV sowie der Freiwilligen Feuerwehr Oberfüllbach umgesetzt.
 
@@ -46,9 +47,13 @@ Um im Ernstfall schnell und sicher helfen zu können, wurden für alle Beteiligt
 
 Ein besonderer Dank gilt allen Spenderinnen und Spendern aus Oberfüllbach. Im Namen der beteiligten Vereine bedanken sich **Steffen Heyn** (1. Vorstand SCO & OGV), **Dominik Hohnhaus** (2. Vorstand SCO & OGV), **Michael Müller** (Kommandant der Freiwilligen Feuerwehr Oberfüllbach) sowie **Siegmar Faber** (1. Vorsitzender des Feuerwehrvereins) herzlich für die großzügige Unterstützung und das entgegengebrachte Vertrauen.
 
+## Impressionen
 
-![Defibrillator am Standort](./defi-1.avif)
-
-![Einweisung in die Bedienung](./defi-2.avif)
-
-![Die Beteiligten bei der Übergabe](./defi-3.avif)
+<Gallery
+  images={[
+    { src: "/assets/2026-01-08-defi-1.avif", alt: "Defibrillator am Standort" },
+    { src: "/assets/2026-01-08-defi-2.avif", alt: "Einweisung in die Bedienung" },
+    { src: "/assets/2026-01-08-defi-3.avif", alt: "Die Beteiligten bei der Übergabe" }
+  ]}
+  columns={3}
+/>
