@@ -1,6 +1,14 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
-import { SITE_TITLE } from "../consts";
+import {
+  SITE_TITLE,
+  USE_WINTER_LOGO,
+  LOGO_NORMAL,
+  LOGO_WINTER,
+} from "../consts";
+
+// Logo basierend auf Konfiguration
+const logoSrc = USE_WINTER_LOGO ? LOGO_WINTER : LOGO_NORMAL;
 
 // Icons from Icones.js.org, Phosphor, Bold
 export const menuItems = [
@@ -27,30 +35,42 @@ const isMaintenanceMode = false;
 <header role="banner">
   <div class="wrapper text-gray-700">
     <div class="w-24 md:w-24 h-12 md:h-16 relative">
-      <a 
-        class="block w-24 md:w-28 h-18 md:h-24 p-3 rounded-md shadow-sm hover:shadow-lg bg-white absolute top-0 left-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2" 
-        href="/" 
+      <a
+        class="block w-24 md:w-28 h-18 md:h-24 p-3 rounded-md shadow-sm hover:shadow-lg bg-white absolute top-0 left-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+        href="/"
         aria-label={`${SITE_TITLE} - Zur Startseite`}
       >
-        <img 
-          width="116" 
-          height="95" 
-          src="/assets/logo_sco_min.png" 
-          alt="SCO-OGV Oberfüllbach 1963 e.V. Logo" 
+        <img
+          width="116"
+          height="95"
+          src={logoSrc}
+          alt="SCO-OGV Oberfüllbach 1963 e.V. Logo"
           loading="eager"
+          style={USE_WINTER_LOGO
+            ? "padding: 0 8px; filter: drop-shadow(0px 0px 2px silver);"
+            : undefined}
         />
       </a>
     </div>
     {
       !isMaintenanceMode && (
         <>
-          <nav id="navigation" class="pointer-events-none md:pointer-events-auto hidden md:block" role="navigation" aria-label="Hauptnavigation">
+          <nav
+            id="navigation"
+            class="pointer-events-none md:pointer-events-auto hidden md:block"
+            role="navigation"
+            aria-label="Hauptnavigation"
+          >
             <ul class="flex gap-4" role="list">
               {menuItems.map((menuItem) => (
                 <li role="none">
                   <HeaderLink href={menuItem.slug}>
                     <>
-                      <span class="icon" set:html={menuItem.icon} aria-hidden="true" />
+                      <span
+                        class="icon"
+                        set:html={menuItem.icon}
+                        aria-hidden="true"
+                      />
                       <span>{menuItem.label}</span>
                     </>
                   </HeaderLink>
@@ -58,7 +78,11 @@ const isMaintenanceMode = false;
               ))}
             </ul>
           </nav>
-          <nav class="md:hidden md:pointer-events-none" role="navigation" aria-label="Mobile Navigation">
+          <nav
+            class="md:hidden md:pointer-events-none"
+            role="navigation"
+            aria-label="Mobile Navigation"
+          >
             <button
               type="button"
               class="open-btn inline-flex gap-2 items-center px-5 h-10 justify-center rounded-full md:hidden bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
@@ -87,16 +111,19 @@ const isMaintenanceMode = false;
         </>
       )
     }
-
   </div>
 </header>
 
 <!-- Mobile Menu Backdrop -->
-<div id="mobile-backdrop" class="mobile-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+<div
+  id="mobile-backdrop"
+  class="mobile-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 hidden"
+>
+</div>
 
 <!-- Side Drawer Mobile Menu - außerhalb des Headers -->
-<div 
-  id="mobile-menu" 
+<div
+  id="mobile-menu"
   class="mobile-menu md:pointer-events-none md:hidden bg-neutral-200 shadow-2xl text-right top-0 right-0 w-[75vw] p-4 fixed h-full z-50"
   inert
   aria-labelledby="mobile-menu-title"
@@ -119,15 +146,17 @@ const isMaintenanceMode = false;
           <path
             fill="currentColor"
             d="M208.49 191.51a12 12 0 0 1-17 17L128 145l-63.51 63.49a12 12 0 0 1-17-17L111 128L47.51 64.49a12 12 0 0 1 17-17L128 111l63.51-63.52a12 12 0 0 1 17 17L145 128Z"
-          />
+          ></path>
         </svg>
       </button>
-      {menuItems.map((menuItem) => (
-        <HeaderLink href={menuItem.slug}>
-          <span class="icon" set:html={menuItem.icon} aria-hidden="true" />
-          &nbsp;<span>{menuItem.label}</span>
-        </HeaderLink>
-      ))}
+      {
+        menuItems.map((menuItem) => (
+          <HeaderLink href={menuItem.slug}>
+            <span class="icon" set:html={menuItem.icon} aria-hidden="true" />
+            &nbsp;<span>{menuItem.label}</span>
+          </HeaderLink>
+        ))
+      }
     </div>
   </nav>
 </div>
@@ -145,44 +174,44 @@ const isMaintenanceMode = false;
   .icon svg {
     @apply block w-5 h-5;
   }
-  
+
   /* Mobile Menu Styles */
   .mobile-backdrop {
     transition: opacity 0.3s ease-in-out;
   }
-  
+
   .mobile-backdrop.mobile-backdrop--open {
     @apply block;
   }
-  
+
   .mobile-menu {
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
   }
-  
+
   .mobile-menu.mobile-menu--open {
     transform: translateX(0);
-  }  /* Focus styles for better accessibility */
+  } /* Focus styles for better accessibility */
   button:focus-visible,
   a:focus-visible {
     @apply outline-none ring-2 ring-red-700 ring-offset-2;
   }
-  
+
   /* High contrast mode support */
   @media (prefers-contrast: high) {
     header {
       @apply border-b-2 border-black;
     }
   }
-  
+
   /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
     .mobile-menu {
       transition: none;
     }
   }
-  
+
   /* Body scroll lock when menu is open */
   html:has(.mobile-menu--open) {
     overflow: hidden;
@@ -193,20 +222,22 @@ const isMaintenanceMode = false;
   const closeBtn = document.querySelector(".close-btn");
   const openBtn = document.querySelector(".open-btn") as HTMLButtonElement;
   const mobileMenu = document.querySelector("#mobile-menu") as HTMLElement;
-  const mobileBackdrop = document.querySelector("#mobile-backdrop") as HTMLElement;
-  
+  const mobileBackdrop = document.querySelector(
+    "#mobile-backdrop",
+  ) as HTMLElement;
+
   // Open mobile menu (Side Drawer)
   openBtn?.addEventListener("click", () => {
     mobileMenu?.removeAttribute("inert");
     mobileMenu?.classList.add("mobile-menu--open");
     mobileBackdrop?.classList.add("mobile-backdrop--open");
     openBtn.setAttribute("aria-expanded", "true");
-    
+
     // Focus management - focus first menu item
     const firstMenuItem = mobileMenu?.querySelector("a") as HTMLAnchorElement;
     firstMenuItem?.focus();
   });
-  
+
   // Close mobile menu
   const closeMobileMenu = () => {
     mobileMenu?.classList.remove("mobile-menu--open");
@@ -215,26 +246,33 @@ const isMaintenanceMode = false;
     openBtn?.setAttribute("aria-expanded", "false");
     openBtn?.focus(); // Return focus to open button
   };
-  
+
   closeBtn?.addEventListener("click", closeMobileMenu);
-  
+
   // Close on Escape key
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && mobileMenu?.classList.contains("mobile-menu--open")) {
+    if (
+      e.key === "Escape" &&
+      mobileMenu?.classList.contains("mobile-menu--open")
+    ) {
       closeMobileMenu();
     }
   });
-  
+
   // Close when clicking backdrop
   mobileBackdrop?.addEventListener("click", closeMobileMenu);
-  
+
   // Trap focus within mobile menu
   mobileMenu?.addEventListener("keydown", (e) => {
     if (e.key === "Tab") {
-      const focusableElements = mobileMenu.querySelectorAll('button, a, [tabindex="0"]');
+      const focusableElements = mobileMenu.querySelectorAll(
+        'button, a, [tabindex="0"]',
+      );
       const firstElement = focusableElements[0] as HTMLElement;
-      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-      
+      const lastElement = focusableElements[
+        focusableElements.length - 1
+      ] as HTMLElement;
+
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
           e.preventDefault();
