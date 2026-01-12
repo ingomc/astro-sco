@@ -18,15 +18,15 @@ Der **SCO&OGV** lädt am **Samstag, den 17. Januar 2026**, ab **18:00 Uhr** herz
 * **Geräucherte Forelle** mit Kartoffelsalat oder Brot
 * **Geräucherter Saibling** mit Kartoffelsalat oder Brot
 
-Wir bitten um Vorbestellung bis zum **11.01.2026** bei:
+~~Wir bitten um Vorbestellung bis zum **11.01.2026** bei:~~
 
-Dominik Hohnhaus\
-📞 0177 7142735
+~~Dominik Hohnhaus~~\
+~~📞 0177 7142735~~
 
-oder
+~~oder~~
 
-Steffen Heyn\
-📞 01514 3250193
+~~Steffen Heyn~~\
+~~📞 01514 3250193~~
 
 
 
