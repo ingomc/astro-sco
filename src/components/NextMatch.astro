@@ -4,14 +4,11 @@ const TEAM_ID = 308868; // SCO-Darts Team Fülltreffer
 const TEAM_NAME = "SCO-Darts Team Fülltreffer";
 ---
 
-<div
-    class="next-match-card bg-white rounded-lg px-4 py-3 border border-slate-300"
->
+<div class="bg-white rounded-lg px-4 py-3 border border-slate-300">
     <div class="flex gap-2 justify-between items-center mb-2">
         <h2 class="font-bold">Nächstes Ligaspiel</h2>
-        <span
-            class="next-match-badge text-xs py-1 px-2 rounded-full hidden"
-            id="home-away-badge"></span>
+        <span class="text-xs py-1 px-2 rounded-full hidden" id="home-away-badge"
+        ></span>
     </div>
     <hr class="mb-3" />
 
@@ -50,13 +47,16 @@ const TEAM_NAME = "SCO-Darts Team Fülltreffer";
                 </div>
 
                 <!-- Teams -->
-                <div class="teams-container mt-1">
+                <div class="flex flex-col gap-1 mt-1">
                     <div
                         class="flex items-center justify-between gap-2 text-sm"
                     >
-                        <span class="home-team font-semibold"></span>
+                        <span class="home-team font-semibold flex-1 truncate"
+                        ></span>
                         <span class="text-slate-400">vs</span>
-                        <span class="guest-team font-semibold"></span>
+                        <span
+                            class="guest-team font-semibold flex-1 truncate text-right"
+                        ></span>
                     </div>
                 </div>
 
@@ -76,38 +76,6 @@ const TEAM_NAME = "SCO-Darts Team Fülltreffer";
         </div>
     </div>
 </div>
-
-<style>
-    .next-match-card {
-        container-type: inline-size;
-    }
-
-    .teams-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-
-    .home-team,
-    .guest-team {
-        flex: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .our-team {
-        color: #b91c1c; /* text-red-700 */
-        font-weight: 700;
-    }
-
-    @container (max-width: 280px) {
-        .home-team,
-        .guest-team {
-            font-size: 0.8rem;
-        }
-    }
-</style>
 
 <script define:vars={{ TEAM_ID, TEAM_NAME }}>
     const API_BASE =
@@ -217,9 +185,9 @@ const TEAM_NAME = "SCO-Darts Team Fülltreffer";
             guestEl.textContent = guestTeam;
 
             if (isHome) {
-                homeEl.classList.add("our-team");
+                homeEl.classList.add("text-red-700", "font-bold");
             } else {
-                guestEl.classList.add("our-team");
+                guestEl.classList.add("text-red-700", "font-bold");
             }
 
             // Spieltag
