@@ -1,0 +1,237 @@
+---
+// NextMatch.astro - Zeigt das nächste Ligaspiel dynamisch von der 2K API
+const TEAM_ID = 308868; // SCO-Darts Team Fülltreffer
+const TEAM_NAME = "SCO-Darts Team Fülltreffer";
+---
+
+<div
+    class="next-match-card bg-white rounded-lg px-4 py-3 border border-slate-300"
+>
+    <div class="flex gap-2 justify-between items-center mb-2">
+        <h2 class="font-bold">Nächstes Ligaspiel</h2>
+        <span
+            class="next-match-badge text-xs py-1 px-2 rounded-full hidden"
+            id="home-away-badge"></span>
+    </div>
+    <hr class="mb-3" />
+
+    <div id="next-match-content">
+        <div id="loading-state" class="py-4 text-center text-slate-500">
+            <svg
+                class="animate-spin h-5 w-5 mx-auto mb-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+            >
+                <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"></circle>
+                <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+            </svg>
+            Lade Spielplan...
+        </div>
+
+        <div id="match-info" class="hidden">
+            <div class="flex flex-col gap-2">
+                <!-- Datum und Uhrzeit -->
+                <div class="flex items-center gap-2">
+                    <span
+                        class="date-badge text-xs font-semibold py-1 px-2 rounded-full bg-slate-100"
+                    ></span>
+                    <span class="time-text text-sm text-slate-600"></span>
+                </div>
+
+                <!-- Teams -->
+                <div class="teams-container mt-1">
+                    <div
+                        class="flex items-center justify-between gap-2 text-sm"
+                    >
+                        <span class="home-team font-semibold"></span>
+                        <span class="text-slate-400">vs</span>
+                        <span class="guest-team font-semibold"></span>
+                    </div>
+                </div>
+
+                <!-- Spieltag Info -->
+                <div class="text-xs text-slate-500 mt-1">
+                    <span class="round-name"></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="no-match-state" class="hidden py-4 text-center text-slate-500">
+            Kein anstehendes Spiel gefunden
+        </div>
+
+        <div id="error-state" class="hidden py-4 text-center text-red-500">
+            Fehler beim Laden der Daten
+        </div>
+    </div>
+</div>
+
+<style>
+    .next-match-card {
+        container-type: inline-size;
+    }
+
+    .teams-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .home-team,
+    .guest-team {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .our-team {
+        color: #b91c1c; /* text-red-700 */
+        font-weight: 700;
+    }
+
+    @container (max-width: 280px) {
+        .home-team,
+        .guest-team {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+
+<script define:vars={{ TEAM_ID, TEAM_NAME }}>
+    const API_BASE =
+        "https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend";
+    const EVENT_ID = 15995;
+    const PHASE_ID = 26752;
+
+    async function fetchNextMatch() {
+        const loadingEl = document.getElementById("loading-state");
+        const matchInfoEl = document.getElementById("match-info");
+        const noMatchEl = document.getElementById("no-match-state");
+        const errorEl = document.getElementById("error-state");
+        const badgeEl = document.getElementById("home-away-badge");
+
+        try {
+            // 1. Hole Phase-Daten mit allen Spieltagen
+            const phaseRes = await fetch(
+                `${API_BASE}/event/${EVENT_ID}/phase/${PHASE_ID}`,
+            );
+            if (!phaseRes.ok) throw new Error("Phase fetch failed");
+            const phaseData = await phaseRes.json();
+
+            // 2. Finde den nächsten Spieltag (dateTo in der Zukunft)
+            const now = new Date();
+            const upcomingRounds = phaseData.rounds
+                .filter((round) => new Date(round.dateTo) > now)
+                .sort((a, b) => new Date(a.dateFrom) - new Date(b.dateFrom));
+
+            if (upcomingRounds.length === 0) {
+                loadingEl.classList.add("hidden");
+                noMatchEl.classList.remove("hidden");
+                return;
+            }
+
+            // 3. Durchsuche die Runden nach unserem nächsten Spiel
+            let foundMatch = null;
+            let foundRound = null;
+
+            for (const round of upcomingRounds) {
+                const roundRes = await fetch(
+                    `${API_BASE}/event/${EVENT_ID}/phase/${PHASE_ID}/round/${round.id}`,
+                );
+                if (!roundRes.ok) continue;
+                const roundData = await roundRes.json();
+
+                // Suche unser Match
+                const ourMatch = roundData.matches.find(
+                    (match) =>
+                        match.participantHome?.id === TEAM_ID ||
+                        match.participantGuest?.id === TEAM_ID,
+                );
+
+                if (ourMatch && ourMatch.statusCd !== "FINISHED") {
+                    foundMatch = ourMatch;
+                    foundRound = round;
+                    break;
+                }
+            }
+
+            if (!foundMatch) {
+                loadingEl.classList.add("hidden");
+                noMatchEl.classList.remove("hidden");
+                return;
+            }
+
+            // 4. Match-Daten extrahieren
+            const isHome = foundMatch.participantHome?.id === TEAM_ID;
+            const opponent = isHome
+                ? foundMatch.participantGuest?.displayName
+                : foundMatch.participantHome?.displayName;
+            const homeTeam = foundMatch.participantHome?.displayName || "TBD";
+            const guestTeam = foundMatch.participantGuest?.displayName || "TBD";
+
+            // Datum formatieren (API liefert UTC)
+            const matchDate = new Date(foundMatch.datePlanned);
+            const dateOptions = {
+                weekday: "short",
+                day: "2-digit",
+                month: "2-digit",
+            };
+            const timeOptions = { hour: "2-digit", minute: "2-digit" };
+            const formattedDate = matchDate.toLocaleDateString(
+                "de-DE",
+                dateOptions,
+            );
+            const formattedTime =
+                matchDate.toLocaleTimeString("de-DE", timeOptions) + " Uhr";
+
+            // 5. UI aktualisieren
+            loadingEl.classList.add("hidden");
+            matchInfoEl.classList.remove("hidden");
+
+            // Heim/Auswärts Badge
+            badgeEl.textContent = isHome ? "🏠 Heimspiel" : "🚗 Auswärts";
+            badgeEl.className = `text-xs py-1 px-2 rounded-full ${isHome ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"}`;
+            badgeEl.classList.remove("hidden");
+
+            // Datum und Zeit
+            matchInfoEl.querySelector(".date-badge").textContent =
+                formattedDate;
+            matchInfoEl.querySelector(".time-text").textContent = formattedTime;
+
+            // Teams mit Highlight für unser Team
+            const homeEl = matchInfoEl.querySelector(".home-team");
+            const guestEl = matchInfoEl.querySelector(".guest-team");
+            homeEl.textContent = homeTeam;
+            guestEl.textContent = guestTeam;
+
+            if (isHome) {
+                homeEl.classList.add("our-team");
+            } else {
+                guestEl.classList.add("our-team");
+            }
+
+            // Spieltag
+            matchInfoEl.querySelector(".round-name").textContent =
+                foundRound.name;
+        } catch (error) {
+            console.error("Error fetching next match:", error);
+            loadingEl.classList.add("hidden");
+            errorEl.classList.remove("hidden");
+        }
+    }
+
+    // Beim Laden der Seite ausführen
+    fetchNextMatch();
+</script>

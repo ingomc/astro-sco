@@ -10,3 +10,11 @@ Am Samstag, den 23. März 2024, fand im Sportheim ein herausragendes Spintessen 
 
 Insgesamt war das Spintessen ein voller Erfolg, der nicht nur den Gaumen erfreute, sondern auch dazu beitrug, die lokale Gemeinschaft zu stärken.
 
+ende januar Spintessenfyler
+wochenblatt?
+austragen
+5.2. Flyer in druckerei
+23.2. spätestens austragen
+8.3. Bestellung bis
+
+
