@@ -7,15 +7,16 @@ import BadgeMini from "../components/BadgeMini.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import EventsSection from "../components/EventsSection.astro";
 import EventBanner from "../components/EventBanner.astro";
+import NextMatch from "../components/NextMatch.astro";
 import allshortevents from "../data/shortevents.json";
 
-const posts = (await getCollection('start')).sort(
-	(a, b) => a.data.order.valueOf() - b.data.order.valueOf()
+const posts = (await getCollection("start")).sort(
+	(a, b) => a.data.order.valueOf() - b.data.order.valueOf(),
 );
 
-const pastEvents = (await getCollection("berichte")).sort(
-  (a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf(),
-).reverse();
+const pastEvents = (await getCollection("berichte"))
+	.sort((a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf())
+	.reverse();
 
 const now = new Date().setHours(0, 0, 0, 0);
 
@@ -24,24 +25,25 @@ const threeWeeksAgo = new Date();
 threeWeeksAgo.setDate(threeWeeksAgo.getDate() - 21);
 const isNew = (date: Date) => date.valueOf() >= threeWeeksAgo.valueOf();
 
-const dateInPast = (date: Date) =>
-  date.setHours(0, 0, 0, 0) >= now;
+const dateInPast = (date: Date) => date.setHours(0, 0, 0, 0) >= now;
 
 // TODO Events + News
-const events = (await getCollection('veranstaltungen'))
-.filter((ev) => dateInPast(ev.data.eventDate))
-.filter((ev) => ev.data.pubDate <= new Date() && !ev.data.hidden)
-.sort(
-	(a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf()
-);
+const events = (await getCollection("veranstaltungen"))
+	.filter((ev) => dateInPast(ev.data.eventDate))
+	.filter((ev) => ev.data.pubDate <= new Date() && !ev.data.hidden)
+	.sort((a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf());
 
-const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev.date))).sort(
-	(a, b) => new Date(a.date).valueOf() -  new Date(b.date).valueOf()
-)
+const shortevents = allshortevents.geplant
+	.filter((ev) => dateInPast(new Date(ev.date)))
+	.sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf());
 
 // Featured Event - bevorzugt Events mit featured: true, sonst erstes Event mit CTA
-const featuredEvent = events.find(event => event.data.featured) || events.find(event => event.data.cta);
-const regularEvents = featuredEvent ? events.filter(event => event.slug !== featuredEvent.slug) : events;
+const featuredEvent =
+	events.find((event) => event.data.featured) ||
+	events.find((event) => event.data.cta);
+const regularEvents = featuredEvent
+	? events.filter((event) => event.slug !== featuredEvent.slug)
+	: events;
 
 // Neuester Bericht, wenn er in den letzten 3 Wochen veröffentlicht wurde
 const latestBericht = pastEvents[0];
@@ -49,175 +51,260 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
 ---
 
 <App>
-  <HpStage />
-  <div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
+	<HpStage />
+	<div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
+		<!-- MAIN CONTENT - kommt jetzt ZUERST im DOM für korrekte Tab-Reihenfolge -->
+		<main class="content prose pb-4">
+			<h1 class="sr-only">
+				Startseite - Aktuelle Veranstaltungen und Neuigkeiten
+			</h1>
 
-	<!-- MAIN CONTENT - kommt jetzt ZUERST im DOM für korrekte Tab-Reihenfolge -->
-	<main class="content prose pb-4">
-		<h1 class="sr-only">Startseite - Aktuelle Veranstaltungen und Neuigkeiten</h1>
-		
-		{
-			featuredEvent && (
-				<section class="not-prose mb-6">
-					<h2 class="sr-only">Featured Veranstaltung</h2>
-					<EventBanner event={featuredEvent} highlight={true} />
-				</section>
-			)
-		}
-		{
-			regularEvents.length > 0 && (
-				<section class="not-prose">
-					<h2 class="sr-only">Weitere Veranstaltungen</h2>
-					<EventsSection data={regularEvents} />
-				</section>
-			)
-		}
-
-		{
-			showLatestBericht && (
-				<section class="not-prose mt-6">
-					<h2 class="text-lg font-bold mb-3 flex items-center gap-2">
-						<BadgeMini highlight><span class="font-semibold">NEU</span></BadgeMini>
-						Aktueller Bericht
-					</h2>
-					<EventsSection data={[latestBericht]} path="berichte" />
-				</section>
-			)
-		}
-
-		{
-			posts.map(async (post) => {
-            	const { Content } = await post.render();
-            	return (
-						<Content />
+			{
+				featuredEvent && (
+					<section class="not-prose mb-6">
+						<h2 class="sr-only">Featured Veranstaltung</h2>
+						<EventBanner event={featuredEvent} highlight={true} />
+					</section>
 				)
-          	})
-		}
-	</main>
+			}
+			{
+				regularEvents.length > 0 && (
+					<section class="not-prose">
+						<h2 class="sr-only">Weitere Veranstaltungen</h2>
+						<EventsSection data={regularEvents} />
+					</section>
+				)
+			}
 
-	 <!-- Berichte  -->
-	 <aside class="side1" aria-labelledby="berichte-heading">
-		<HpCard>
-			<div class="flex gap-2 justify-between items-center" slot="title">
-				<h2 id="berichte-heading" class="font-bold">Berichte</h2>
-				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2" href="/veranstaltungen/" aria-label="Alle Berichte anzeigen">
-					Alle Berichte
-					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" aria-hidden="true">
-						<path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/>
-					</svg>
-				</a>
-			</div>
+			{
+				showLatestBericht && (
+					<section class="not-prose mt-6">
+						<h2 class="text-lg font-bold mb-3 flex items-center gap-2">
+							<BadgeMini highlight>
+								<span class="font-semibold">NEU</span>
+							</BadgeMini>
+							Aktueller Bericht
+						</h2>
+						<EventsSection data={[latestBericht]} path="berichte" />
+					</section>
+				)
+			}
+
+			{
+				posts.map(async (post) => {
+					const { Content } = await post.render();
+					return <Content />;
+				})
+			}
+		</main>
+
+		<!-- Berichte  -->
+		<aside class="side1" aria-labelledby="berichte-heading">
+			<HpCard>
+				<div
+					class="flex gap-2 justify-between items-center"
+					slot="title"
+				>
+					<h2 id="berichte-heading" class="font-bold">Berichte</h2>
+					<a
+						class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+						href="/veranstaltungen/"
+						aria-label="Alle Berichte anzeigen"
+					>
+						Alle Berichte
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 256 256"
+							aria-hidden="true"
+						>
+							<path
+								fill="currentColor"
+								d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"
+							></path>
+						</svg>
+					</a>
+				</div>
 				<ul class="whitespace-nowrap">
 					{
-						pastEvents.slice(0,1).map((event) => (
+						pastEvents.slice(0, 1).map((event) => (
 							<li>
-								<a href={`/berichte/${event.slug}/`} 
-								   class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-1 rounded"
-								   aria-label={`Bericht lesen: ${event.data.title}`}>
+								<a
+									href={`/berichte/${event.slug}/`}
+									class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-1 rounded"
+									aria-label={`Bericht lesen: ${event.data.title}`}
+								>
 									{isNew(event.data.pubDate) && (
 										<BadgeMini highlight>
-											<span class="font-semibold">NEU</span>
+											<span class="font-semibold">
+												NEU
+											</span>
 										</BadgeMini>
 									)}
-									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">{event.data.title}</span>
+									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">
+										{event.data.title}
+									</span>
 								</a>
 							</li>
 						))
 					}
 				</ul>
-		</HpCard>
-	</aside>
-	<!-- / Berichte  -->
-	 
-	<!--  Veranstaltungen -->
-	<aside class="side2" aria-labelledby="veranstaltungen-heading">
-		<HpCard>
-			<div class="flex gap-2 justify-between items-center" slot="title">
-				<h2 id="veranstaltungen-heading" class="font-bold">Veranstaltungen</h2>
-				<a class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2" href="/veranstaltungen/" aria-label="Alle Veranstaltungen anzeigen">
-					Alle Termine
-					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" aria-hidden="true">
-						<path fill="currentColor" d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"/>
-					</svg>
-				</a>
-			</div>
-			{
-				events.length > 0 && (
-					<ul class="">
-						{
-							events.map((event) => (
-							<li>
-								<a href={`/veranstaltungen/${event.slug}/`} 
-								   class="inline-flex flex-row items-start gap-2 overflow-hidden max-w-full block py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-1 rounded"
-								   aria-label={`Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`}>
-									<BadgeMini>
-										<span class="font-semibold whitespace-nowrap">
-											<span class="day">{event.data.eventDate.toLocaleDateString("de-DE", { weekday: 'short' })},</span>
-											<span><FormattedDate date={event.data.eventDate} /></span>
+			</HpCard>
+		</aside>
+		<!-- / Berichte  -->
+
+		<!--  Veranstaltungen -->
+		<aside class="side2" aria-labelledby="veranstaltungen-heading">
+			<HpCard>
+				<div
+					class="flex gap-2 justify-between items-center"
+					slot="title"
+				>
+					<h2 id="veranstaltungen-heading" class="font-bold">
+						Veranstaltungen
+					</h2>
+					<a
+						class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+						href="/veranstaltungen/"
+						aria-label="Alle Veranstaltungen anzeigen"
+					>
+						Alle Termine
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 256 256"
+							aria-hidden="true"
+						>
+							<path
+								fill="currentColor"
+								d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"
+							></path>
+						</svg>
+					</a>
+				</div>
+				{
+					events.length > 0 && (
+						<ul class="">
+							{events.map((event) => (
+								<li>
+									<a
+										href={`/veranstaltungen/${event.slug}/`}
+										class="inline-flex flex-row items-start gap-2 overflow-hidden max-w-full block py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-1 rounded"
+										aria-label={`Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`}
+									>
+										<BadgeMini>
+											<span class="font-semibold whitespace-nowrap">
+												<span class="day">
+													{event.data.eventDate.toLocaleDateString(
+														"de-DE",
+														{ weekday: "short" },
+													)}
+													,
+												</span>
+												<span>
+													<FormattedDate
+														date={
+															event.data.eventDate
+														}
+													/>
+												</span>
+											</span>
+										</BadgeMini>
+										<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">
+											{event.data.title}
 										</span>
-									</BadgeMini>
-									<span class="underline underline-offset-2 decoration-slate-300 hover:decoration-slate-500 overflow-hidden text-ellipsis">{event.data.title}</span>
-								</a>
-							</li>
-						))
-						}
-					</ul>
-				)
-			}	
-			{
-				shortevents.length > 0 && (
-					<ul class="whitespace-nowrap">
-						{
-							shortevents.slice(0,2).map((event) => (
-							<li>
-								<div class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
-									<BadgeMini>
-										<span class="font-semibold"><span class="day">{new Date(event.date).toLocaleDateString("de-DE", { weekday: 'short' })},</span><span><FormattedDate date={new Date(event.date)} /></span></span>
-									</BadgeMini>
-									<span class="overflow-hidden text-ellipsis">{event.title}</span>
-									{/* <BadgeMini highlight>
+									</a>
+								</li>
+							))}
+						</ul>
+					)
+				}
+				{
+					shortevents.length > 0 && (
+						<ul class="whitespace-nowrap">
+							{shortevents.slice(0, 2).map((event) => (
+								<li>
+									<div class="inline-flex flex-row gap-2 overflow-hidden max-w-full block py-2">
+										<BadgeMini>
+											<span class="font-semibold">
+												<span class="day">
+													{new Date(
+														event.date,
+													).toLocaleDateString(
+														"de-DE",
+														{ weekday: "short" },
+													)}
+													,
+												</span>
+												<span>
+													<FormattedDate
+														date={
+															new Date(event.date)
+														}
+													/>
+												</span>
+											</span>
+										</BadgeMini>
+										<span class="overflow-hidden text-ellipsis">
+											{event.title}
+										</span>
+										{/* <BadgeMini highlight>
 											<span class="font-semibold">NEU</span>
 										</BadgeMini> */}
-								</div>
-							</li>
-						))
-						}
-					</ul>
-				)
-			}	
-			{(!shortevents.length && !events.length) && (
-				<p class="py-2 overflow-hidden text-ellipsis">Aktuell keine Veranstaltungen geplant</p>
-			)}
-		</HpCard>
-	</aside>
-	<!-- /  Veranstaltungen -->
+									</div>
+								</li>
+							))}
+						</ul>
+					)
+				}
+				{
+					!shortevents.length && !events.length && (
+						<p class="py-2 overflow-hidden text-ellipsis">
+							Aktuell keine Veranstaltungen geplant
+						</p>
+					)
+				}
+			</HpCard>
+		</aside>
+		<!-- /  Veranstaltungen -->
 
-	 <!-- Öffnungszeiten  -->
-	<aside class="side3" aria-labelledby="oeffnungszeiten-heading">
-		<HpCard>
-			<div class="flex gap-2 justify-between items-center" slot="title">
-			<h2 id="oeffnungszeiten-heading" class="font-bold">Öffnungszeiten</h2>
-			</div>
-			<ul class="prose list-disc pl-4 list-outside">
-				<li class="">
-					jeden Sonntag ab 18:30 Uhr 
-				</li>
-				<li class="">
-					jeden 1. Freitag im Monat ab 19:30 Uhr (ohne Gewähr)
-				</li>
-			</ul>
-		</HpCard>
-	</aside>
-	<!-- / Öffnungszeiten  -->
-  </div>
-</App> 
+		<!-- Nächstes Ligaspiel -->
+		<aside class="side4" aria-labelledby="next-match-heading">
+			<NextMatch />
+		</aside>
+		<!-- / Nächstes Ligaspiel -->
+
+		<!-- Öffnungszeiten  -->
+		<aside class="side3" aria-labelledby="oeffnungszeiten-heading">
+			<HpCard>
+				<div
+					class="flex gap-2 justify-between items-center"
+					slot="title"
+				>
+					<h2 id="oeffnungszeiten-heading" class="font-bold">
+						Öffnungszeiten
+					</h2>
+				</div>
+				<ul class="prose list-disc pl-4 list-outside">
+					<li class="">jeden Sonntag ab 18:30 Uhr</li>
+					<li class="">
+						jeden 1. Freitag im Monat ab 19:30 Uhr (ohne Gewähr)
+					</li>
+				</ul>
+			</HpCard>
+		</aside>
+		<!-- / Öffnungszeiten  -->
+	</div>
+</App>
 
 <style>
 	.day {
 		display: inline-block;
 		width: 3ch;
 	}
-	@media (max-width:767px) {
+	@media (max-width: 767px) {
 		.main {
 			grid-area: main;
 			display: flex;
@@ -228,11 +315,12 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
 		.main {
 			grid-area: main;
 			grid-template-areas:
-			  "content side1"
-			  "content side2"
-			  "content side3";
-			  grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
-			grid-template-rows: auto auto 1fr;
+				"content side1"
+				"content side2"
+				"content side4"
+				"content side3";
+			grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
+			grid-template-rows: auto auto auto 1fr;
 		}
 		.content {
 			grid-area: content;
@@ -246,8 +334,11 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
 		.side3 {
 			grid-area: side3;
 		}
+		.side4 {
+			grid-area: side4;
+		}
 	}
-		
+
 	@media (min-width: 1280px) {
 		.main {
 			grid-template-columns: minmax(0, 4fr) minmax(0, 2fr);
