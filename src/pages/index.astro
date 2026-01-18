@@ -79,12 +79,13 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
 			{
 				showLatestBericht && (
 					<section class="not-prose mt-6">
-						<h2 class="text-lg font-bold mb-3 flex items-center gap-2">
+						{/*  <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
 							<BadgeMini highlight>
 								<span class="font-semibold">NEU</span>
 							</BadgeMini>
 							Aktueller Bericht
 						</h2>
+						 */}
 						<EventsSection data={[latestBericht]} path="berichte" />
 					</section>
 				)
