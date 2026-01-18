@@ -1,5 +1,6 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
+import NextMatch from "./NextMatch.astro";
 import {
   SITE_TITLE,
   USE_WINTER_LOGO,
@@ -55,6 +56,10 @@ const isMaintenanceMode = false;
     {
       !isMaintenanceMode && (
         <>
+          <div class="hidden md:block">
+            <NextMatch small={true} />
+          </div>
+
           <nav
             id="navigation"
             class="pointer-events-none md:pointer-events-auto hidden md:block"

@@ -7,6 +7,7 @@ import HeaderLink from "../components/HeaderLink.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
 import {version} from "../../package.json";
 import Snow from "../components/Snow.astro";
+import NextMatch from "../components/NextMatch.astro";
 
 const { title, description, image } = Astro.props;
 ---
@@ -20,6 +21,9 @@ const { title, description, image } = Astro.props;
     <SkipLinks />
     <div class="app">
       <Snow />
+      <div class="md:hidden bg-neutral-100 border-b border-neutral-200">
+        <NextMatch small={true} />
+      </div>
       <Header title={SITE_TITLE} />
       <main id="main-content" role="main" tabindex="-1">
         <slot />
@@ -49,18 +53,13 @@ const { title, description, image } = Astro.props;
   }
   
   .app {
-    display: grid;
-    grid-template-areas:
-      "header"
-      "main"
-      "footer";
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
   }
   
   main {
-    grid-area: main;
+    flex: 1;
     /* Ensure main content is focusable for skip links */
     outline: none;
   }
