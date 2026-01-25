@@ -183,23 +183,22 @@ const TEAM_NAME = "SCO-Darts Team Fülltreffer";
               }
               const phaseData = await window.phaseDataCache;
        
-              // 3. Finde den nächsten Spieltag (dateTo in der Zukunft)
-              const now = new Date();
-              const upcomingRounds = phaseData.rounds
-                  .filter((round) => new Date(round.dateTo) > now)
-                  .sort((a, b) => new Date(a.dateFrom) - new Date(b.dateFrom)); 
-  
-              if (upcomingRounds.length === 0) {
-                  loadingEl.classList.add("hidden");
-                  if(noMatchEl) noMatchEl.classList.remove("hidden");
-                  return;
-              }
-  
-              // 4. Durchsuche die Runden nach unserem nächsten Spiel
-              let foundMatch = null;
-              let foundRound = null;
-  
-              for (const round of upcomingRounds) {
+            // 3. Finde das nächste Spiel nach Match-Datum (nicht nur nach Rundendatum)
+            const now = new Date();
+            const startOfToday = new Date();
+            startOfToday.setHours(0, 0, 0, 0);
+
+            const roundsByDate = [...phaseData.rounds].sort(
+                (a, b) => new Date(a.dateFrom) - new Date(b.dateFrom)
+            );
+
+            // 4. Durchsuche die Runden nach unserem nächsten Spiel
+            let foundMatch = null;
+            let foundRound = null;
+            let fallbackMatch = null;
+            let fallbackRound = null;
+
+            for (const round of roundsByDate) {
                   // Cache round requests auch
                    const cacheKey = `round_${round.id}`;
                    if (!window[cacheKey]) {
@@ -208,20 +207,46 @@ const TEAM_NAME = "SCO-Darts Team Fülltreffer";
                   const roundData = await window[cacheKey];
   
                   // Suche unser Match
-                  const ourMatch = roundData.matches.find(
-                      (match) =>
-                          match.participantHome?.id === TEAM_ID ||
-                          match.participantGuest?.id === TEAM_ID,
-                  );
-  
-                  if (ourMatch && ourMatch.statusCd !== "FINISHED") {
-                      foundMatch = ourMatch;
-                      foundRound = round;
-                      break;
-                  }
+                const ourMatches = roundData.matches.filter(
+                    (match) =>
+                        match.participantHome?.id === TEAM_ID ||
+                        match.participantGuest?.id === TEAM_ID,
+                );
+
+                if (ourMatches.length === 0) continue;
+
+                // Kandidat: nächstes Spiel ab heute
+                const upcomingMatch = ourMatches
+                    .filter((match) => match.statusCd !== "FINISHED")
+                    .map((match) => ({
+                        match,
+                        date: match.datePlanned ? new Date(match.datePlanned) : null,
+                    }))
+                    .filter((item) => item.date && item.date >= startOfToday)
+                    .sort((a, b) => a.date - b.date)[0];
+
+                if (upcomingMatch) {
+                    foundMatch = upcomingMatch.match;
+                    foundRound = round;
+                    break;
+                }
+
+                // Fallback: erstes nicht beendetes Match, falls keine DatePlanned >= heute
+                const firstNotFinished = ourMatches.find(
+                    (match) => match.statusCd !== "FINISHED",
+                );
+                if (firstNotFinished && !fallbackMatch) {
+                    fallbackMatch = firstNotFinished;
+                    fallbackRound = round;
+                }
               }
   
-              if (!foundMatch) {
+            if (!foundMatch && fallbackMatch) {
+                foundMatch = fallbackMatch;
+                foundRound = fallbackRound;
+            }
+
+            if (!foundMatch) {
                   loadingEl.classList.add("hidden");
                   if(noMatchEl) noMatchEl.classList.remove("hidden");
                   return;
