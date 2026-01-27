@@ -5,7 +5,7 @@ import App from "../layouts/App.astro";
 import HpCard from "../components/HpCard.astro";
 import BadgeMini from "../components/BadgeMini.astro";
 import FormattedDate from "../components/FormattedDate.astro";
-import EventsSection from "../components/EventsSection.astro";
+import EventCardCompact from "../components/EventCardCompact.astro";
 import EventBanner from "../components/EventBanner.astro";
 import NextMatch from "../components/NextMatch.astro";
 import allshortevents from "../data/shortevents.json";
@@ -63,7 +63,7 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
 				featuredEvent && (
 					<section class="not-prose mb-6">
 						<h2 class="sr-only">Featured Veranstaltung</h2>
-						<EventBanner event={featuredEvent} highlight={true} />
+						<EventCardCompact data={[featuredEvent]} />
 					</section>
 				)
 			}
@@ -71,7 +71,7 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
 				regularEvents.length > 0 && (
 					<section class="not-prose">
 						<h2 class="sr-only">Weitere Veranstaltungen</h2>
-						<EventsSection data={regularEvents} />
+						<EventCardCompact data={regularEvents} />
 					</section>
 				)
 			}
@@ -86,7 +86,7 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
 							Aktueller Bericht
 						</h2>
 						 */}
-						<EventsSection data={[latestBericht]} path="berichte" />
+						<EventCardCompact data={[latestBericht]} path="berichte" />
 					</section>
 				)
 			}

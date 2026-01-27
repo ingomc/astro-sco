@@ -5,6 +5,7 @@ import BadgeMini from "../../components/BadgeMini.astro";
 import HpCard from "../../components/HpCard.astro";
 import HpStage from "../../components/HpStage.astro";
 import EventsSection from "../../components/EventsSection.astro";
+import EventCardCompact from "../../components/EventCardCompact.astro";
 import FormattedDate from "../../components/FormattedDate.astro";
 import allshortevents from "../../data/shortevents.json";
 import NextMatch from "../../components/NextMatch.astro";
@@ -118,7 +119,7 @@ const description =
         <hr class="my-8">
         <section>
           <h2 class="text-xl font-bold mb-4">Vergangene Veranstaltungen (letzte 3 Monate)</h2>
-          <EventsSection data={recentPastEvents} isPast={true} />
+          <EventCardCompact data={recentPastEvents} isPast={true} />
         </section>
       )}
 
