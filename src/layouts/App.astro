@@ -8,6 +8,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
 import {version} from "../../package.json";
 import Snow from "../components/Snow.astro";
 import NextMatch from "../components/NextMatch.astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
 
 const { title, description, image } = Astro.props;
 ---
@@ -31,6 +32,7 @@ const { title, description, image } = Astro.props;
       </main>
       <Footer />
     </div>
+    <SpeedInsights />
   </body>
 </html>
 
