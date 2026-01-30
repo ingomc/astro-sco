@@ -1,29 +1,38 @@
 ---
-import { Image } from 'astro:assets';
+import { Image } from "astro:assets";
 import FormattedDate from "./FormattedDate.astro";
 import BadgeMini from "./BadgeMini.astro";
 
 // Kompakte Event-Karte für Startseite und vergangene Veranstaltungen
 const { data, path, isPast = false } = Astro.props;
-const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*.{jpeg,jpg,png,gif,avif}');
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  "/public/assets/**/*.{jpeg,jpg,png,gif,avif}",
+);
 ---
 
 <div>
-    <ul class="grid grid-cols-1 gap-4">
-      {
-        data.map((event) => {
-          const Element = isPast ? 'div' : 'a';
-          const href = isPast ? undefined : `/${path ? path : 'veranstaltungen' }/${event.slug}/`;
-          return (
+  <ul class="grid grid-cols-1 gap-4">
+    {
+      data.map((event) => {
+        const Element = isPast ? "div" : "a";
+        const href = isPast
+          ? undefined
+          : `/${path ? path : "veranstaltungen"}/${event.slug}/`;
+        return (
           <li>
             <Element
               class:list={[
                 "flex flex-row w-full bg-white rounded-lg border border-slate-300 transition-all duration-200 gap-3 md:gap-4 p-3 md:p-4",
-                !isPast && "hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2",
-                isPast && "opacity-60 grayscale cursor-not-allowed"
+                !isPast &&
+                  "hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2",
+                isPast && "opacity-60 grayscale cursor-not-allowed",
               ]}
               href={href}
-              aria-label={!isPast ? `Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}` : undefined}
+              aria-label={
+                !isPast
+                  ? `Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`
+                  : undefined
+              }
             >
               {event.data.heroImage && (
                 <div class="shrink-0 overflow-hidden rounded w-32 md:w-48">
@@ -35,12 +44,15 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
                     widths={[100, 150, 200, 320]}
                     sizes="(max-width: 768px) 128px, 224px"
                     class="object-contain object-top w-full h-auto"
+                    loading="eager"
                   />
                 </div>
               )}
               <div class="flex flex-col justify-between w-full min-w-0 gap-1 md:gap-2">
                 <div class="flex flex-col gap-1 md:gap-2">
-                  <h2 class="font-bold text-base md:text-xl">{event.data.title}</h2>
+                  <h2 class="font-bold text-base md:text-xl">
+                    {event.data.title}
+                  </h2>
                   <div class="flex flex-wrap gap-2 md:gap-4 gap-y-1 md:gap-y-2">
                     <BadgeMini>
                       <b>Am:</b>
@@ -48,10 +60,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
                         weekday: "short",
                       })}
                       ,
-                      <FormattedDate
-                        date={event.data.eventDate}
-                        time={false}
-                      />
+                      <FormattedDate date={event.data.eventDate} time={false} />
                     </BadgeMini>
                     {event.data.location && (
                       <BadgeMini>
@@ -60,31 +69,44 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
                     )}
                   </div>
                 </div>
-                <p class="hidden md:block text-sm text-slate-600 line-clamp-1">{event.data.description}</p>
-                <span class:list={[
-                  "self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-1.5 px-3 md:py-2 md:px-4 justify-center rounded-full",
-                  isPast ? "bg-slate-200 text-slate-500" : (event.data.cta ? "bg-red-700 text-white hover:bg-red-800" : "bg-slate-100 hover:bg-slate-300")
-                ]}>
-                  {isPast ? "Vergangen" : (event.data.cta ? event.data.cta : 'Mehr erfahren')}
+                <p class="hidden md:block text-sm text-slate-600 line-clamp-1">
+                  {event.data.description}
+                </p>
+                <span
+                  class:list={[
+                    "self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-1.5 px-3 md:py-2 md:px-4 justify-center rounded-full",
+                    isPast
+                      ? "bg-slate-200 text-slate-500"
+                      : event.data.cta
+                        ? "bg-red-700 text-white hover:bg-red-800"
+                        : "bg-slate-100 hover:bg-slate-300",
+                  ]}
+                >
+                  {isPast
+                    ? "Vergangen"
+                    : event.data.cta
+                      ? event.data.cta
+                      : "Mehr erfahren"}
                   {!isPast && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 256 256"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill="currentColor"
-                      d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"
-                    />
-                  </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 256 256"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="m224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01Z"
+                      />
+                    </svg>
                   )}
                 </span>
               </div>
             </Element>
           </li>
-        )})
-      }
-    </ul>
-  </div>
+        );
+      })
+    }
+  </ul>
+</div>
