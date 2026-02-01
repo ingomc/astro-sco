@@ -8,7 +8,9 @@ import BadgeMini from "../components/BadgeMini.astro";
 
 // type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, eventDate, heroImage, location } = Astro.props;
+const { title, description, eventDate, heroImage, location, hidden } =
+  Astro.props;
+const robots = hidden ? "noindex, nofollow" : undefined;
 const images = import.meta.glob<{ default: ImageMetadata }>(
   "/public/assets/**/*.{jpeg,jpg,png,gif,avif}",
 );
@@ -19,7 +21,7 @@ if (!images[finalImageUrl])
   );
 ---
 
-<App title={title} description={description} image={heroImage}>
+<App title={title} description={description} image={heroImage} robots={robots}>
   <main>
     <div class="hero-header">
       <div class="hero-bg">

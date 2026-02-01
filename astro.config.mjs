@@ -26,7 +26,15 @@ const deployadapter = () => {
 // https://astro.build/config
 export default defineConfig({
   site: "https://www.sc-oberfuellbach.de/",
-  integrations: [mdx(), sitemap(), tailwind()],
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) =>
+        !page.includes("/admin") &&
+        !page.includes("/public/admin"),
+    }),
+    tailwind(),
+  ],
   output: "static",
   adapter: deployadapter(),
 });
