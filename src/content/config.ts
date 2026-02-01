@@ -25,13 +25,13 @@ const veranstaltungen = defineCollection({
     title: z.string(),
     description: z.string(),
     pubDate: z
-    .string()
-    .or(z.date())
-    .transform((val) => new Date(val)),
+      .string()
+      .or(z.date())
+      .transform((val) => new Date(val)),
     eventDate: z
-    .string()
-    .or(z.date())
-    .transform((val) => new Date(val)),
+      .string()
+      .or(z.date())
+      .transform((val) => new Date(val)),
     location: z.string().optional(),
     heroImage: z.string().optional(),
     cta: z.string().optional(),
@@ -46,15 +46,16 @@ const berichte = defineCollection({
     title: z.string(),
     description: z.string().optional(),
     pubDate: z
-    .string()
-    .or(z.date())
-    .transform((val) => new Date(val)),
+      .string()
+      .or(z.date())
+      .transform((val) => new Date(val)),
     eventDate: z
-    .string()
-    .or(z.date())
-    .transform((val) => new Date(val)),
+      .string()
+      .or(z.date())
+      .transform((val) => new Date(val)),
     location: z.string().optional(),
     heroImage: z.string().optional(),
+    hidden: z.boolean().optional(),
   }),
 });
 
@@ -95,11 +96,11 @@ const settings = defineCollection({
   }),
 });
 
-export const collections = { 
-  veranstaltungen, 
-  berichte, 
-  start, 
-  mitglieder, 
-  sportheim, 
-  settings 
+export const collections = {
+  veranstaltungen,
+  berichte,
+  start,
+  mitglieder,
+  sportheim,
+  settings
 };

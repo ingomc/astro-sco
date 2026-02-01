@@ -1,28 +1,34 @@
 ---
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
-import '../styles/global.css';
+import "../styles/global.css";
 
 interface Props {
-	title: string;
-	description: string;
-	image?: string;
+  title: string;
+  description: string;
+  image?: string;
+  robots?: string;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, description, image = '/logo_sco.png' } = Astro.props;
+const {
+  title,
+  description,
+  image = "/logo_sco.png",
+  robots = "index,follow",
+} = Astro.props;
 ---
 
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico">
+<link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico" />
 <meta name="generator" content={Astro.generator} />
 
 <!-- Accessibility Meta Tags -->
-<meta name="color-scheme" content="light">
-<meta name="theme-color" content="#dc2626">
+<meta name="color-scheme" content="light" />
+<meta name="theme-color" content="#dc2626" />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
@@ -32,7 +38,7 @@ const { title, description, image = '/logo_sco.png' } = Astro.props;
 <meta name="title" content={title} />
 <meta name="description" content={description} />
 <meta name="language" content="de" />
-<meta name="robots" content="index,follow" />
+<meta name="robots" content={robots} />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
@@ -50,37 +56,45 @@ const { title, description, image = '/logo_sco.png' } = Astro.props;
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(image, Astro.url)} />
-<meta property="twitter:image:alt" content="SCO-OGV Oberfüllbach 1963 e.V. Logo" />
+<meta
+  property="twitter:image:alt"
+  content="SCO-OGV Oberfüllbach 1963 e.V. Logo"
+/>
 
 <!-- Performance & Accessibility -->
-<link rel="preload" href="/assets/logo_sco_min.png" as="image" fetchpriority="high">
-<link rel="dns-prefetch" href="//fonts.googleapis.com">
+<link
+  rel="preload"
+  href="/assets/logo_sco_min.png"
+  as="image"
+  fetchpriority="high"
+/>
+<link rel="dns-prefetch" href="//fonts.googleapis.com" />
 
 <!-- Apple Touch Icons -->
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="manifest" href="/site.webmanifest" />
 
 <!-- Structured Data for Local Business -->
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SportsClub",
-  "name": "SCO-OGV Oberfüllbach 1963 e.V.",
-  "description": "Sportverein in Oberfüllbach mit Vereinsheim, Veranstaltungen und Gemeinschaftsaktivitäten",
-  "url": "https://sc-oberfuellbach.de",
-  "logo": "https://sc-oberfuellbach.de/assets/logo_sco.png",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Lützelbucher Str. 7",
-    "addressLocality": "Ebersdorf-Oberfüllbach",
-    "postalCode": "96237",
-    "addressCountry": "DE"
-  },
-  "telephone": "+49-9560-8609",
-  "email": "info@sc-oberfuellbach.de",
-  "foundingDate": "1963",
-  "sameAs": []
-}
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsClub",
+    "name": "SCO-OGV Oberfüllbach 1963 e.V.",
+    "description": "Sportverein in Oberfüllbach mit Vereinsheim, Veranstaltungen und Gemeinschaftsaktivitäten",
+    "url": "https://sc-oberfuellbach.de",
+    "logo": "https://sc-oberfuellbach.de/assets/logo_sco.png",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Lützelbucher Str. 7",
+      "addressLocality": "Ebersdorf-Oberfüllbach",
+      "postalCode": "96237",
+      "addressCountry": "DE"
+    },
+    "telephone": "+49-9560-8609",
+    "email": "info@sc-oberfuellbach.de",
+    "foundingDate": "1963",
+    "sameAs": []
+  }
 </script>

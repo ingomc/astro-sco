@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /public/admin/
+
+Sitemap: https://www.sc-oberfuellbach.de/sitemap-index.xml
