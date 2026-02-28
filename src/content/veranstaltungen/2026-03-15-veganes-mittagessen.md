@@ -5,7 +5,7 @@ eventDate: 2026-03-15T12:00:00.000Z
 heroImage: /assets/2026-03-15-veganer-braten-title.avif
 location: Sportheim
 cta: Jetzt anmelden!
-description: SCO & OVG Oberfüllbach lädt zum veganen Mittagessen am 15.03.2026! Wählen Sie zwischen Nussbraten, Lasagne oder Frikadellen. Jetzt anmelden!
+description: SCO & OGV Oberfüllbach lädt zum veganen Mittagessen am 15.03.2026! Wählen Sie zwischen Nussbraten, Lasagne oder Frikadellen. Jetzt anmelden!
 hidden: false
 ---
 
