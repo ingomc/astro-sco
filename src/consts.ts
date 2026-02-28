@@ -9,7 +9,7 @@ export const SITE_DESCRIPTION = "Der SCO-OGV Oberfüllbach 1963 e.V. ist ein off
 // ===========================================
 // Setze auf true für das Winter-Logo mit Schnee
 // Setze auf false für das normale Logo
-export const USE_WINTER_LOGO = true;
+export const USE_WINTER_LOGO = false;
 
 // Logo-Pfade (nicht ändern, außer die Dateien werden umbenannt)
 export const LOGO_NORMAL = "/assets/logo_sco_min.png";
