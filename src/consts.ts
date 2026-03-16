@@ -14,3 +14,10 @@ export const USE_WINTER_LOGO = false;
 // Logo-Pfade (nicht ändern, außer die Dateien werden umbenannt)
 export const LOGO_NORMAL = "/assets/logo_sco_min.png";
 export const LOGO_WINTER = "/logos/logo_sco_winter.avif";
+
+// ===========================================
+// BUEHNENBILD KONFIGURATION
+// ===========================================
+// Setze auf true für das Winterbild
+// Setze auf false für das Sommerbild
+export const USE_WINTER_STAGE = false;
