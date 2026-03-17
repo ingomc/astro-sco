@@ -8,6 +8,7 @@ const { data, path, isPast = false } = Astro.props;
 const images = import.meta.glob<{ default: ImageMetadata }>(
   "/public/assets/**/*.{jpeg,jpg,png,gif,avif}",
 );
+const isBerichtList = path === "berichte";
 ---
 
 <div>
@@ -18,6 +19,8 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
         const href = isPast
           ? undefined
           : `/${path ? path : "veranstaltungen"}/${event.slug}/`;
+        const isBericht = isBerichtList;
+        const ariaPrefix = isBericht ? "Bericht lesen" : "Veranstaltung ansehen";
         return (
           <li>
             <Element
@@ -30,7 +33,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
               href={href}
               aria-label={
                 !isPast
-                  ? `Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`
+                  ? `${ariaPrefix}: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`
                   : undefined
               }
             >
@@ -50,6 +53,13 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
               )}
               <div class="flex flex-col justify-between w-full min-w-0 gap-1 md:gap-2">
                 <div class="flex flex-col gap-1 md:gap-2">
+                  {isBericht && (
+                    <div>
+                      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                        Bericht
+                      </span>
+                    </div>
+                  )}
                   <h2 class="font-bold text-base md:text-xl">
                     {event.data.title}
                   </h2>
@@ -86,7 +96,9 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
                     ? "Vergangen"
                     : event.data.cta
                       ? event.data.cta
-                      : "Mehr erfahren"}
+                      : isBericht
+                        ? "Bericht lesen"
+                        : "Mehr erfahren"}
                   {!isPast && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
