@@ -2,7 +2,7 @@
 title: Jahreshauptversammlung
 pubDate: 2025-03-04T11:14:18.197Z
 eventDate: 2026-04-18T16:30:00.000Z
-location: Sportheim Oberfüllbach
+location: Sportheim
 heroImage: /assets/2024-04-14-jahresschluss.jpg
 description: 'Einladung zur Jahreshauptversammlung! Berichte, Ehrungen & gemeinsames Essen.'
 cta: Jetzt anmelden!
