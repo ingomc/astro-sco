@@ -35,7 +35,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
               )}
               <div class="flex flex-col justify-between w-full min-w-0 gap-2 md:gap-3 p-4 md:p-0 md:pl-4">
                 <div class="flex flex-col gap-2">
-                  <h2 class="font-bold text-lg md:text-xl">{event.data.title}</h2>
+                  <h2 class="font-bold text-lg md:text-xl hyphens-auto break-words" lang="de">{event.data.title}</h2>
                   <div class="flex flex-wrap gap-2 md:gap-4 gap-y-1 md:gap-y-2">
                     <BadgeMini>
                       <b>Am:</b>
