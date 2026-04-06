@@ -5,7 +5,6 @@ eventDate: 2026-04-18T16:30:00.000Z
 location: Sportheim
 heroImage: /assets/2024-04-14-jahresschluss.jpg
 description: 'Einladung zur Jahreshauptversammlung! Berichte, Ehrungen & gemeinsames Essen.'
-cta: Jetzt anmelden!
 ---
 
 ## Einladung
@@ -17,10 +16,8 @@ Wir bieten folgendes Essen zur JHV an:
  - Sauerbraten m. Klößen
  - bzw. vegetarische Lasagne
  
-Wir bitten um **Anmeldung bis zum 01.04.2026**. Klicke einfach auf eine der Nummern, um direkt einen WhatsApp-Chat zu öffnen, oder nutze die E-Mail:
+~~Wir bitten um **Anmeldung bis zum 01.04.2026**.~~ Für Rückfragen nutze gerne die E-Mail:
 
-- **Steffen Heyn:** [0151 / 43250193](https://wa.me/4915143250193) 
-- **Dominik Hohnhaus:** [0177 / 7142735](https://wa.me/491777142735)
 - **E-Mail:** [info@sc-oberfuellbach.de](mailto:info@sc-oberfuellbach.de)
 
 ## Tagesordnung
