@@ -5,6 +5,7 @@ eventDate: 2026-04-18T16:30:00.000Z
 location: Sportheim
 heroImage: /assets/2024-04-14-jahresschluss.jpg
 description: 'Einladung zur Jahreshauptversammlung! Berichte, Ehrungen & gemeinsames Essen.'
+tags: [jahreshauptversammlung]
 ---
 
 ## Einladung

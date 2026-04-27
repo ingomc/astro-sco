@@ -6,6 +6,7 @@ heroImage: /assets/veganer-braten-23.jpg
 location: Sportheim
 cta: Jetzt anmelden!
 description: SCO & OGV Oberfüllbach lädt zum veganem Mittagessen am 10.11.2024! Wählen Sie zwischen Kartoffelgulasch, Thailändischem Gemüsecurry oder Linsenbraten mit Coburger Klößen. Jetzt anmelden!
+tags: [veganes-mittagessen]
 ---
 
 ## Herzliche Einladung

@@ -4,6 +4,7 @@ pubDate: 2024-04-13T11:14:18.197Z
 eventDate: 2024-04-14T16:00:00.000Z
 location: Sportheim
 heroImage: /assets/2024-04-14-jahresschluss.jpg
+tags: [jahreshauptversammlung]
 ---
 Am 14. April 2024 fand die festliche Jahresschlussveranstaltung des SC Oberfüllbach statt. 
 

@@ -1,0 +1,74 @@
+---
+import { Image } from "astro:assets";
+import FormattedDate from "./FormattedDate.astro";
+import BadgeMini from "./BadgeMini.astro";
+
+// Related content entries from veranstaltungen and berichte collections
+const { items } = Astro.props;
+
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  "/public/assets/**/*.{jpeg,jpg,png,gif,avif}",
+);
+---
+
+{
+  items && items.length > 0 && (
+    <section class="related-content container mx-auto px-2 py-8">
+      <h2 class="text-xl font-bold mb-4">Weitere Beiträge</h2>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {items.map((item) => {
+          const imageKey = `/public${item.data.heroImage}`;
+          const hasImage = item.data.heroImage && images[imageKey];
+          const isBericht = item.collection === "berichte";
+          const path = isBericht ? "berichte" : "veranstaltungen";
+          return (
+            <li>
+              <a
+                href={`/${path}/${item.slug}/`}
+                class="flex flex-col h-full bg-white rounded-lg border border-slate-300 overflow-hidden transition-all duration-200 hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+                aria-label={`${isBericht ? "Bericht lesen" : "Veranstaltung ansehen"}: ${item.data.title} am ${item.data.eventDate.toLocaleDateString("de-DE")}`}
+              >
+                {hasImage && (
+                  <div class="overflow-hidden h-36 bg-slate-100">
+                    <Image
+                      width={400}
+                      height={200}
+                      alt={item.data.title}
+                      src={images[imageKey]()}
+                      widths={[200, 300, 400]}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      class="object-cover object-top w-full h-full"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+                <div class="flex flex-col flex-1 gap-2 p-3">
+                  {isBericht && (
+                    <div>
+                      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                        Bericht
+                      </span>
+                    </div>
+                  )}
+                  <p class="font-bold text-base hyphens-auto break-words leading-snug">
+                    {item.data.title}
+                  </p>
+                  <div class="flex flex-wrap gap-2 gap-y-1 mt-auto">
+                    <BadgeMini>
+                      <b>Am:</b>{" "}
+                      {item.data.eventDate.toLocaleDateString("de-DE", {
+                        weekday: "short",
+                      })}
+                      ,{" "}
+                      <FormattedDate date={item.data.eventDate} time={false} />
+                    </BadgeMini>
+                  </div>
+                </div>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  )
+}

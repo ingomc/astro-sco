@@ -4,6 +4,7 @@ pubDate: 2023-11-17T13:30:23.138Z
 eventDate: 2023-12-02T17:00:23.138Z
 location: Sportheim
 heroImage: /assets/dorfweihnacht23.png
+tags: [dorfweihnacht]
 ---
 
 ## 🎄 Dorfweihnacht in Oberfüllbach: Ein festlicher Abend für die ganze Familie!

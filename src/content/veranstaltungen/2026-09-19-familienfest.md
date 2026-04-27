@@ -8,6 +8,7 @@ cta: "Kommt zum Apfelfest!"
 featured: true
 hidden: true
 description: "Unser großes Familienfest steht ganz im Zeichen des Apfels! Äpfelpressen, Blindverkostungen und vieles mehr für Groß und Klein."
+tags: [familienfest]
 ---
 
 Herzliche Einladung zu unserem **Familienfest** am **19. September 2026**!

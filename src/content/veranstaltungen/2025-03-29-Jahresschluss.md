@@ -5,6 +5,7 @@ eventDate: 2025-03-29T16:00:00.000Z
 location: Sportheim
 heroImage: /assets/2024-04-14-jahresschluss.jpg
 description: 'Einladung zur Jahreshauptversammlung! Neuwahlen, Berichte & gemeinsames Essen.'
+tags: [jahreshauptversammlung]
 ---
 
 ## Einladung

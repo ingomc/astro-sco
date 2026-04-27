@@ -7,6 +7,7 @@ location: Sportheim
 cta: Jetzt anmelden!
 description: SCO & OGV Oberfüllbach lädt zum veganen Mittagessen am 15.03.2026! Wählen Sie zwischen Nussbraten, Lasagne oder Frikadellen. Jetzt anmelden!
 hidden: false
+tags: [veganes-mittagessen]
 ---
 
 ## Herzliche Einladung
