@@ -37,6 +37,7 @@ const veranstaltungen = defineCollection({
     cta: z.string().optional(),
     featured: z.boolean().optional(),
     hidden: z.boolean().optional(),
+    tags: z.array(z.string()).optional(),
   }),
 });
 
@@ -56,6 +57,7 @@ const berichte = defineCollection({
     location: z.string().optional(),
     heroImage: z.string().optional(),
     hidden: z.boolean().optional(),
+    tags: z.array(z.string()).optional(),
   }),
 });
 
