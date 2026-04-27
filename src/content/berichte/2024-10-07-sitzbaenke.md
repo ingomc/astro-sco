@@ -4,6 +4,7 @@ pubDate: 2024-07-27T11:14:18.197Z
 eventDate: 2024-10-07T16:00:00.000Z
 heroImage: /assets/2024-10-07-sitzbaenke.jpeg
 description: 'Neue Sitzbänke am Füllbach: Entspannen am grünen Rad- und Fußweg zwischen „An der Linde“ und „Schafgasse“.'
+tags: [dorfentwicklung]
 ---
 ## 🏞️ Neue Sitzbänke am Füllbach: Ein Ort der Ruhe und Entspannung
 
