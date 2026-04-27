@@ -4,7 +4,7 @@ import EventPost from '../../layouts/EventPost.astro';
 
 export async function getStaticPaths() {
 	const allBerichte = await getCollection('berichte');
-	const allVeranstaltungen = await getCollection('veranstaltungen');
+	const allVeranstaltungen = (await getCollection('veranstaltungen')).filter((ev) => ev.data.pubDate <= new Date());
 
 	return allBerichte.map((event) => {
 		const tags = event.data.tags ?? [];
