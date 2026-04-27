@@ -5,6 +5,7 @@ eventDate: 2023-12-02T15:00:23.138Z
 location: Sportheim
 heroImage: /assets/dorfweihnacht23.png
 description: ''
+tags: [dorfweihnacht]
 ---
 
 Zur diesjährigen Dorfweihnacht am Samstag, den 2. Dezember, laden die Feuerwehr Oberfüllbach und der SCO/OGV Oberfüllbach recht herzlich ein.

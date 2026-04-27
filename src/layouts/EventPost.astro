@@ -5,10 +5,11 @@ import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
 import FormattedDate from "../components/FormattedDate.astro";
 import BadgeMini from "../components/BadgeMini.astro";
+import RelatedContent from "../components/RelatedContent.astro";
 
 // type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, eventDate, heroImage, location, hidden } =
+const { title, description, eventDate, heroImage, location, hidden, relatedItems } =
   Astro.props;
 const robots = hidden ? "noindex, nofollow" : undefined;
 const images = import.meta.glob<{ default: ImageMetadata }>(
@@ -69,6 +70,9 @@ if (!images[finalImageUrl])
         </div>
       </div>
     </article>
+    {relatedItems && relatedItems.length > 0 && (
+      <RelatedContent items={relatedItems} />
+    )}
   </main>
 </App>
 

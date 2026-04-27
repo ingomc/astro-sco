@@ -5,6 +5,7 @@ eventDate: 2024-09-14T18:00:23.138Z
 location: Sportheim
 heroImage: /assets/2024-09-14-kerwa-weinfest.png
 description: 'Einladung zu unserem Weinfest am 14.09. - Freut auch auf erstklassigen Wein, gute Snacks und eine tolle Atmosphäre.'
+tags: [kerwa]
 ---
 
 ## Einladung zum Weinfest
