@@ -4,6 +4,7 @@ pubDate: 2023-10-03T13:30:23.138Z
 eventDate: 2023-10-21T11:30:23.138Z
 location: Sportheim
 heroImage: /assets/title-wanderung.jpg
+tags: [kinder-wanderung]
 ---
 ## Wanderung für Kids aus Oberfüllbach
 

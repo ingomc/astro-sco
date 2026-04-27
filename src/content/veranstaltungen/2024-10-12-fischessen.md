@@ -6,6 +6,7 @@ location: Sportheim
 heroImage: /assets/2024-09-29-fischessen.jpg
 description: Genießen Sie am 12.10.2024 ab 18:00 Uhr frisch geräucherte Forelle,
   Saibling oder Schnitzel. Jetzt Plätze reservieren!
+tags: [fischessen]
 ---
 Der **SCO&OGV** lädt am **Samstag, den 12. Oktober 2024**, ab **18:00 Uhr** herzlich zum **Fischessen** ins **Sportheim** ein.
 Wer keinen Fisch mag, dem bieten wir als Alternative Schnitzel mit Kartoffelsalat an.
