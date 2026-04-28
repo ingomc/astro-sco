@@ -33,6 +33,7 @@ export const GET: APIRoute = async ({ request }) => {
   }
 
   const csvHref = `/api/admin/event-signups.csv?${csvParams.toString()}`;
+  const dashboardHref = `/admin/event-signups?${csvParams.toString()}`;
   const rows = signups
     .map(
       (signup) => `
@@ -121,7 +122,10 @@ export const GET: APIRoute = async ({ request }) => {
               <h1>Event-Anmeldungen</h1>
               <p>${eventId ? `Gefiltert nach ${escapeHtml(eventId)}` : "Alle Veranstaltungen"} · ${signups.length} Einträge</p>
             </div>
-            <a href="${escapeHtml(csvHref)}">CSV exportieren</a>
+            <div style="display:flex; gap:.5rem; flex-wrap:wrap;">
+              <a href="${escapeHtml(dashboardHref)}" style="background:#1d4ed8;">Zum Dashboard</a>
+              <a href="${escapeHtml(csvHref)}">CSV exportieren</a>
+            </div>
           </header>
           <table>
             <thead>

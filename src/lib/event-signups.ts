@@ -47,6 +47,33 @@ export type EventSignupWithItems = EventRegistration & {
   items: EventRegistrationItem[];
 };
 
+export type EventSignupSortField =
+  | "createdAt"
+  | "name"
+  | "partySize"
+  | "totalItems";
+
+export type EventSignupSortDirection = "asc" | "desc";
+
+export type EventSignupAdminQuery = {
+  eventId?: string;
+  q?: string;
+  kind?: EventSignupMode;
+  createdAfter?: string;
+  createdBefore?: string;
+  sortBy: EventSignupSortField;
+  sortDirection: EventSignupSortDirection;
+  page: number;
+  pageSize: number;
+};
+
+export type EventSignupAdminPatch = {
+  name?: string;
+  email?: string;
+  partySize?: number;
+  items?: Record<string, number>;
+};
+
 export class EventSignupValidationError extends Error {
   constructor(message: string) {
     super(message);
@@ -220,4 +247,180 @@ export function buildEventSignupsCsv(signups: EventSignupWithItems[]): string {
     .join("\r\n");
 
   return `\uFEFF${csv}\r\n`;
+}
+
+function normalizeOptionalString(value: unknown): string | undefined {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : undefined;
+}
+
+function parseBoundedInteger(
+  value: unknown,
+  fallback: number,
+  min: number,
+  max: number,
+): number {
+  const parsed = parseInteger(value, fallback);
+  if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
+    return fallback;
+  }
+
+  return parsed;
+}
+
+function normalizeIsoDate(value: unknown): string | undefined {
+  const text = normalizeOptionalString(value);
+  if (!text) {
+    return undefined;
+  }
+
+  const date = new Date(text);
+  if (Number.isNaN(date.getTime())) {
+    throw new EventSignupValidationError(
+      "Bitte geben Sie ein gueltiges Datum im ISO-Format an.",
+    );
+  }
+
+  return date.toISOString();
+}
+
+function isEventSignupMode(value: unknown): value is EventSignupMode {
+  return value === "registration" || value === "order" || value === "both";
+}
+
+export function parseEventSignupAdminQuery(
+  input: Record<string, unknown>,
+): EventSignupAdminQuery {
+  const sortByInput = normalizeOptionalString(input.sortBy);
+  const allowedSortFields: EventSignupSortField[] = [
+    "createdAt",
+    "name",
+    "partySize",
+    "totalItems",
+  ];
+  const sortBy: EventSignupSortField =
+    sortByInput && (allowedSortFields as string[]).includes(sortByInput)
+      ? (sortByInput as EventSignupSortField)
+      : "createdAt";
+
+  const sortDirectionInput = normalizeOptionalString(input.sortDirection);
+  const sortDirection: EventSignupSortDirection =
+    sortDirectionInput === "asc" || sortDirectionInput === "desc"
+      ? sortDirectionInput
+      : "desc";
+
+  const kindInput = normalizeOptionalString(input.kind);
+  if (kindInput && !isEventSignupMode(kindInput)) {
+    throw new EventSignupValidationError(
+      "Bitte geben Sie einen gueltigen Typ-Filter an.",
+    );
+  }
+
+  const page = parseBoundedInteger(input.page, 1, 1, 100000);
+  const pageSize = parseBoundedInteger(input.pageSize, 25, 1, 200);
+
+  return {
+    eventId: normalizeOptionalString(input.eventId),
+    q: normalizeOptionalString(input.q),
+    kind: kindInput,
+    createdAfter: normalizeIsoDate(input.createdAfter),
+    createdBefore: normalizeIsoDate(input.createdBefore),
+    sortBy,
+    sortDirection,
+    page,
+    pageSize,
+  };
+}
+
+export function parseEventSignupAdminPatch(
+  input: Record<string, unknown>,
+): EventSignupAdminPatch {
+  const patch: EventSignupAdminPatch = {};
+
+  if (Object.hasOwn(input, "name")) {
+    const name = normalizeOptionalString(input.name) ?? "";
+
+    if (!name) {
+      throw new EventSignupValidationError("Bitte geben Sie einen Namen ein.");
+    }
+
+    if (name.length > 100) {
+      throw new EventSignupValidationError("Der Name ist zu lang.");
+    }
+
+    patch.name = name;
+  }
+
+  if (Object.hasOwn(input, "email")) {
+    const email = normalizeOptionalString(input.email) ?? "";
+
+    if (!email) {
+      throw new EventSignupValidationError(
+        "Bitte geben Sie eine E-Mail ein.",
+      );
+    }
+
+    if (email.length > 200 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new EventSignupValidationError(
+        "Bitte geben Sie eine gueltige E-Mail ein.",
+      );
+    }
+
+    patch.email = email;
+  }
+
+  if (Object.hasOwn(input, "partySize")) {
+    const partySize = parseInteger(input.partySize, Number.NaN);
+
+    if (!Number.isInteger(partySize) || partySize < 1 || partySize > 99) {
+      throw new EventSignupValidationError(
+        "Bitte geben Sie eine gueltige Personenzahl ein.",
+      );
+    }
+
+    patch.partySize = partySize;
+  }
+
+  if (Object.hasOwn(input, "items")) {
+    if (!input.items || typeof input.items !== "object") {
+      throw new EventSignupValidationError(
+        "Bitte geben Sie gueltige Mengen fuer Positionen ein.",
+      );
+    }
+
+    const itemsPayload = input.items as Record<string, unknown>;
+    const normalizedItems: Record<string, number> = {};
+
+    for (const [itemId, quantityRaw] of Object.entries(itemsPayload)) {
+      const quantity = parseInteger(quantityRaw, Number.NaN);
+      if (!Number.isInteger(quantity) || quantity < 0 || quantity > 99) {
+        throw new EventSignupValidationError(
+          "Bitte geben Sie gueltige Mengen fuer Positionen ein.",
+        );
+      }
+
+      if (quantity > 0) {
+        normalizedItems[itemId] = quantity;
+      }
+    }
+
+    patch.items = normalizedItems;
+  }
+
+  if (
+    patch.name === undefined &&
+    patch.email === undefined &&
+    patch.partySize === undefined &&
+    patch.items === undefined
+  ) {
+    throw new EventSignupValidationError(
+      "Es wurde keine aenderbare Eigenschaft uebergeben.",
+    );
+  }
+
+  return patch;
 }

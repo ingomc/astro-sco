@@ -1,0 +1,65 @@
+<section class="panel signups-stats">
+  <div class="stats" id="stats"></div>
+  <div class="events-breakdown" id="events-breakdown"></div>
+</section>
+
+<style is:global>
+  .signups-stats.panel {
+    margin-top: 1rem;
+    padding: 1.15rem 1.2rem;
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    background: var(--card);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  }
+  .signups-stats .stats {
+    display: grid;
+    gap: 0.7rem;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+  .signups-stats .stat {
+    border: 1px solid var(--line-soft);
+    border-radius: 0.75rem;
+    padding: 0.82rem 0.88rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .signups-stats .stat-label {
+    display: block;
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin-bottom: 0.25rem;
+  }
+  .signups-stats .stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .signups-stats .events-breakdown {
+    margin-top: 0.7rem;
+    border-top: 1px dashed var(--line-soft);
+    padding-top: 0.7rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .signups-stats .events-breakdown span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid var(--line-soft);
+    border-radius: 999px;
+    padding: 0.22rem 0.55rem;
+    font-size: 0.78rem;
+    background: #fff;
+    color: #1f2937;
+  }
+  @media (max-width: 640px) {
+    .signups-stats.panel {
+      padding: 0.8rem;
+    }
+  }
+</style>
