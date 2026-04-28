@@ -18,6 +18,25 @@ import { defineCollection, z } from "astro:content";
 //   }),
 // });
 
+const signupItemSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  max: z.number().int().positive().optional(),
+});
+
+const signupSchema = z
+  .object({
+    enabled: z.boolean(),
+    eventId: z.string(),
+    mode: z.enum(["registration", "order", "both"]),
+    deadline: z
+      .string()
+      .or(z.date())
+      .transform((val) => new Date(val)),
+    capacity: z.number().int().positive().optional(),
+    items: z.array(signupItemSchema).optional(),
+  })
+  .optional();
 
 const veranstaltungen = defineCollection({
   // Type-check frontmatter using a schema
@@ -38,6 +57,7 @@ const veranstaltungen = defineCollection({
     featured: z.boolean().optional(),
     hidden: z.boolean().optional(),
     tags: z.array(z.string()).optional(),
+    signup: signupSchema,
   }),
 });
 
@@ -87,7 +107,7 @@ const sportheim = defineCollection({
 });
 
 const settings = defineCollection({
-  type: 'data',
+  type: "data",
   schema: z.object({
     site_title: z.string(),
     posts: z.object({
@@ -104,5 +124,5 @@ export const collections = {
   start,
   mitglieder,
   sportheim,
-  settings
+  settings,
 };
