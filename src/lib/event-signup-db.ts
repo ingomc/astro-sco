@@ -26,10 +26,21 @@ function getEnvVar(name: string): string | undefined {
 }
 
 function getDatabaseUrl(): string {
+  const localDatabaseUrl = getEnvVar("LOCAL_DATABASE_URL");
   const databaseUrl = getEnvVar("DATABASE_URL");
 
+  // In local development we prefer a dedicated local database URL so
+  // developers never accidentally write to shared/staging/production data.
+  if (import.meta.env.DEV && localDatabaseUrl) {
+    return localDatabaseUrl;
+  }
+
   if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not configured.");
+    throw new Error(
+      import.meta.env.DEV
+        ? "DATABASE_URL is not configured. Set LOCAL_DATABASE_URL (recommended) or DATABASE_URL."
+        : "DATABASE_URL is not configured.",
+    );
   }
 
   return databaseUrl;
@@ -299,33 +310,37 @@ export async function listEventSignups(
 
   if (getDatabaseDriver() === "neon") {
     const sql = getSql();
-    registrationRows = (eventId
-      ? await sql`
+    registrationRows = (
+      eventId
+        ? await sql`
           select id, event_id, created_at, name, email, kind, party_size, total_items
           from event_registrations
           where event_id = ${eventId}
           order by created_at asc
         `
-      : await sql`
+        : await sql`
           select id, event_id, created_at, name, email, kind, party_size, total_items
           from event_registrations
           order by created_at asc
-        `) as RegistrationRow[];
+        `
+    ) as RegistrationRow[];
 
-    itemRows = (eventId
-      ? await sql`
+    itemRows = (
+      eventId
+        ? await sql`
           select i.registration_id, i.item_id, i.label, i.quantity
           from event_registration_items i
           join event_registrations r on r.id = i.registration_id
           where r.event_id = ${eventId}
           order by r.created_at asc, i.item_id asc
         `
-      : await sql`
+        : await sql`
           select i.registration_id, i.item_id, i.label, i.quantity
           from event_registration_items i
           join event_registrations r on r.id = i.registration_id
           order by r.created_at asc, i.item_id asc
-        `) as ItemRow[];
+        `
+    ) as ItemRow[];
   } else {
     const pool = getPgPool();
     const registrationResult = eventId
@@ -434,7 +449,10 @@ function compareSignups(
   const direction = query.sortDirection === "asc" ? 1 : -1;
 
   if (query.sortBy === "name") {
-    return left.name.localeCompare(right.name, "de", { sensitivity: "base" }) * direction;
+    return (
+      left.name.localeCompare(right.name, "de", { sensitivity: "base" }) *
+      direction
+    );
   }
 
   if (query.sortBy === "partySize") {
@@ -495,7 +513,9 @@ export async function getEventSignupsStats(
   query: EventSignupAdminQuery,
 ): Promise<EventSignupStatsResult> {
   const allRows = await listEventSignups();
-  const filtered = allRows.filter((signup) => matchesSignupQuery(signup, query));
+  const filtered = allRows.filter((signup) =>
+    matchesSignupQuery(signup, query),
+  );
   const byEventMap = new Map<
     string,
     { eventId: string; signups: number; partySize: number; items: number }
@@ -684,7 +704,9 @@ export async function deleteEventSignupById(id: string): Promise<boolean> {
 
 export async function bulkDeleteEventSignups(ids: string[]): Promise<number> {
   await ensureEventSignupSchema();
-  const uniqueIds = Array.from(new Set(ids.map((id) => id.trim()).filter(Boolean)));
+  const uniqueIds = Array.from(
+    new Set(ids.map((id) => id.trim()).filter(Boolean)),
+  );
 
   if (uniqueIds.length === 0) {
     return 0;
