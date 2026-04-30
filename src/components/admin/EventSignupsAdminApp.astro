@@ -82,6 +82,7 @@ const { view, eventId = "" } = Astro.props;
                   <th>ID</th>
                   <th>Zeit</th>
                   <th>Name</th>
+                  <th>Termin</th>
                   <th>Personen</th>
                   <th>Auswahl</th>
                   <th>Hinweise</th>
@@ -127,6 +128,10 @@ const { view, eventId = "" } = Astro.props;
           <div>
             <span>Datenschutz bestaetigt</span>
             <strong data-meta-privacy>-</strong>
+          </div>
+          <div>
+            <span>Termin</span>
+            <strong data-meta-slot>-</strong>
           </div>
         </div>
         <label>Hinweise<textarea data-edit="notes" name="notes" rows="5" maxlength="1000"></textarea></label>
@@ -325,7 +330,7 @@ const { view, eventId = "" } = Astro.props;
   function renderRows() {
     renderBulkbar();
     if (!state.rows.length) {
-      els.rows.innerHTML = `<tr><td colspan="8"><div class="empty-state">Keine Datensaetze gefunden.</div></td></tr>`;
+      els.rows.innerHTML = `<tr><td colspan="9"><div class="empty-state">Keine Datensaetze gefunden.</div></td></tr>`;
       els.mobileRows.innerHTML = `<div class="empty-state">Keine Datensaetze gefunden.</div>`;
       return;
     }
@@ -338,6 +343,7 @@ const { view, eventId = "" } = Astro.props;
           <td><button class="id-pill" data-open="${row.id}">${row.id}</button></td>
           <td>${new Date(row.createdAt).toLocaleString("de-DE")}</td>
           <td>${escapeHtml(row.name)}</td>
+          <td>${row.slotLabel ? escapeHtml(row.slotLabel) : "-"}</td>
           <td>${row.partySize}</td>
           <td>${itemSummary(row)}</td>
           <td class="note-cell">${noteCell(row)}</td>
@@ -350,6 +356,7 @@ const { view, eventId = "" } = Astro.props;
       .map((row) => `<article class="mobile-card" data-row-id="${row.id}">
         <label><input type="checkbox" data-select="${row.id}" ${state.selected.has(row.id) ? "checked" : ""}> ${escapeHtml(row.name)}</label>
         <p>${new Date(row.createdAt).toLocaleString("de-DE")} · ${row.partySize} Pers.</p>
+        <p>${row.slotLabel ? escapeHtml(row.slotLabel) : "Kein Termin"}</p>
         <p>${row.notes ? noteCell(row) : "Keine Hinweise"}</p>
         <button type="button" data-open="${row.id}">Details</button>
       </article>`)
@@ -406,6 +413,7 @@ const { view, eventId = "" } = Astro.props;
     els.drawerForm.elements.partySize.value = row.partySize;
     const ipMeta = els.drawerForm.querySelector("[data-meta-ip]");
     const privacyMeta = els.drawerForm.querySelector("[data-meta-privacy]");
+    const slotMeta = els.drawerForm.querySelector("[data-meta-slot]");
     if (ipMeta) {
       ipMeta.textContent = row.ipFingerprint || "-";
     }
@@ -413,6 +421,9 @@ const { view, eventId = "" } = Astro.props;
       privacyMeta.textContent = row.privacyAcceptedAt
         ? new Date(row.privacyAcceptedAt).toLocaleString("de-DE")
         : "-";
+    }
+    if (slotMeta) {
+      slotMeta.textContent = row.slotLabel || "-";
     }
     els.drawerForm.elements.notes.value = row.notes || "";
     els.drawerForm.elements.notesDone.checked = row.notesDone;

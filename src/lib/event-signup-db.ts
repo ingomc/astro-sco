@@ -91,6 +91,8 @@ export async function ensureEventSignupSchema(): Promise<void> {
           email text not null,
           ip_fingerprint text not null default '',
           privacy_accepted_at timestamptz,
+          slot_at timestamptz,
+          slot_label text not null default '',
           notes text not null default '',
           notes_done boolean not null default false,
           kind text not null check (kind in ('registration', 'order', 'both')),
@@ -105,6 +107,14 @@ export async function ensureEventSignupSchema(): Promise<void> {
       await sql`
         alter table event_registrations
         add column if not exists privacy_accepted_at timestamptz
+      `;
+      await sql`
+        alter table event_registrations
+        add column if not exists slot_at timestamptz
+      `;
+      await sql`
+        alter table event_registrations
+        add column if not exists slot_label text not null default ''
       `;
       await sql`
         alter table event_registrations
@@ -143,6 +153,8 @@ export async function ensureEventSignupSchema(): Promise<void> {
         email text not null,
         ip_fingerprint text not null default '',
         privacy_accepted_at timestamptz,
+        slot_at timestamptz,
+        slot_label text not null default '',
         notes text not null default '',
         notes_done boolean not null default false,
         kind text not null check (kind in ('registration', 'order', 'both')),
@@ -157,6 +169,14 @@ export async function ensureEventSignupSchema(): Promise<void> {
     await pool.query(`
       alter table event_registrations
       add column if not exists privacy_accepted_at timestamptz
+    `);
+    await pool.query(`
+      alter table event_registrations
+      add column if not exists slot_at timestamptz
+    `);
+    await pool.query(`
+      alter table event_registrations
+      add column if not exists slot_label text not null default ''
     `);
     await pool.query(`
       alter table event_registrations
@@ -233,6 +253,8 @@ export async function saveEventSignup(
           email,
           ip_fingerprint,
           privacy_accepted_at,
+          slot_at,
+          slot_label,
           notes,
           notes_done,
           kind,
@@ -247,6 +269,8 @@ export async function saveEventSignup(
           ${registration.email},
           ${registration.ipFingerprint},
           ${registration.privacyAcceptedAt},
+          ${registration.slotAt || null},
+          ${registration.slotLabel},
           ${registration.notes},
           ${registration.notesDone},
           ${registration.kind},
@@ -291,13 +315,15 @@ export async function saveEventSignup(
           email,
           ip_fingerprint,
           privacy_accepted_at,
+          slot_at,
+          slot_label,
           notes,
           notes_done,
           kind,
           party_size,
           total_items
         )
-        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
       `,
       [
         registration.id,
@@ -307,6 +333,8 @@ export async function saveEventSignup(
         registration.email,
         registration.ipFingerprint,
         registration.privacyAcceptedAt,
+        registration.slotAt || null,
+        registration.slotLabel,
         registration.notes,
         registration.notesDone,
         registration.kind,
@@ -347,6 +375,8 @@ type RegistrationRow = {
   email: string;
   ip_fingerprint: string;
   privacy_accepted_at: string | Date | null;
+  slot_at: string | Date | null;
+  slot_label: string;
   notes: string;
   notes_done: boolean;
   kind: EventRegistration["kind"];
@@ -373,13 +403,13 @@ export async function listEventSignups(
     registrationRows = (
       eventId
         ? await sql`
-          select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, notes, notes_done, kind, party_size, total_items
+          select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, slot_at, slot_label, notes, notes_done, kind, party_size, total_items
           from event_registrations
           where event_id = ${eventId}
           order by created_at asc
         `
         : await sql`
-          select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, notes, notes_done, kind, party_size, total_items
+          select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, slot_at, slot_label, notes, notes_done, kind, party_size, total_items
           from event_registrations
           order by created_at asc
         `
@@ -406,7 +436,7 @@ export async function listEventSignups(
     const registrationResult = eventId
       ? await pool.query<RegistrationRow>(
           `
-            select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, notes, notes_done, kind, party_size, total_items
+            select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, slot_at, slot_label, notes, notes_done, kind, party_size, total_items
             from event_registrations
             where event_id = $1
             order by created_at asc
@@ -415,7 +445,7 @@ export async function listEventSignups(
         )
       : await pool.query<RegistrationRow>(
           `
-            select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, notes, notes_done, kind, party_size, total_items
+            select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, slot_at, slot_label, notes, notes_done, kind, party_size, total_items
             from event_registrations
             order by created_at asc
           `,
@@ -467,6 +497,8 @@ export async function listEventSignups(
     privacyAcceptedAt: row.privacy_accepted_at
       ? new Date(row.privacy_accepted_at).toISOString()
       : "",
+    slotAt: row.slot_at ? new Date(row.slot_at).toISOString() : "",
+    slotLabel: row.slot_label ?? "",
     notes: row.notes ?? "",
     notesDone: row.notes_done ?? false,
     kind: row.kind,
@@ -510,7 +542,7 @@ function matchesSignupQuery(
 
   if (query.q) {
     const q = query.q.toLowerCase();
-    const haystack = `${signup.name} ${signup.email} ${signup.notes}`.toLowerCase();
+    const haystack = `${signup.name} ${signup.email} ${signup.notes} ${signup.slotLabel}`.toLowerCase();
     if (!haystack.includes(q)) {
       return false;
     }

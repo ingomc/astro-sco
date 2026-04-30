@@ -146,6 +146,8 @@ export const POST: APIRoute = async ({ request }) => {
         email: parsed.email,
         ipFingerprint,
         privacyAcceptedAt: new Date().toISOString(),
+        slotAt: parsed.slotAt,
+        slotLabel: parsed.slotLabel,
         notes: parsed.notes,
         notesDone: false,
         kind: signupConfig.mode,

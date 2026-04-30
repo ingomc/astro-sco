@@ -4,6 +4,12 @@ create table if not exists event_registrations (
   created_at timestamptz not null default now(),
   name text not null,
   email text not null,
+  ip_fingerprint text not null default '',
+  privacy_accepted_at timestamptz,
+  slot_at timestamptz,
+  slot_label text not null default '',
+  notes text not null default '',
+  notes_done boolean not null default false,
   kind text not null check (kind in ('registration', 'order', 'both')),
   party_size integer not null default 1 check (party_size >= 1),
   total_items integer not null default 0 check (total_items >= 0)

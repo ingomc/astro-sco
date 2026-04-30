@@ -1,3 +1,8 @@
+import {
+  getNextDartOpenPlaySlots,
+  isValidDartOpenPlaySlot,
+} from "./dart-open-play";
+
 export const SIGNUP_ID_ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 
 export type EventSignupMode = "registration" | "order" | "both";
@@ -25,6 +30,8 @@ export type EventSignupInput = {
   email?: unknown;
   privacyAccepted?: unknown;
   hcaptchaToken?: unknown;
+  slotAt?: unknown;
+  slotLabel?: unknown;
   notes?: unknown;
   partySize?: unknown;
   items?: unknown;
@@ -46,6 +53,8 @@ export type EventRegistration = {
   email: string;
   ipFingerprint: string;
   privacyAcceptedAt: string;
+  slotAt: string;
+  slotLabel: string;
   notes: string;
   notesDone: boolean;
   kind: EventSignupMode;
@@ -131,6 +140,8 @@ export function parseEventSignupInput(
   name: string;
   email: string;
   privacyAccepted: boolean;
+  slotAt: string;
+  slotLabel: string;
   notes: string;
   partySize: number;
   items: EventRegistrationItem[];
@@ -141,6 +152,9 @@ export function parseEventSignupInput(
   const name = typeof input.name === "string" ? input.name.trim() : "";
   const email = typeof input.email === "string" ? input.email.trim() : "";
   const privacyAccepted = input.privacyAccepted === true;
+  const slotAtRaw = typeof input.slotAt === "string" ? input.slotAt.trim() : "";
+  const slotLabelRaw =
+    typeof input.slotLabel === "string" ? input.slotLabel.trim() : "";
   const notes = typeof input.notes === "string" ? input.notes.trim() : "";
   const website = typeof input.website === "string" ? input.website.trim() : "";
 
@@ -172,6 +186,29 @@ export function parseEventSignupInput(
     throw new EventSignupValidationError(
       "Bitte stimmen Sie der Datenschutzerklaerung zu.",
     );
+  }
+
+  let slotAt = "";
+  let slotLabel = "";
+  if (config.eventId === "dart-open-play") {
+    const slotDate = new Date(slotAtRaw);
+    if (!slotAtRaw || Number.isNaN(slotDate.getTime())) {
+      throw new EventSignupValidationError(
+        "Bitte waehlen Sie einen Termin fuer das offene Dart-Spiel aus.",
+      );
+    }
+    const canonicalSlotAt = slotDate.toISOString();
+    const allowedSlots = getNextDartOpenPlaySlots();
+    if (!isValidDartOpenPlaySlot(canonicalSlotAt, allowedSlots)) {
+      throw new EventSignupValidationError(
+        "Der gewaehlte Termin ist nicht mehr verfuegbar. Bitte Seite neu laden.",
+      );
+    }
+    slotAt = canonicalSlotAt;
+    slotLabel =
+      slotLabelRaw ||
+      allowedSlots.find((slot) => slot.slotAtIso === canonicalSlotAt)?.slotLabel ||
+      "";
   }
 
   if (notes.length > 1000) {
@@ -237,6 +274,8 @@ export function parseEventSignupInput(
     name,
     email,
     privacyAccepted,
+    slotAt,
+    slotLabel,
     notes,
     partySize,
     items,
@@ -266,6 +305,7 @@ export function buildEventSignupsCsv(signups: EventSignupWithItems[]): string {
     "E-Mail",
     "IP Fingerprint",
     "Datenschutz bestaetigt am",
+    "Termin",
     "Hinweise",
     "Hinweise erledigt",
     "Personen",
@@ -282,6 +322,7 @@ export function buildEventSignupsCsv(signups: EventSignupWithItems[]): string {
     signup.email,
     signup.ipFingerprint,
     signup.privacyAcceptedAt,
+    signup.slotLabel,
     signup.notes,
     signup.notesDone ? "ja" : "nein",
     signup.partySize,

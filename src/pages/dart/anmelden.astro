@@ -1,0 +1,53 @@
+---
+import App from "../../layouts/App.astro";
+import DartOpenPlaySignupForm from "../../components/DartOpenPlaySignupForm.astro";
+import { getNextDartOpenPlaySlots } from "../../lib/dart-open-play";
+
+const slots = getNextDartOpenPlaySlots();
+---
+
+<App title="Dart Anmeldung">
+  <main class="container">
+    <section class="intro">
+      <p class="eyebrow">Dart-Abteilung</p>
+      <h1>Anmeldung offenes Dart-Spiel</h1>
+      <p>
+        Jeden Sonntag ab 18:00 Uhr im Sportheim. Hier koennen Sie sich kostenlos
+        fuer einen der naechsten Termine anmelden.
+      </p>
+    </section>
+
+    <DartOpenPlaySignupForm slots={slots} />
+  </main>
+</App>
+
+<style>
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .intro {
+    border: 1px solid #e7e5e4;
+    border-radius: 0.5rem;
+    background: #fff;
+    padding: 1.25rem;
+  }
+  .eyebrow {
+    margin: 0;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #b91c1c;
+  }
+  .intro h1 {
+    margin: 0.2rem 0 0.4rem;
+    color: #1c1917;
+  }
+  .intro p {
+    margin: 0;
+    color: #44403c;
+  }
+</style>

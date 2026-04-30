@@ -1,0 +1,327 @@
+---
+import App from "../../layouts/App.astro";
+
+export const prerender = false;
+
+const url = new URL(Astro.request.url);
+const id = url.searchParams.get("id")?.trim() ?? "";
+const name = url.searchParams.get("name")?.trim() ?? "";
+const partySize = Number.parseInt(url.searchParams.get("partySize") ?? "1", 10);
+const totalItems = Number.parseInt(url.searchParams.get("totalItems") ?? "0", 10);
+const itemsSummary = url.searchParams.get("items")?.trim() ?? "";
+const itemLinesRaw = url.searchParams
+  .getAll("item")
+  .map((value) => value.trim())
+  .filter(Boolean);
+const itemLines =
+  itemLinesRaw.length > 0
+    ? itemLinesRaw
+    : itemsSummary
+        .split("|")
+        .map((value) => value.trim())
+        .filter(Boolean);
+const hasOrderContext = id.length > 0;
+---
+
+<App title="Danke fuer Ihre Bestellung">
+  <main class="container">
+    <section class="thank-you">
+      <div class="thank-you__header">
+        <p class="thank-you__eyebrow">Erfolg</p>
+        <h3>Bestellung gespeichert</h3>
+      </div>
+      {
+        hasOrderContext ? (
+          <>
+            <p class="thank-you__intro">
+              Vielen Dank{name ? `, ${name}` : ""}. Ihre Kerwa-Bestellung ist
+              eingegangen.
+            </p>
+            <div class="thank-you__stats">
+              <div class="stat">
+                <span class="stat__label">Personen</span>
+                <strong class="stat__value">
+                  {Number.isFinite(partySize) ? partySize : 1}
+                </strong>
+              </div>
+              <div class="stat">
+                <span class="stat__label">Gesamtportionen</span>
+                <strong class="stat__value">
+                  {Number.isFinite(totalItems) ? totalItems : 0}
+                </strong>
+              </div>
+            </div>
+
+            <div class="thank-you__items prose">
+              <p class="items__label">Ihre Auswahl</p>
+              {
+                itemLines.length > 0 ? (
+                  <ul>
+                    {itemLines.map((line) => (
+                      <li>
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p class="items__empty">Keine Positionen uebergeben.</p>
+                )
+              }
+            </div>
+
+            <div class="order-number">
+              <span class="order-number__label">Bestellnummer</span>
+              <strong>{id}</strong>
+            </div>
+
+            <p class="thank-you__help">
+              Bestellungen koennen gerne telefonisch storniert oder angepasst
+              werden.
+            </p>
+          </>
+        ) : (
+          <p class="thank-you__intro">
+            Vielen Dank. Ihre Bestellung wurde gespeichert und wird vom Team
+            bearbeitet.
+          </p>
+        )
+      }
+    </section>
+
+    <section class="dart-teaser">
+      <div class="dart-teaser__content">
+        <p class="eyebrow">Dart-Abteilung</p>
+        <h2>Offenes Spiel sonntags ab 18:00 Uhr</h2>
+        <ul class="dart-teaser__facts">
+          <li>Kurze Anmeldung vorab hilft uns bei der Planung.</li>
+          <li>Jedes Alter und jede Spielstaerke ist herzlich willkommen.</li>
+          <li>Teilnahme ist kostenlos und unverbindlich.</li>
+          <li>Sie muessen nichts mitbringen.</li>
+          <li>Wir stellen kostenlos eine grosse Auswahl an Pfeilen.</li>
+        </ul>
+        <a href="/dart/anmelden" class="cta">Jetzt kostenlos anmelden</a>
+      </div>
+      <figure class="dart-teaser__media">
+        <img
+          src="/assets/buehne-events.jpg"
+          alt="Vereinsleben im Sportheim"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+    </section>
+  </main>
+</App>
+
+<style>
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .thank-you {
+    display: grid;
+    gap: 1rem;
+    border: 1px solid #bbf7d0;
+    border-radius: 0.75rem;
+    background: #f0fdf4;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px -20px rgba(20, 83, 45, 0.45);
+  }
+  .thank-you__header {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .thank-you__eyebrow {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #166534;
+  }
+  .thank-you h3 {
+    margin: 0;
+    color: #14532d;
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+  .thank-you__intro {
+    margin: 0;
+    color: #14532d;
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+  .thank-you__help {
+    margin: 0;
+    color: #166534;
+    font-size: 0.98rem;
+  }
+  .thank-you__stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+  .stat {
+    border: 1px solid #bbf7d0;
+    border-radius: 0.6rem;
+    background: #dcfce7;
+    padding: 0.75rem 0.85rem;
+  }
+  .stat__label {
+    display: block;
+    font-size: 0.82rem;
+    color: #166534;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+  }
+  .stat__value {
+    font-size: 1.6rem;
+    line-height: 1.1;
+    color: #14532d;
+  }
+  .thank-you__items {
+    display: grid;
+    gap: 0.45rem;
+  }
+  .items__label {
+    margin: 0;
+    color: #166534;
+    font-size: 0.92rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .thank-you ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .item-pill {
+    display: inline-block;
+    border: 1px solid #86efac;
+    background: #dcfce7;
+    color: #14532d;
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem;
+    font-weight: 600;
+  }
+  .items__empty {
+    margin: 0;
+    color: #166534;
+    opacity: 0.8;
+  }
+  .order-number {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .order-number__label {
+    color: #14532d;
+    font-weight: 700;
+  }
+  .order-number strong {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 0.45rem;
+    background: #dcfce7;
+    color: #14532d;
+    border: 1px solid #86efac;
+    letter-spacing: 0.12em;
+    font-size: 1.15rem;
+  }
+  .dart-teaser {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 1rem;
+    align-items: stretch;
+    border: 1px solid #e7e5e4;
+    border-radius: 0.75rem;
+    background: #fff;
+    padding: 1.25rem;
+    overflow: hidden;
+  }
+  .dart-teaser__content {
+    display: grid;
+    align-content: center;
+    gap: 0.45rem;
+    padding-right: 0.2rem;
+  }
+  .dart-teaser__media {
+    margin: 0;
+    border-radius: 0.6rem;
+    overflow: hidden;
+    min-height: 220px;
+  }
+  .dart-teaser__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(1.04) contrast(1.03);
+  }
+  .eyebrow {
+    margin: 0;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #b91c1c;
+  }
+  .dart-teaser h2 {
+    margin: 0.2rem 0 0.4rem;
+    color: #1c1917;
+  }
+  .dart-teaser p {
+    margin: 0;
+    color: #44403c;
+  }
+  .dart-teaser__facts {
+    margin: 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+    list-style-position: outside;
+    color: #44403c;
+    display: grid;
+    gap: 0.35rem;
+  }
+  .dart-teaser .cta {
+    margin-top: 0.9rem;
+    display: inline-block;
+    min-height: 2.5rem;
+    line-height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 0.4rem;
+    background: #b91c1c;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+  }
+  @media (max-width: 720px) {
+    .thank-you {
+      padding: 1.15rem;
+    }
+    .thank-you h3 {
+      font-size: 1.45rem;
+    }
+    .thank-you__intro {
+      font-size: 1.05rem;
+    }
+    .thank-you__stats {
+      grid-template-columns: 1fr;
+    }
+    .dart-teaser {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+    }
+    .dart-teaser__media {
+      order: -1;
+      min-height: 170px;
+    }
+  }
+</style>

@@ -26,7 +26,8 @@ const items = signup.items ?? [];
 const hasItems =
   (signup.mode === "order" || signup.mode === "both") && items.length > 0;
 const maxPartySize = signup.maxPartySize ?? 99;
-const showPartySize = signup.mode !== "order" && maxPartySize > 1;
+const showPartySize = maxPartySize > 1;
+const maxPartySizeSelect = Math.min(9, maxPartySize);
 const notesLabel = signup.notesLabel?.trim() || "Hinweise (optional)";
 const notesPlaceholder =
   signup.notesPlaceholder?.trim() ||
@@ -54,6 +55,8 @@ const clientConfig = {
   captchaWidgetReady,
   canSubmit,
   eventTitle,
+  successRedirectPath:
+    signup.eventId === "kerwa-2026" ? "/danke/kerwa" : "",
 };
 ---
 
@@ -72,12 +75,45 @@ const clientConfig = {
     </p>
     <h2 id="event-signup-title">{title}</h2>
     <p>Anmeldungen sind bis {deadlineLabel} möglich.</p>
+    {(signup.mode === "order" || signup.mode === "both") && (
+      <p class="event-signup__price-note">
+        Preise zeigen wir bewusst noch nicht an. Wir kalkulieren fuer alle den
+        guenstigsten Preis, der sich nach der gesamten Bestellmenge richtet.
+      </p>
+    )}
   </div>
 
   {
     isOpen ? (
       <>
         <form class="event-signup__form" data-event-signup-form>
+          {hasItems && (
+            <fieldset class="event-signup__items">
+              <legend>Auswahl</legend>
+              {items.map((item) => (
+                <label
+                  class="event-signup__item"
+                  for={`${signup.eventId}-${item.id}`}
+                >
+                  <span>{item.label}</span>
+                  <select
+                    id={`${signup.eventId}-${item.id}`}
+                    name={item.id}
+                  >
+                    {Array.from(
+                      { length: Math.min(9, item.max ?? 99) + 1 },
+                      (_, index) => (
+                        <option value={String(index)} selected={index === 0}>
+                          {index}
+                        </option>
+                      ),
+                    )}
+                  </select>
+                </label>
+              ))}
+            </fieldset>
+          )}
+
           <div class="event-signup__field">
             <label for={`${signup.eventId}-name`}>Name</label>
             <input
@@ -116,16 +152,17 @@ const clientConfig = {
           {showPartySize && (
             <div class="event-signup__field">
               <label for={`${signup.eventId}-party-size`}>Personen</label>
-              <input
+              <select
                 id={`${signup.eventId}-party-size`}
                 name="partySize"
-                type="number"
-                inputmode="numeric"
-                min="1"
-                max={maxPartySize}
-                value="1"
                 required
-              />
+              >
+                {Array.from({ length: maxPartySizeSelect }, (_, index) => (
+                  <option value={String(index + 1)} selected={index === 0}>
+                    {index + 1}
+                  </option>
+                ))}
+              </select>
             </div>
           )}
 
@@ -166,29 +203,6 @@ const clientConfig = {
               Ich habe die <a href="/datenschutz" target="_blank" rel="noopener noreferrer">Datenschutzerklaerung</a> gelesen und stimme der Verarbeitung meiner Daten zur Veranstaltungsabwicklung zu.
             </span>
           </label>
-
-          {hasItems && (
-            <fieldset class="event-signup__items">
-              <legend>Auswahl</legend>
-              {items.map((item) => (
-                <label
-                  class="event-signup__item"
-                  for={`${signup.eventId}-${item.id}`}
-                >
-                  <span>{item.label}</span>
-                  <input
-                    id={`${signup.eventId}-${item.id}`}
-                    name={item.id}
-                    type="number"
-                    inputmode="numeric"
-                    min="0"
-                    max={item.max ?? 99}
-                    value="0"
-                  />
-                </label>
-              ))}
-            </fieldset>
-          )}
 
           <button type="submit" disabled={!canSubmit}>{actionLabel}</button>
           <p
@@ -350,6 +364,61 @@ const clientConfig = {
           );
         }
 
+        if (clientConfig.successRedirectPath) {
+          const redirectParams = new URLSearchParams();
+          if (result.id) {
+            redirectParams.set("id", String(result.id));
+          }
+          const name = String(payload.name ?? "").trim();
+          if (name) {
+            redirectParams.set("name", name);
+          }
+          redirectParams.set("partySize", String(payload.partySize ?? "1"));
+          const totalItems = clientConfig.items.reduce((sum, item) => {
+            const quantity = Number.parseInt(
+              String(payload.items[item.id] ?? "0"),
+              10,
+            );
+            return sum + (Number.isFinite(quantity) ? quantity : 0);
+          }, 0);
+          redirectParams.set("totalItems", String(totalItems));
+          const selectedItemsSummary = clientConfig.items
+            .map((item) => {
+              const quantity = Number.parseInt(
+                String(payload.items[item.id] ?? "0"),
+                10,
+              );
+              if (!Number.isFinite(quantity) || quantity <= 0) {
+                return "";
+              }
+              return `${quantity}x ${item.label}`;
+            })
+            .filter(Boolean)
+            .join(" | ");
+          const selectedItemsLines = clientConfig.items
+            .map((item) => {
+              const quantity = Number.parseInt(
+                String(payload.items[item.id] ?? "0"),
+                10,
+              );
+              if (!Number.isFinite(quantity) || quantity <= 0) {
+                return "";
+              }
+              return `${quantity}x ${item.label}`;
+            })
+            .filter(Boolean);
+          if (selectedItemsSummary) {
+            redirectParams.set("items", selectedItemsSummary);
+          }
+          for (const line of selectedItemsLines) {
+            redirectParams.append("item", line);
+          }
+          window.location.assign(
+            `${clientConfig.successRedirectPath}?${redirectParams.toString()}`,
+          );
+          return;
+        }
+
         const name = String(payload.name ?? "").trim();
         const selectedItems = clientConfig.items
           .map((item) => ({
@@ -440,6 +509,17 @@ const clientConfig = {
     color: #44403c;
   }
 
+  .event-signup__price-note {
+    margin-top: 0.6rem;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid #e7e5e4;
+    border-radius: 0.4rem;
+    background: #fafaf9;
+    color: #57534e;
+    font-size: 0.96rem;
+    line-height: 1.4;
+  }
+
   .event-signup__form {
     display: grid;
     gap: 1rem;
@@ -469,6 +549,17 @@ const clientConfig = {
     border-radius: 0.375rem;
     padding: 0.5rem 0.75rem;
     font: inherit;
+  }
+
+  .event-signup select {
+    width: 100%;
+    min-height: 2.75rem;
+    border: 1px solid #a8a29e;
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    font: inherit;
+    background: #fff;
+    color: #1c1917;
   }
 
   .event-signup textarea {
@@ -539,6 +630,10 @@ const clientConfig = {
   }
 
   .event-signup__item input {
+    text-align: right;
+  }
+
+  .event-signup__item select {
     text-align: right;
   }
 
