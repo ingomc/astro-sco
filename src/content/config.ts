@@ -34,6 +34,9 @@ const signupSchema = z
       .or(z.date())
       .transform((val) => new Date(val)),
     capacity: z.number().int().positive().optional(),
+    maxPartySize: z.number().int().min(1).max(99).optional(),
+    notesLabel: z.string().max(120).optional(),
+    notesPlaceholder: z.string().max(240).optional(),
     items: z.array(signupItemSchema).optional(),
   })
   .optional();

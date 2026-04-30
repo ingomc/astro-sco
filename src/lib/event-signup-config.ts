@@ -20,6 +20,9 @@ export async function getEventSignupConfig(
     mode: event.data.signup.mode,
     deadline: event.data.signup.deadline,
     capacity: event.data.signup.capacity,
+    maxPartySize: event.data.signup.maxPartySize,
+    notesLabel: event.data.signup.notesLabel,
+    notesPlaceholder: event.data.signup.notesPlaceholder,
     items: event.data.signup.items,
   };
 }

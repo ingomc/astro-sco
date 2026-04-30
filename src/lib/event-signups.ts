@@ -13,6 +13,9 @@ export type EventSignupConfig = {
   mode: EventSignupMode;
   deadline: Date;
   capacity?: number;
+  maxPartySize?: number;
+  notesLabel?: string;
+  notesPlaceholder?: string;
   items?: EventSignupItemConfig[];
 };
 
@@ -20,6 +23,7 @@ export type EventSignupInput = {
   eventId?: unknown;
   name?: unknown;
   email?: unknown;
+  notes?: unknown;
   partySize?: unknown;
   items?: unknown;
   website?: unknown;
@@ -38,6 +42,7 @@ export type EventRegistration = {
   createdAt: string;
   name: string;
   email: string;
+  notes: string;
   kind: EventSignupMode;
   partySize: number;
   totalItems: number;
@@ -70,6 +75,7 @@ export type EventSignupAdminQuery = {
 export type EventSignupAdminPatch = {
   name?: string;
   email?: string;
+  notes?: string;
   partySize?: number;
   items?: Record<string, number>;
 };
@@ -115,6 +121,7 @@ export function parseEventSignupInput(
 ): {
   name: string;
   email: string;
+  notes: string;
   partySize: number;
   items: EventRegistrationItem[];
   totalItems: number;
@@ -123,6 +130,7 @@ export function parseEventSignupInput(
   const eventId = typeof input.eventId === "string" ? input.eventId.trim() : "";
   const name = typeof input.name === "string" ? input.name.trim() : "";
   const email = typeof input.email === "string" ? input.email.trim() : "";
+  const notes = typeof input.notes === "string" ? input.notes.trim() : "";
   const website = typeof input.website === "string" ? input.website.trim() : "";
 
   if (eventId !== config.eventId) {
@@ -149,10 +157,23 @@ export function parseEventSignupInput(
     );
   }
 
-  const partySize = parseInteger(input.partySize, 1);
-  if (!Number.isInteger(partySize) || partySize < 1 || partySize > 99) {
+  if (notes.length > 1000) {
     throw new EventSignupValidationError(
-      "Bitte geben Sie eine gültige Personenzahl ein.",
+      "Bitte kuerzen Sie den Hinweistext auf maximal 1000 Zeichen.",
+    );
+  }
+
+  const maxPartySize = config.maxPartySize ?? 99;
+  const partySize = parseInteger(input.partySize, 1);
+  if (
+    !Number.isInteger(partySize) ||
+    partySize < 1 ||
+    partySize > maxPartySize
+  ) {
+    throw new EventSignupValidationError(
+      maxPartySize === 1
+        ? "Für diese Veranstaltung ist nur eine Einzelanmeldung möglich."
+        : `Bitte geben Sie eine gültige Personenzahl (max. ${maxPartySize}) ein.`,
     );
   }
 
@@ -198,6 +219,7 @@ export function parseEventSignupInput(
   return {
     name,
     email,
+    notes,
     partySize,
     items,
     totalItems,
@@ -224,6 +246,7 @@ export function buildEventSignupsCsv(signups: EventSignupWithItems[]): string {
     "Typ",
     "Name",
     "E-Mail",
+    "Hinweise",
     "Personen",
     "Auswahl",
     "Gesamt",
@@ -236,6 +259,7 @@ export function buildEventSignupsCsv(signups: EventSignupWithItems[]): string {
     signup.kind,
     signup.name,
     signup.email,
+    signup.notes,
     signup.partySize,
     formatSignupItems(signup.items),
     signup.totalItems,
@@ -373,6 +397,18 @@ export function parseEventSignupAdminPatch(
     patch.email = email;
   }
 
+  if (Object.hasOwn(input, "notes")) {
+    const notes = normalizeOptionalString(input.notes) ?? "";
+
+    if (notes.length > 1000) {
+      throw new EventSignupValidationError(
+        "Bitte kuerzen Sie den Hinweistext auf maximal 1000 Zeichen.",
+      );
+    }
+
+    patch.notes = notes;
+  }
+
   if (Object.hasOwn(input, "partySize")) {
     const partySize = parseInteger(input.partySize, Number.NaN);
 
@@ -414,6 +450,7 @@ export function parseEventSignupAdminPatch(
   if (
     patch.name === undefined &&
     patch.email === undefined &&
+    patch.notes === undefined &&
     patch.partySize === undefined &&
     patch.items === undefined
   ) {

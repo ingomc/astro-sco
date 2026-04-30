@@ -89,10 +89,15 @@ export async function ensureEventSignupSchema(): Promise<void> {
           created_at timestamptz not null default now(),
           name text not null,
           email text not null,
+          notes text not null default '',
           kind text not null check (kind in ('registration', 'order', 'both')),
           party_size integer not null default 1 check (party_size >= 1),
           total_items integer not null default 0 check (total_items >= 0)
         )
+      `;
+      await sql`
+        alter table event_registrations
+        add column if not exists notes text not null default ''
       `;
 
       await sql`
@@ -121,10 +126,15 @@ export async function ensureEventSignupSchema(): Promise<void> {
         created_at timestamptz not null default now(),
         name text not null,
         email text not null,
+        notes text not null default '',
         kind text not null check (kind in ('registration', 'order', 'both')),
         party_size integer not null default 1 check (party_size >= 1),
         total_items integer not null default 0 check (total_items >= 0)
       )
+    `);
+    await pool.query(`
+      alter table event_registrations
+      add column if not exists notes text not null default ''
     `);
     await pool.query(`
       create table if not exists event_registration_items (
@@ -191,6 +201,7 @@ export async function saveEventSignup(
           created_at,
           name,
           email,
+          notes,
           kind,
           party_size,
           total_items
@@ -201,6 +212,7 @@ export async function saveEventSignup(
           ${registration.createdAt},
           ${registration.name},
           ${registration.email},
+          ${registration.notes},
           ${registration.kind},
           ${registration.partySize},
           ${registration.totalItems}
@@ -241,11 +253,12 @@ export async function saveEventSignup(
           created_at,
           name,
           email,
+          notes,
           kind,
           party_size,
           total_items
         )
-        values ($1, $2, $3, $4, $5, $6, $7, $8)
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       `,
       [
         registration.id,
@@ -253,6 +266,7 @@ export async function saveEventSignup(
         registration.createdAt,
         registration.name,
         registration.email,
+        registration.notes,
         registration.kind,
         registration.partySize,
         registration.totalItems,
@@ -289,6 +303,7 @@ type RegistrationRow = {
   created_at: string | Date;
   name: string;
   email: string;
+  notes: string;
   kind: EventRegistration["kind"];
   party_size: number;
   total_items: number;
@@ -313,13 +328,13 @@ export async function listEventSignups(
     registrationRows = (
       eventId
         ? await sql`
-          select id, event_id, created_at, name, email, kind, party_size, total_items
+          select id, event_id, created_at, name, email, notes, kind, party_size, total_items
           from event_registrations
           where event_id = ${eventId}
           order by created_at asc
         `
         : await sql`
-          select id, event_id, created_at, name, email, kind, party_size, total_items
+          select id, event_id, created_at, name, email, notes, kind, party_size, total_items
           from event_registrations
           order by created_at asc
         `
@@ -346,7 +361,7 @@ export async function listEventSignups(
     const registrationResult = eventId
       ? await pool.query<RegistrationRow>(
           `
-            select id, event_id, created_at, name, email, kind, party_size, total_items
+            select id, event_id, created_at, name, email, notes, kind, party_size, total_items
             from event_registrations
             where event_id = $1
             order by created_at asc
@@ -355,7 +370,7 @@ export async function listEventSignups(
         )
       : await pool.query<RegistrationRow>(
           `
-            select id, event_id, created_at, name, email, kind, party_size, total_items
+            select id, event_id, created_at, name, email, notes, kind, party_size, total_items
             from event_registrations
             order by created_at asc
           `,
@@ -403,6 +418,7 @@ export async function listEventSignups(
     createdAt: new Date(row.created_at).toISOString(),
     name: row.name,
     email: row.email,
+    notes: row.notes ?? "",
     kind: row.kind,
     partySize: row.party_size,
     totalItems: row.total_items,
@@ -432,7 +448,7 @@ function matchesSignupQuery(
 
   if (query.q) {
     const q = query.q.toLowerCase();
-    const haystack = `${signup.name} ${signup.email}`.toLowerCase();
+    const haystack = `${signup.name} ${signup.email} ${signup.notes}`.toLowerCase();
     if (!haystack.includes(q)) {
       return false;
     }
@@ -484,6 +500,15 @@ export type EventSignupStatsResult = {
     partySize: number;
     items: number;
   }>;
+};
+
+export type EventSignupCollectionRow = {
+  eventId: string;
+  year: number;
+  signups: number;
+  partySize: number;
+  items: number;
+  lastSignupAt: string;
 };
 
 export async function listEventSignupsAdmin(
@@ -550,6 +575,60 @@ export async function getEventSignupsStats(
   };
 }
 
+function deriveEventYear(eventId: string, fallbackIso: string): number {
+  const match = eventId.match(/(?:^|[^0-9])(20[0-9]{2})(?:$|[^0-9])/);
+  if (match) {
+    return Number.parseInt(match[1], 10);
+  }
+  return new Date(fallbackIso).getUTCFullYear();
+}
+
+export async function listEventSignupCollections(): Promise<
+  EventSignupCollectionRow[]
+> {
+  const allRows = await listEventSignups();
+  const byEvent = new Map<
+    string,
+    {
+      eventId: string;
+      year: number;
+      signups: number;
+      partySize: number;
+      items: number;
+      lastSignupAt: string;
+    }
+  >();
+
+  for (const row of allRows) {
+    const current = byEvent.get(row.eventId);
+    if (!current) {
+      byEvent.set(row.eventId, {
+        eventId: row.eventId,
+        year: deriveEventYear(row.eventId, row.createdAt),
+        signups: 1,
+        partySize: row.partySize,
+        items: row.totalItems,
+        lastSignupAt: row.createdAt,
+      });
+      continue;
+    }
+
+    current.signups += 1;
+    current.partySize += row.partySize;
+    current.items += row.totalItems;
+    if (row.createdAt > current.lastSignupAt) {
+      current.lastSignupAt = row.createdAt;
+    }
+  }
+
+  return Array.from(byEvent.values()).sort((a, b) => {
+    if (a.year !== b.year) {
+      return b.year - a.year;
+    }
+    return b.lastSignupAt.localeCompare(a.lastSignupAt);
+  });
+}
+
 async function getRegistrationById(
   id: string,
 ): Promise<EventSignupWithItems | null> {
@@ -569,6 +648,7 @@ export async function updateEventSignupById(
 
   const name = patch.name ?? existing.name;
   const email = patch.email ?? existing.email;
+  const notes = patch.notes ?? existing.notes;
   const partySize = patch.partySize ?? existing.partySize;
   const itemsMap = patch.items;
   const nextItems = itemsMap
@@ -595,6 +675,7 @@ export async function updateEventSignupById(
         update event_registrations
         set name = ${name},
             email = ${email},
+            notes = ${notes},
             party_size = ${partySize},
             total_items = ${totalItems}
         where id = ${id}
@@ -633,11 +714,12 @@ export async function updateEventSignupById(
           update event_registrations
           set name = $1,
               email = $2,
-              party_size = $3,
-              total_items = $4
-          where id = $5
+              notes = $3,
+              party_size = $4,
+              total_items = $5
+          where id = $6
         `,
-        [name, email, partySize, totalItems, id],
+        [name, email, notes, partySize, totalItems, id],
       );
 
       await client.query(

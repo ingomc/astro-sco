@@ -12,6 +12,9 @@ signup:
   mode: registration
   deadline: 2026-11-10T22:59:00.000Z
   capacity: 48
+  maxPartySize: 1
+  notesLabel: Frage an die Orga (optional)
+  notesPlaceholder: Z. B. Teamwunsch oder kurze Rueckfrage
 ---
 
 ## Einladung zum Dartturnier

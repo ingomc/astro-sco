@@ -33,7 +33,9 @@ export const GET: APIRoute = async ({ request }) => {
   }
 
   const csvHref = `/api/admin/event-signups.csv?${csvParams.toString()}`;
-  const dashboardHref = `/admin/event-signups?${csvParams.toString()}`;
+  const dashboardHref = eventId
+    ? `/admin/event-signups/${encodeURIComponent(eventId)}?${csvParams.toString()}`
+    : `/admin/event-signups?${csvParams.toString()}`;
   const rows = signups
     .map(
       (signup) => `
@@ -43,6 +45,7 @@ export const GET: APIRoute = async ({ request }) => {
           <td>${escapeHtml(signup.kind)}</td>
           <td>${escapeHtml(signup.name)}</td>
           <td>${escapeHtml(signup.email)}</td>
+          <td>${escapeHtml(signup.notes || "-")}</td>
           <td>${escapeHtml(signup.partySize)}</td>
           <td>${escapeHtml(formatSignupItems(signup.items))}</td>
           <td>${escapeHtml(signup.totalItems)}</td>
@@ -135,6 +138,7 @@ export const GET: APIRoute = async ({ request }) => {
                 <th>Typ</th>
                 <th>Name</th>
                 <th>E-Mail</th>
+                <th>Hinweise</th>
                 <th>Personen</th>
                 <th>Auswahl</th>
                 <th>Gesamt</th>
@@ -142,7 +146,7 @@ export const GET: APIRoute = async ({ request }) => {
               </tr>
             </thead>
             <tbody>
-              ${rows || `<tr><td colspan="9">Noch keine Anmeldungen.</td></tr>`}
+              ${rows || `<tr><td colspan="10">Noch keine Anmeldungen.</td></tr>`}
             </tbody>
           </table>
         </main>

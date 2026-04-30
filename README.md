@@ -71,7 +71,12 @@ signup:
   mode: registration
   deadline: 2026-11-10T22:59:00.000Z
   capacity: 48
+  maxPartySize: 1
+  notesLabel: Frage an die Orga (optional)
+  notesPlaceholder: Z. B. Teamwunsch oder kurze Rueckfrage
 ```
 
 For `registration`, no `items` are needed. Capacity blocks additional
 registrations once reserved seats exceed the limit.
+All modes support an optional `notes` text input in the form (for allergies
+or short questions), which is included in admin views and CSV export.

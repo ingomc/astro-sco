@@ -21,7 +21,12 @@ const isOpen = Date.now() <= deadline.getTime();
 const items = signup.items ?? [];
 const hasItems =
   (signup.mode === "order" || signup.mode === "both") && items.length > 0;
-const showPartySize = signup.mode !== "order";
+const maxPartySize = signup.maxPartySize ?? 99;
+const showPartySize = signup.mode !== "order" && maxPartySize > 1;
+const notesLabel = signup.notesLabel?.trim() || "Hinweise (optional)";
+const notesPlaceholder =
+  signup.notesPlaceholder?.trim() ||
+  "z. B. Allergien oder kurze Frage";
 const actionLabel =
   signup.mode === "registration" ? "Anmeldung abschicken" : "Abschicken";
 const title =
@@ -35,6 +40,7 @@ const clientConfig = {
   mode: signup.mode,
   items,
   showPartySize,
+  maxPartySize,
   eventTitle,
 };
 ---
@@ -84,6 +90,17 @@ const clientConfig = {
             />
           </div>
 
+          <div class="event-signup__field">
+            <label for={`${signup.eventId}-notes`}>{notesLabel}</label>
+            <textarea
+              id={`${signup.eventId}-notes`}
+              name="notes"
+              maxlength="1000"
+              rows="3"
+              placeholder={notesPlaceholder}
+            />
+          </div>
+
           {showPartySize && (
             <div class="event-signup__field">
               <label for={`${signup.eventId}-party-size`}>Personen</label>
@@ -93,7 +110,7 @@ const clientConfig = {
                 type="number"
                 inputmode="numeric"
                 min="1"
-                max="99"
+                max={maxPartySize}
                 value="1"
                 required
               />
@@ -225,6 +242,7 @@ const clientConfig = {
         eventId: clientConfig.eventId,
         name: formData.get("name"),
         email: formData.get("email"),
+        notes: formData.get("notes"),
         partySize: clientConfig.showPartySize ? formData.get("partySize") : "1",
         website: formData.get("website"),
         items,
@@ -261,6 +279,7 @@ const clientConfig = {
             ),
           }))
           .filter((item) => item.quantity > 0);
+        const notes = String(payload.notes ?? "").trim();
 
         confirmationTitle.textContent =
           clientConfig.mode === "registration"
@@ -272,6 +291,7 @@ const clientConfig = {
             ...(clientConfig.showPartySize
               ? [`${payload.partySize} Person(en)`]
               : []),
+            ...(notes ? [`Hinweise: ${notes}`] : []),
             ...selectedItems.map((item) => `${item.quantity}x ${item.label}`),
           ].map((text) => {
             const listItem = document.createElement("li");
@@ -363,6 +383,17 @@ const clientConfig = {
     border-radius: 0.375rem;
     padding: 0.5rem 0.75rem;
     font: inherit;
+  }
+
+  .event-signup textarea {
+    width: 100%;
+    min-height: 5.2rem;
+    resize: vertical;
+    border: 1px solid #d6d3d1;
+    border-radius: 0.4rem;
+    padding: 0.55rem 0.65rem;
+    font: inherit;
+    color: #1c1917;
   }
 
   .event-signup__honeypot {

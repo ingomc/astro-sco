@@ -113,6 +113,7 @@ export const POST: APIRoute = async ({ request }) => {
         createdAt: new Date().toISOString(),
         name: parsed.name,
         email: parsed.email,
+        notes: parsed.notes,
         kind: signupConfig.mode,
         partySize: parsed.partySize,
         totalItems: parsed.totalItems,
