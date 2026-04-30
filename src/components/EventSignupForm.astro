@@ -1,0 +1,521 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+type SignupConfig = NonNullable<
+  CollectionEntry<"veranstaltungen">["data"]["signup"]
+>;
+
+type Props = {
+  eventTitle: string;
+  signup: SignupConfig;
+};
+
+const { eventTitle, signup } = Astro.props;
+const deadline = new Date(signup.deadline);
+const deadlineLabel = deadline.toLocaleDateString("de-DE", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+});
+const isOpen = Date.now() <= deadline.getTime();
+const items = signup.items ?? [];
+const hasItems =
+  (signup.mode === "order" || signup.mode === "both") && items.length > 0;
+const maxPartySize = signup.maxPartySize ?? 99;
+const showPartySize = signup.mode !== "order" && maxPartySize > 1;
+const notesLabel = signup.notesLabel?.trim() || "Hinweise (optional)";
+const notesPlaceholder =
+  signup.notesPlaceholder?.trim() ||
+  "z. B. Allergien oder kurze Frage";
+const actionLabel =
+  signup.mode === "registration" ? "Anmeldung abschicken" : "Abschicken";
+const title =
+  signup.mode === "registration" ? "Online anmelden" : "Online vorbestellen";
+const closedLabel =
+  signup.mode === "registration"
+    ? "Die Anmeldung ist geschlossen."
+    : "Der Bestellschluss ist vorbei.";
+const clientConfig = {
+  eventId: signup.eventId,
+  mode: signup.mode,
+  items,
+  showPartySize,
+  maxPartySize,
+  eventTitle,
+};
+---
+
+<section
+  class="not-prose event-signup"
+  aria-labelledby="event-signup-title"
+  data-event-signup-root={signup.eventId}
+>
+  <div class="event-signup__header">
+    <p class="event-signup__eyebrow">
+      {
+        signup.mode === "registration"
+          ? "Online-Anmeldung"
+          : "Online-Bestellung"
+      }
+    </p>
+    <h2 id="event-signup-title">{title}</h2>
+    <p>Anmeldungen sind bis {deadlineLabel} möglich.</p>
+  </div>
+
+  {
+    isOpen ? (
+      <>
+        <form class="event-signup__form" data-event-signup-form>
+          <div class="event-signup__field">
+            <label for={`${signup.eventId}-name`}>Name</label>
+            <input
+              id={`${signup.eventId}-name`}
+              name="name"
+              type="text"
+              autocomplete="name"
+              maxlength="100"
+              required
+            />
+          </div>
+
+          <div class="event-signup__field">
+            <label for={`${signup.eventId}-email`}>E-Mail</label>
+            <input
+              id={`${signup.eventId}-email`}
+              name="email"
+              type="email"
+              autocomplete="email"
+              maxlength="200"
+              required
+            />
+          </div>
+
+          <div class="event-signup__field">
+            <label for={`${signup.eventId}-notes`}>{notesLabel}</label>
+            <textarea
+              id={`${signup.eventId}-notes`}
+              name="notes"
+              maxlength="1000"
+              rows="3"
+              placeholder={notesPlaceholder}
+            />
+          </div>
+
+          {showPartySize && (
+            <div class="event-signup__field">
+              <label for={`${signup.eventId}-party-size`}>Personen</label>
+              <input
+                id={`${signup.eventId}-party-size`}
+                name="partySize"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                max={maxPartySize}
+                value="1"
+                required
+              />
+            </div>
+          )}
+
+          <div class="event-signup__honeypot" aria-hidden="true">
+            <label for={`${signup.eventId}-website`}>Website</label>
+            <input
+              id={`${signup.eventId}-website`}
+              name="website"
+              type="text"
+              tabindex="-1"
+              autocomplete="off"
+            />
+          </div>
+
+          {hasItems && (
+            <fieldset class="event-signup__items">
+              <legend>Auswahl</legend>
+              {items.map((item) => (
+                <label
+                  class="event-signup__item"
+                  for={`${signup.eventId}-${item.id}`}
+                >
+                  <span>{item.label}</span>
+                  <input
+                    id={`${signup.eventId}-${item.id}`}
+                    name={item.id}
+                    type="number"
+                    inputmode="numeric"
+                    min="0"
+                    max={item.max ?? 99}
+                    value="0"
+                  />
+                </label>
+              ))}
+            </fieldset>
+          )}
+
+          <button type="submit">{actionLabel}</button>
+          <p
+            class="event-signup__message"
+            role="status"
+            aria-live="polite"
+            data-event-signup-message
+          />
+        </form>
+        <div
+          class="event-signup__confirmation"
+          data-event-signup-confirmation
+          hidden
+          tabindex="-1"
+        >
+          <h3 data-event-signup-confirmation-title />
+          <p data-event-signup-confirmation-intro />
+          <ul data-event-signup-confirmation-items />
+          <p class="event-signup__registration-id">
+            Nummer:
+            <strong data-event-signup-confirmation-id />
+          </p>
+          <button type="button" data-event-signup-again>
+            Weitere Anmeldung
+          </button>
+        </div>
+      </>
+    ) : (
+      <p class="event-signup__closed">
+        {closedLabel} Bitte wenden Sie sich direkt an den Verein.
+      </p>
+    )
+  }
+</section>
+
+<script define:vars={{ clientConfig, actionLabel }}>
+  const root = document.querySelector(
+    `[data-event-signup-root="${clientConfig.eventId}"]`,
+  );
+  const form = root?.querySelector("[data-event-signup-form]");
+  const message = root?.querySelector("[data-event-signup-message]");
+  const confirmation = root?.querySelector("[data-event-signup-confirmation]");
+  const confirmationTitle = root?.querySelector(
+    "[data-event-signup-confirmation-title]",
+  );
+  const confirmationIntro = root?.querySelector(
+    "[data-event-signup-confirmation-intro]",
+  );
+  const confirmationItems = root?.querySelector(
+    "[data-event-signup-confirmation-items]",
+  );
+  const confirmationId = root?.querySelector(
+    "[data-event-signup-confirmation-id]",
+  );
+  const signupAgainButton = root?.querySelector("[data-event-signup-again]");
+
+  if (
+    form instanceof HTMLFormElement &&
+    message instanceof HTMLElement &&
+    confirmation instanceof HTMLElement &&
+    confirmationTitle instanceof HTMLElement &&
+    confirmationIntro instanceof HTMLElement &&
+    confirmationItems instanceof HTMLUListElement &&
+    confirmationId instanceof HTMLElement &&
+    signupAgainButton instanceof HTMLButtonElement
+  ) {
+    signupAgainButton.addEventListener("click", () => {
+      delete confirmation.dataset.visible;
+      confirmation.hidden = true;
+      form.hidden = false;
+      form.reset();
+      message.textContent = "";
+      message.dataset.state = "";
+      form.querySelector("input[name='name']")?.focus();
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const submitButton = form.querySelector("button[type='submit']");
+      if (!(submitButton instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      const formData = new FormData(form);
+      const items = Object.fromEntries(
+        clientConfig.items.map((item) => [item.id, formData.get(item.id)]),
+      );
+      const payload = {
+        eventId: clientConfig.eventId,
+        name: formData.get("name"),
+        email: formData.get("email"),
+        notes: formData.get("notes"),
+        partySize: clientConfig.showPartySize ? formData.get("partySize") : "1",
+        website: formData.get("website"),
+        items,
+      };
+
+      message.textContent = "";
+      message.dataset.state = "";
+      submitButton.disabled = true;
+      submitButton.textContent = "Wird gespeichert ...";
+
+      try {
+        const response = await fetch("/api/event-signups", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json();
+
+        if (!response.ok || !result.ok) {
+          throw new Error(
+            result.message || "Die Anmeldung konnte nicht gespeichert werden.",
+          );
+        }
+
+        const name = String(payload.name ?? "").trim();
+        const selectedItems = clientConfig.items
+          .map((item) => ({
+            label: item.label,
+            quantity: Number.parseInt(
+              String(payload.items[item.id] ?? "0"),
+              10,
+            ),
+          }))
+          .filter((item) => item.quantity > 0);
+        const notes = String(payload.notes ?? "").trim();
+
+        confirmationTitle.textContent =
+          clientConfig.mode === "registration"
+            ? "Anmeldung gespeichert"
+            : "Bestellung gespeichert";
+        confirmationIntro.textContent = `Vielen Dank, ${name}. Ihre ${clientConfig.mode === "registration" ? "Anmeldung" : "Bestellung"} ist eingegangen.`;
+        confirmationItems.replaceChildren(
+          ...[
+            ...(clientConfig.showPartySize
+              ? [`${payload.partySize} Person(en)`]
+              : []),
+            ...(notes ? [`Hinweise: ${notes}`] : []),
+            ...selectedItems.map((item) => `${item.quantity}x ${item.label}`),
+          ].map((text) => {
+            const listItem = document.createElement("li");
+            listItem.textContent = text;
+            return listItem;
+          }),
+        );
+        confirmationId.textContent = result.id || "gespeichert";
+        form.hidden = true;
+        confirmation.hidden = false;
+        confirmation.getBoundingClientRect();
+        requestAnimationFrame(() => {
+          confirmation.dataset.visible = "true";
+          confirmation.focus();
+        });
+      } catch (error) {
+        message.textContent =
+          error instanceof Error
+            ? error.message
+            : "Die Anmeldung konnte nicht gespeichert werden.";
+        message.dataset.state = "error";
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = actionLabel;
+      }
+    });
+  }
+</script>
+
+<style>
+  .event-signup {
+    margin: 2rem 0;
+    padding: 1.25rem;
+    border: 1px solid #d6d3d1;
+    border-radius: 0.5rem;
+    background: #fff;
+  }
+
+  .event-signup__header {
+    margin-bottom: 1rem;
+  }
+
+  .event-signup__eyebrow {
+    margin: 0 0 0.25rem;
+    color: #b91c1c;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .event-signup h2 {
+    margin: 0 0 0.25rem;
+    color: #171717;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .event-signup p {
+    margin: 0;
+    color: #44403c;
+  }
+
+  .event-signup__form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .event-signup__form[hidden],
+  .event-signup__confirmation[hidden] {
+    display: none;
+  }
+
+  .event-signup__field,
+  .event-signup__items {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .event-signup label,
+  .event-signup legend {
+    color: #292524;
+    font-weight: 700;
+  }
+
+  .event-signup input {
+    width: 100%;
+    min-height: 2.75rem;
+    border: 1px solid #a8a29e;
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    font: inherit;
+  }
+
+  .event-signup textarea {
+    width: 100%;
+    min-height: 5.2rem;
+    resize: vertical;
+    border: 1px solid #d6d3d1;
+    border-radius: 0.4rem;
+    padding: 0.55rem 0.65rem;
+    font: inherit;
+    color: #1c1917;
+  }
+
+  .event-signup__honeypot {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .event-signup__items {
+    margin: 0;
+    border: 0;
+    padding: 0;
+  }
+
+  .event-signup__item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 5rem;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #e7e5e4;
+    border-radius: 0.5rem;
+  }
+
+  .event-signup__item input {
+    text-align: right;
+  }
+
+  .event-signup button {
+    min-height: 2.75rem;
+    border: 0;
+    border-radius: 0.375rem;
+    background: #b91c1c;
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .event-signup button:hover {
+    background: #991b1b;
+    color: #fff;
+  }
+
+  .event-signup button:disabled {
+    cursor: wait;
+    opacity: 0.7;
+  }
+
+  .event-signup__message {
+    min-height: 1.5rem;
+    font-weight: 700;
+  }
+
+  .event-signup__message[data-state="error"] {
+    color: #b91c1c;
+  }
+
+  .event-signup__confirmation {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid #bbf7d0;
+    border-radius: 0.5rem;
+    background: #f0fdf4;
+    opacity: 0;
+    transform: translateY(0.85rem) scale(0.96);
+    transition:
+      opacity 260ms ease,
+      transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .event-signup__confirmation[data-visible="true"] {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .event-signup__confirmation h3 {
+    margin: 0;
+    color: #14532d;
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+
+  .event-signup__confirmation ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #292524;
+  }
+
+  .event-signup__registration-id {
+    font-size: 1rem;
+  }
+
+  .event-signup__registration-id strong {
+    display: inline-block;
+    margin-left: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.375rem;
+    background: #dcfce7;
+    color: #14532d;
+    letter-spacing: 0.08em;
+  }
+
+  .event-signup__closed {
+    font-weight: 700;
+  }
+
+  @media (max-width: 520px) {
+    .event-signup {
+      padding: 1rem;
+    }
+
+    .event-signup__item {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .event-signup__confirmation {
+      transition: none;
+      transform: none;
+    }
+  }
+</style>

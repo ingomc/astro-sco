@@ -1,0 +1,197 @@
+<section class="panel table-wrap signups-table">
+  <div class="table-toolbar">
+    <label>Sortieren nach
+      <select id="sortBy">
+        <option value="createdAt">createdAt</option>
+        <option value="name">name</option>
+        <option value="partySize">partySize</option>
+        <option value="totalItems">totalItems</option>
+      </select>
+    </label>
+    <label>Richtung
+      <select id="sortDirection">
+        <option value="desc">desc</option>
+        <option value="asc">asc</option>
+      </select>
+    </label>
+    <label>Pro Seite
+      <select id="pageSize">
+        <option value="10">10</option>
+        <option value="25" selected>25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </label>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th><input id="select-all" type="checkbox" /></th>
+        <th>Zeit</th>
+        <th>Event</th>
+        <th>Typ</th>
+        <th>Name</th>
+        <th>E-Mail</th>
+        <th>Hinweise</th>
+        <th>Personen</th>
+        <th>Items</th>
+        <th>Gesamt</th>
+        <th>ID</th>
+        <th>Aktionen</th>
+      </tr>
+    </thead>
+    <tbody id="rows">
+      <tr><td colspan="12">Wird geladen ...</td></tr>
+    </tbody>
+  </table>
+  <div class="pagination">
+    <button id="prev">Zurueck</button>
+    <span id="page-label">Seite 1</span>
+    <button id="next">Weiter</button>
+  </div>
+</section>
+
+<style is:global>
+  .signups-table.panel {
+    margin-top: 1rem;
+    padding: 1.15rem 1.2rem;
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    background: var(--card);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  }
+  .signups-table {
+    overflow: auto;
+  }
+  .signups-table .table-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: end;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+    padding: 0.25rem 0;
+  }
+  .signups-table .table-toolbar label {
+    min-width: 150px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #374151;
+    display: grid;
+    gap: 0.38rem;
+  }
+  .signups-table .table-toolbar select {
+    min-height: 2.5rem;
+    border: 1px solid var(--line);
+    border-radius: 0.55rem;
+    padding: 0 0.7rem;
+    font-size: 0.97rem;
+    background: #fff;
+  }
+  .signups-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #b6becb;
+  }
+  .signups-table thead th {
+    background: #f5f5f4;
+    border-right: 1px solid #b6becb;
+    border-bottom: 1px solid #b6becb;
+  }
+  .signups-table thead th:last-child {
+    border-right: 0;
+  }
+  .signups-table th,
+  .signups-table td {
+    padding: 0.625rem;
+    text-align: left;
+    vertical-align: top;
+    background: #fff;
+  }
+  .signups-table tbody td {
+    border-right: 1px solid #b6becb;
+    border-top: 1px solid #b6becb;
+  }
+  .signups-table tbody td:last-child {
+    border-right: 0;
+  }
+  .signups-table tbody tr:first-child td {
+    border-top: 0;
+  }
+  .signups-table tbody tr:last-child td {
+    border-bottom: 1px solid #b6becb;
+  }
+  .signups-table td.actions {
+    white-space: nowrap;
+  }
+  .signups-table .actions-row {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+  .signups-table .actions-row button {
+    min-height: 1.95rem;
+  }
+  .signups-table .kind-pill {
+    display: inline;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+  }
+  .signups-table .kind-pill.order,
+  .signups-table .kind-pill.registration,
+  .signups-table .kind-pill.both {
+    background: transparent;
+    color: inherit;
+  }
+  .signups-table .items-list,
+  .signups-table .items-edit-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.28rem;
+  }
+  .signups-table .items-list li {
+    line-height: 1.25;
+  }
+  .signups-table .items-edit-list label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.55rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .signups-table .items-edit-list input {
+    width: 86px;
+    min-height: 2rem;
+  }
+  .signups-table .pagination {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+  @media (max-width: 640px) {
+    .signups-table.panel {
+      padding: 0.8rem;
+    }
+    .signups-table .pagination {
+      flex-wrap: wrap;
+    }
+    .signups-table .table-toolbar {
+      justify-content: stretch;
+    }
+    .signups-table .table-toolbar label {
+      min-width: 100%;
+    }
+  }
+</style>

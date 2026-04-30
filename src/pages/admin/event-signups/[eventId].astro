@@ -1,0 +1,10 @@
+---
+import EventSignupsAdminApp from "../../../components/admin/EventSignupsAdminApp.astro";
+
+export const prerender = false;
+
+const eventId = decodeURIComponent(Astro.params.eventId ?? "").trim();
+---
+
+<EventSignupsAdminApp view="event" eventId={eventId} />
+

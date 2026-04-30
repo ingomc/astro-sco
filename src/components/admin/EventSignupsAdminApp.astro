@@ -1,0 +1,910 @@
+---
+type ViewMode = "collections" | "event" | "all" | "open-notes";
+
+type Props = {
+  view: ViewMode;
+  eventId?: string;
+};
+
+const { view, eventId = "" } = Astro.props;
+---
+
+<div
+  class="admin-app"
+  data-admin-view={view}
+  data-admin-event-id={eventId}
+>
+  <header class="admin-topbar">
+    <div class="brand">
+      <span class="brand-mark">SCO</span>
+      <a data-nav-root href="#">Collections</a>
+      <span>Logs</span>
+      <span>Settings</span>
+    </div>
+    <div class="topbar-actions">
+      <span data-last-refresh>Bereit</span>
+      <button type="button" data-refresh>Aktualisieren</button>
+      <a class="primary-action" data-csv-link href="#">CSV Export</a>
+    </div>
+  </header>
+
+  <div class="admin-body">
+    <aside class="admin-sidebar">
+      <input
+        class="sidebar-search"
+        data-sidebar-search
+        type="search"
+        placeholder="Collections suchen..."
+      />
+      <nav class="system-nav" aria-label="System Views">
+        <a data-system-all href="#">Alle Anmeldungen</a>
+        <a data-system-open-notes href="#">Offene Hinweise</a>
+      </nav>
+      <div class="sidebar-section-title">Collections</div>
+      <div data-sidebar-groups class="sidebar-groups"></div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="main-head">
+        <div>
+          <p class="breadcrumb" data-breadcrumb>Collections</p>
+          <h1 data-title>Collections</h1>
+        </div>
+      </div>
+
+      <section class="query-bar" data-query-bar>
+        <div class="search-control">
+          <span>Search</span>
+          <input data-q type="search" placeholder="Suchbegriff oder Filter..." />
+        </div>
+        <div class="quick-chips">
+          <button type="button" data-chip="notesOnly">Nur Hinweise</button>
+          <button type="button" data-chip="openNotesOnly">Nur offen</button>
+          <button type="button" data-chip="groupsOnly">Nur Gruppen</button>
+        </div>
+      </section>
+
+      <section class="bulkbar" data-bulkbar hidden>
+        <span data-selection-label>0 ausgewaehlt</span>
+        <button type="button" data-bulk-notes-done>Hinweise erledigt</button>
+        <button type="button" data-bulk-notes-open>Hinweise oeffnen</button>
+        <button type="button" data-bulk-delete>Loeschen</button>
+      </section>
+
+      <section class="content-panel">
+        <div data-collections-view class="collections-view"></div>
+        <div data-table-view class="table-view" hidden>
+          <div class="desktop-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th><input data-select-all type="checkbox" /></th>
+                  <th>ID</th>
+                  <th>Zeit</th>
+                  <th>Name</th>
+                  <th>Personen</th>
+                  <th>Auswahl</th>
+                  <th>Hinweise</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody data-rows></tbody>
+            </table>
+          </div>
+          <div class="mobile-list" data-mobile-rows></div>
+        </div>
+      </section>
+
+      <footer class="table-footer">
+        <span data-status>Lade...</span>
+        <div class="pager">
+          <button type="button" data-prev>Zurueck</button>
+          <span data-page-label>Seite 1</span>
+          <button type="button" data-next>Weiter</button>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <aside class="drawer" data-drawer hidden>
+    <div class="drawer-panel">
+      <header class="drawer-head">
+        <div>
+          <p class="breadcrumb">Record</p>
+          <h2 data-drawer-title>Datensatz</h2>
+        </div>
+        <button type="button" data-drawer-close>Schliessen</button>
+      </header>
+      <form data-drawer-form class="drawer-form">
+        <label>Name<input data-edit="name" name="name" /></label>
+        <label>E-Mail<input data-edit="email" name="email" type="email" /></label>
+        <label>Personen<input data-edit="partySize" name="partySize" type="number" min="1" max="99" /></label>
+        <label>Hinweise<textarea data-edit="notes" name="notes" rows="5" maxlength="1000"></textarea></label>
+        <label class="check-row"><input data-edit="notesDone" name="notesDone" type="checkbox" /> Hinweise erledigt</label>
+        <div class="drawer-actions">
+          <button type="submit">Speichern</button>
+          <button type="button" data-drawer-delete>Loeschen</button>
+        </div>
+      </form>
+    </div>
+  </aside>
+</div>
+
+<script define:vars={{ initialView: view, initialEventId: eventId }}>
+  // @ts-nocheck
+  const root = document.querySelector(".admin-app");
+  const token = new URLSearchParams(window.location.search).get("token") || "";
+  const state = {
+    view: initialView,
+    eventId: initialEventId,
+    rows: [],
+    collections: [],
+    selected: new Set(),
+    editing: null,
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    chips: {
+      notesOnly: false,
+      openNotesOnly: initialView === "open-notes",
+      groupsOnly: false,
+    },
+  };
+
+  const els = {
+    title: root.querySelector("[data-title]"),
+    breadcrumb: root.querySelector("[data-breadcrumb]"),
+    status: root.querySelector("[data-status]"),
+    lastRefresh: root.querySelector("[data-last-refresh]"),
+    sidebarGroups: root.querySelector("[data-sidebar-groups]"),
+    sidebarSearch: root.querySelector("[data-sidebar-search]"),
+    q: root.querySelector("[data-q]"),
+    csvLink: root.querySelector("[data-csv-link]"),
+    queryBar: root.querySelector("[data-query-bar]"),
+    collectionsView: root.querySelector("[data-collections-view]"),
+    tableView: root.querySelector("[data-table-view]"),
+    rows: root.querySelector("[data-rows]"),
+    mobileRows: root.querySelector("[data-mobile-rows]"),
+    selectAll: root.querySelector("[data-select-all]"),
+    bulkbar: root.querySelector("[data-bulkbar]"),
+    selectionLabel: root.querySelector("[data-selection-label]"),
+    pageLabel: root.querySelector("[data-page-label]"),
+    prev: root.querySelector("[data-prev]"),
+    next: root.querySelector("[data-next]"),
+    drawer: root.querySelector("[data-drawer]"),
+    drawerTitle: root.querySelector("[data-drawer-title]"),
+    drawerForm: root.querySelector("[data-drawer-form]"),
+  };
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+  }
+
+  function setStatus(message, error = false) {
+    els.status.textContent = message;
+    els.status.dataset.error = error ? "true" : "false";
+  }
+
+  function appUrl(path) {
+    const sep = path.includes("?") ? "&" : "?";
+    return `${path}${token ? `${sep}token=${encodeURIComponent(token)}` : ""}`;
+  }
+
+  function listParams({ allRows = false } = {}) {
+    const params = new URLSearchParams();
+    if (token) params.set("token", token);
+    if (state.view === "event") params.set("eventId", state.eventId);
+    if (state.chips.notesOnly) params.set("notesOnly", "true");
+    if (state.chips.openNotesOnly || state.view === "open-notes") {
+      params.set("openNotesOnly", "true");
+    }
+    if (state.chips.groupsOnly) params.set("groupsOnly", "true");
+    const q = els.q.value.trim();
+    if (q) params.set("q", q);
+    params.set("sortBy", "createdAt");
+    params.set("sortDirection", "desc");
+    params.set("pageSize", allRows ? "100000" : "25");
+    params.set("page", allRows ? "1" : String(state.page));
+    return params;
+  }
+
+  function updateTop() {
+    const titles = {
+      collections: ["Collections", "Collections"],
+      all: ["Collections / Alle Anmeldungen", "Alle Anmeldungen"],
+      "open-notes": ["Collections / Offene Hinweise", "Offene Hinweise"],
+      event: [`Collections / ${state.eventId}`, state.eventId],
+    };
+    const [breadcrumb, title] = titles[state.view] ?? titles.collections;
+    els.breadcrumb.textContent = breadcrumb;
+    els.title.textContent = title;
+    els.queryBar.hidden = state.view === "collections";
+    els.tableView.hidden = state.view === "collections";
+    els.collectionsView.hidden = state.view !== "collections";
+    els.csvLink.hidden = state.view === "collections";
+    els.csvLink.href = `/api/admin/event-signups.csv?${listParams({ allRows: true }).toString()}`;
+  }
+
+  function groupedCollections(filter = "") {
+    const q = filter.trim().toLowerCase();
+    const rows = q
+      ? state.collections.filter((row) => row.eventId.toLowerCase().includes(q))
+      : state.collections;
+    const groups = new Map();
+    for (const row of rows) {
+      const list = groups.get(row.year) ?? [];
+      list.push(row);
+      groups.set(row.year, list);
+    }
+    return Array.from(groups.entries()).sort((a, b) => Number(b[0]) - Number(a[0]));
+  }
+
+  function renderSidebar() {
+    const groups = groupedCollections(els.sidebarSearch.value);
+    els.sidebarGroups.innerHTML = groups
+      .map(([year, entries]) => {
+        const links = entries
+          .map((row) => {
+            const active = state.view === "event" && state.eventId === row.eventId;
+            const badge = row.openNotes
+              ? `<span class="sidebar-badge">${row.openNotes}</span>`
+              : "";
+            return `<a class="${active ? "active" : ""}" href="${appUrl(`/admin/event-signups/${encodeURIComponent(row.eventId)}`)}"><span>${escapeHtml(row.eventId)}</span><small>${row.signups}</small>${badge}</a>`;
+          })
+          .join("");
+        return `<section><h3>${year}</h3>${links}</section>`;
+      })
+      .join("");
+
+    root.querySelector("[data-system-all]").href = appUrl("/admin/event-signups/system/all");
+    root.querySelector("[data-system-open-notes]").href = appUrl("/admin/event-signups/system/open-notes");
+    root.querySelector("[data-nav-root]").href = appUrl("/admin/event-signups");
+    root.querySelector("[data-system-all]").classList.toggle("active", state.view === "all");
+    root.querySelector("[data-system-open-notes]").classList.toggle("active", state.view === "open-notes");
+  }
+
+  function renderCollections() {
+    const groups = groupedCollections(els.sidebarSearch.value);
+    if (!groups.length) {
+      els.collectionsView.innerHTML = `<div class="empty-state">Keine Collections gefunden.</div>`;
+      return;
+    }
+
+    els.collectionsView.innerHTML = groups
+      .map(([year, entries]) => {
+        const rows = entries
+          .map((row) => {
+            return `<tr>
+              <td><a class="id-pill" href="${appUrl(`/admin/event-signups/${encodeURIComponent(row.eventId)}`)}">${escapeHtml(row.eventId)}</a></td>
+              <td>${row.signups}</td>
+              <td>${row.partySize}</td>
+              <td>${row.items}</td>
+              <td>${row.openNotes ? `<span class="open-badge">${row.openNotes} offen</span>` : "-"}</td>
+              <td>${new Date(row.lastSignupAt).toLocaleString("de-DE")}</td>
+              <td><a class="row-arrow" href="${appUrl(`/admin/event-signups/${encodeURIComponent(row.eventId)}`)}">Oeffnen</a></td>
+            </tr>`;
+          })
+          .join("");
+        return `<section class="collection-table-section"><h2>${year}</h2><table class="collection-table"><thead><tr><th>Collection</th><th>Anmeldungen</th><th>Personen</th><th>Items</th><th>Hinweise</th><th>Letzte Aktivitaet</th><th></th></tr></thead><tbody>${rows}</tbody></table></section>`;
+      })
+      .join("");
+  }
+
+  function itemSummary(row) {
+    if (!row.items.length) return "-";
+    return row.items.map((item) => `${item.quantity}x ${escapeHtml(item.label)}`).join("<br>");
+  }
+
+  function noteCell(row) {
+    if (!row.notes) return "-";
+    return `<span class="${row.notesDone ? "note-done" : "note-open"}">${row.notesDone ? "erledigt" : "offen"}</span><span>${escapeHtml(row.notes)}</span>`;
+  }
+
+  function renderBulkbar() {
+    const count = state.selected.size;
+    els.bulkbar.hidden = count === 0;
+    els.selectionLabel.textContent = `${count} ausgewaehlt`;
+  }
+
+  function renderRows() {
+    renderBulkbar();
+    if (!state.rows.length) {
+      els.rows.innerHTML = `<tr><td colspan="8"><div class="empty-state">Keine Datensaetze gefunden.</div></td></tr>`;
+      els.mobileRows.innerHTML = `<div class="empty-state">Keine Datensaetze gefunden.</div>`;
+      return;
+    }
+
+    els.rows.innerHTML = state.rows
+      .map((row) => {
+        const checked = state.selected.has(row.id) ? "checked" : "";
+        return `<tr data-row-id="${row.id}">
+          <td><input type="checkbox" data-select="${row.id}" ${checked}></td>
+          <td><button class="id-pill" data-open="${row.id}">${row.id}</button></td>
+          <td>${new Date(row.createdAt).toLocaleString("de-DE")}</td>
+          <td>${escapeHtml(row.name)}</td>
+          <td>${row.partySize}</td>
+          <td>${itemSummary(row)}</td>
+          <td class="note-cell">${noteCell(row)}</td>
+          <td><button class="ghost-action" data-open="${row.id}">Details</button></td>
+        </tr>`;
+      })
+      .join("");
+
+    els.mobileRows.innerHTML = state.rows
+      .map((row) => `<article class="mobile-card" data-row-id="${row.id}">
+        <label><input type="checkbox" data-select="${row.id}" ${state.selected.has(row.id) ? "checked" : ""}> ${escapeHtml(row.name)}</label>
+        <p>${new Date(row.createdAt).toLocaleString("de-DE")} · ${row.partySize} Pers.</p>
+        <p>${row.notes ? noteCell(row) : "Keine Hinweise"}</p>
+        <button type="button" data-open="${row.id}">Details</button>
+      </article>`)
+      .join("");
+  }
+
+  async function loadCollections() {
+    const response = await fetch(`/api/admin/event-signups.collections?token=${encodeURIComponent(token)}`);
+    const result = await response.json();
+    if (!response.ok || !result.ok) {
+      throw new Error(result.message || "Collections konnten nicht geladen werden.");
+    }
+    state.collections = result.rows;
+    renderSidebar();
+    renderCollections();
+  }
+
+  async function loadList() {
+    const response = await fetch(`/api/admin/event-signups.list?${listParams().toString()}`);
+    const result = await response.json();
+    if (!response.ok || !result.ok) {
+      throw new Error(result.message || "Liste konnte nicht geladen werden.");
+    }
+    state.rows = result.rows;
+    state.total = result.total;
+    state.page = result.page;
+    state.totalPages = result.totalPages;
+    els.pageLabel.textContent = `Seite ${state.page} / ${state.totalPages}`;
+    renderRows();
+    setStatus(`${state.total} Datensaetze`);
+  }
+
+  async function refresh() {
+    if (!token) {
+      setStatus("Kein Token in URL.", true);
+      return;
+    }
+    updateTop();
+    setStatus("Lade...");
+    await loadCollections();
+    if (state.view !== "collections") {
+      await loadList();
+    } else {
+      setStatus(`${state.collections.length} Collections`);
+    }
+    els.lastRefresh.textContent = `Aktualisiert ${new Date().toLocaleTimeString("de-DE")}`;
+  }
+
+  function openDrawer(row) {
+    state.editing = row;
+    els.drawerTitle.textContent = row.id;
+    els.drawerForm.elements.name.value = row.name;
+    els.drawerForm.elements.email.value = row.email;
+    els.drawerForm.elements.partySize.value = row.partySize;
+    els.drawerForm.elements.notes.value = row.notes || "";
+    els.drawerForm.elements.notesDone.checked = row.notesDone;
+    els.drawer.hidden = false;
+  }
+
+  async function patchRow(id, patch) {
+    const params = new URLSearchParams();
+    params.set("token", token);
+    params.set("id", id);
+    const response = await fetch(`/api/admin/event-signups.mutation?${params.toString()}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(patch),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok) {
+      throw new Error(result.message || "Speichern fehlgeschlagen.");
+    }
+  }
+
+  async function deleteRows(ids) {
+    const response = await fetch(`/api/admin/event-signups.bulk-delete?token=${encodeURIComponent(token)}`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ids }),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok) {
+      throw new Error(result.message || "Loeschen fehlgeschlagen.");
+    }
+  }
+
+  async function bulkAction(action) {
+    const response = await fetch(`/api/admin/event-signups.bulk-action?token=${encodeURIComponent(token)}`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ids: Array.from(state.selected), action }),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok) {
+      throw new Error(result.message || "Bulk-Aktion fehlgeschlagen.");
+    }
+  }
+
+  root.querySelector("[data-refresh]").addEventListener("click", () => refresh().catch((error) => setStatus(error.message, true)));
+  els.sidebarSearch.addEventListener("input", () => {
+    renderSidebar();
+    if (state.view === "collections") renderCollections();
+  });
+  els.q.addEventListener("input", () => {
+    state.page = 1;
+    loadList().catch((error) => setStatus(error.message, true));
+    updateTop();
+  });
+  root.querySelectorAll("[data-chip]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.chip;
+      state.chips[key] = !state.chips[key];
+      button.classList.toggle("active", state.chips[key]);
+      state.page = 1;
+      loadList().catch((error) => setStatus(error.message, true));
+      updateTop();
+    });
+  });
+  els.prev.addEventListener("click", () => {
+    if (state.page > 1) {
+      state.page -= 1;
+      loadList().catch((error) => setStatus(error.message, true));
+    }
+  });
+  els.next.addEventListener("click", () => {
+    if (state.page < state.totalPages) {
+      state.page += 1;
+      loadList().catch((error) => setStatus(error.message, true));
+    }
+  });
+  root.addEventListener("change", (event) => {
+    const target = event.target;
+    if (target.matches("[data-select]")) {
+      target.checked ? state.selected.add(target.dataset.select) : state.selected.delete(target.dataset.select);
+      renderRows();
+    }
+    if (target === els.selectAll) {
+      state.selected = target.checked ? new Set(state.rows.map((row) => row.id)) : new Set();
+      renderRows();
+    }
+  });
+  root.addEventListener("click", async (event) => {
+    const target = event.target;
+    const openId = target.closest("[data-open]")?.dataset.open;
+    if (openId) {
+      const row = state.rows.find((item) => item.id === openId);
+      if (row) openDrawer(row);
+    }
+  });
+  root.querySelector("[data-drawer-close]").addEventListener("click", () => {
+    els.drawer.hidden = true;
+  });
+  els.drawer.addEventListener("click", (event) => {
+    if (event.target === els.drawer) els.drawer.hidden = true;
+  });
+  els.drawerForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!state.editing) return;
+    try {
+      await patchRow(state.editing.id, {
+        name: els.drawerForm.elements.name.value,
+        email: els.drawerForm.elements.email.value,
+        partySize: Number.parseInt(els.drawerForm.elements.partySize.value, 10),
+        notes: els.drawerForm.elements.notes.value,
+        notesDone: els.drawerForm.elements.notesDone.checked,
+      });
+      els.drawer.hidden = true;
+      await refresh();
+    } catch (error) {
+      setStatus(error.message, true);
+    }
+  });
+  root.querySelector("[data-drawer-delete]").addEventListener("click", async () => {
+    if (!state.editing || !window.confirm(`Datensatz ${state.editing.id} loeschen?`)) return;
+    try {
+      await deleteRows([state.editing.id]);
+      els.drawer.hidden = true;
+      await refresh();
+    } catch (error) {
+      setStatus(error.message, true);
+    }
+  });
+  root.querySelector("[data-bulk-delete]").addEventListener("click", async () => {
+    if (!state.selected.size || !window.confirm(`${state.selected.size} Datensaetze loeschen?`)) return;
+    await deleteRows(Array.from(state.selected));
+    state.selected.clear();
+    await refresh();
+  });
+  root.querySelector("[data-bulk-notes-done]").addEventListener("click", async () => {
+    await bulkAction("notesDone");
+    state.selected.clear();
+    await refresh();
+  });
+  root.querySelector("[data-bulk-notes-open]").addEventListener("click", async () => {
+    await bulkAction("notesOpen");
+    state.selected.clear();
+    await refresh();
+  });
+
+  refresh().catch((error) => setStatus(error.message, true));
+</script>
+
+<style is:global>
+  .admin-app {
+    min-height: 100vh;
+    background: #f3f5f8;
+    color: #1f2937;
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .admin-topbar {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 1rem;
+    background: #24272f;
+    color: #e5e7eb;
+  }
+  .brand,
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .brand a,
+  .brand span,
+  .topbar-actions span {
+    color: #cbd5e1;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .brand-mark {
+    display: inline-flex;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: #fff;
+    color: #111827 !important;
+    font-size: 0.72rem;
+  }
+  .topbar-actions button,
+  .primary-action {
+    min-height: 2rem;
+    border: 1px solid #4b5563;
+    border-radius: 6px;
+    padding: 0 0.75rem;
+    background: #2f333d;
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .primary-action {
+    background: #fff;
+    color: #111827;
+  }
+  .admin-body {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: calc(100vh - 48px);
+  }
+  .admin-sidebar {
+    border-right: 1px solid #d7dce4;
+    background: #f8fafc;
+    padding: 1rem;
+  }
+  .sidebar-search,
+  .search-control input {
+    width: 100%;
+    min-height: 2.65rem;
+    border: 1px solid #cfd6e2;
+    border-radius: 8px;
+    padding: 0 0.85rem;
+    font: inherit;
+    background: #fff;
+  }
+  .system-nav {
+    display: grid;
+    gap: 0.35rem;
+    margin: 1rem 0;
+  }
+  .system-nav a,
+  .sidebar-groups a {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 0.35rem;
+    align-items: center;
+    min-height: 2.3rem;
+    border-radius: 7px;
+    padding: 0 0.65rem;
+    color: #334155;
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .system-nav a.active,
+  .sidebar-groups a.active,
+  .system-nav a:hover,
+  .sidebar-groups a:hover {
+    background: #e5e7eb;
+    color: #111827;
+  }
+  .sidebar-section-title,
+  .sidebar-groups h3 {
+    margin: 1rem 0 0.45rem;
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .sidebar-badge,
+  .open-badge {
+    border-radius: 999px;
+    padding: 0.1rem 0.42rem;
+    background: #fee2e2;
+    color: #991b1b;
+    font-size: 0.72rem;
+    font-weight: 800;
+  }
+  .admin-main {
+    min-width: 0;
+    padding: 1.7rem 2rem;
+    background: #fff;
+  }
+  .main-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+  }
+  .breadcrumb {
+    margin: 0 0 0.25rem;
+    color: #64748b;
+    font-size: 1.05rem;
+  }
+  .admin-main h1 {
+    margin: 0;
+    font-size: 1.55rem;
+  }
+  .query-bar {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .search-control {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 999px;
+    background: #edf0f5;
+    padding: 0.45rem 0.75rem;
+  }
+  .search-control span {
+    color: #64748b;
+    font-weight: 700;
+  }
+  .search-control input {
+    border: 0;
+    background: transparent;
+    min-height: 2rem;
+  }
+  .quick-chips,
+  .bulkbar {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+  }
+  .quick-chips button,
+  .bulkbar button,
+  .pager button,
+  .ghost-action,
+  .drawer button {
+    min-height: 2rem;
+    border: 1px solid #cfd6e2;
+    border-radius: 6px;
+    padding: 0 0.65rem;
+    background: #fff;
+    color: #1f2937;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .quick-chips button.active {
+    background: #111827;
+    color: #fff;
+    border-color: #111827;
+  }
+  .bulkbar {
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding: 0.65rem;
+    border: 1px solid #cfd6e2;
+    border-radius: 8px;
+    background: #f8fafc;
+  }
+  .content-panel {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th,
+  td {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.72rem 0.85rem;
+    text-align: left;
+    vertical-align: middle;
+  }
+  th {
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+  tbody tr:hover {
+    background: #f8fafc;
+  }
+  .id-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.65rem;
+    border: 0;
+    border-radius: 6px;
+    padding: 0 0.45rem;
+    background: #e5e7eb;
+    color: #111827;
+    font: inherit;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .note-cell {
+    display: grid;
+    gap: 0.22rem;
+    max-width: 360px;
+  }
+  .note-open,
+  .note-done {
+    width: fit-content;
+    border-radius: 999px;
+    padding: 0.12rem 0.42rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+  }
+  .note-open {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  .note-done {
+    background: #dcfce7;
+    color: #166534;
+  }
+  .collection-table-section {
+    padding: 1rem;
+  }
+  .collection-table-section h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    color: #334155;
+  }
+  .row-arrow {
+    color: #1d4ed8;
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .table-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    padding-top: 0.9rem;
+    color: #64748b;
+  }
+  [data-error="true"] {
+    color: #991b1b;
+    font-weight: 800;
+  }
+  .drawer {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: flex-end;
+    background: rgba(15, 23, 42, 0.28);
+    z-index: 20;
+  }
+  .drawer[hidden] {
+    display: none;
+  }
+  .drawer-panel {
+    width: min(480px, 100%);
+    height: 100%;
+    background: #fff;
+    padding: 1rem;
+    box-shadow: -12px 0 30px rgba(15, 23, 42, 0.18);
+    overflow: auto;
+  }
+  .drawer-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: start;
+    margin-bottom: 1rem;
+  }
+  .drawer-form {
+    display: grid;
+    gap: 0.85rem;
+  }
+  .drawer-form label {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .drawer-form input,
+  .drawer-form textarea {
+    min-height: 2.4rem;
+    border: 1px solid #cfd6e2;
+    border-radius: 7px;
+    padding: 0.55rem;
+    font: inherit;
+    color: #111827;
+    text-transform: none;
+  }
+  .drawer-form .check-row {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+  }
+  .drawer-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .mobile-list {
+    display: none;
+  }
+  .empty-state {
+    padding: 1.25rem;
+    color: #64748b;
+  }
+  @media (max-width: 820px) {
+    .admin-body {
+      grid-template-columns: 1fr;
+    }
+    .admin-sidebar {
+      border-right: 0;
+      border-bottom: 1px solid #d7dce4;
+    }
+    .desktop-table-wrap {
+      display: none;
+    }
+    .mobile-list {
+      display: grid;
+      gap: 0.6rem;
+      padding: 0.75rem;
+    }
+    .mobile-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 0.75rem;
+    }
+  }
+</style>
+
