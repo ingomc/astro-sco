@@ -119,6 +119,16 @@ const { view, eventId = "" } = Astro.props;
         <label>Name<input data-edit="name" name="name" /></label>
         <label>E-Mail<input data-edit="email" name="email" type="email" /></label>
         <label>Personen<input data-edit="partySize" name="partySize" type="number" min="1" max="99" /></label>
+        <div class="meta-grid">
+          <div>
+            <span>IP Fingerprint</span>
+            <strong data-meta-ip>-</strong>
+          </div>
+          <div>
+            <span>Datenschutz bestaetigt</span>
+            <strong data-meta-privacy>-</strong>
+          </div>
+        </div>
         <label>Hinweise<textarea data-edit="notes" name="notes" rows="5" maxlength="1000"></textarea></label>
         <label class="check-row"><input data-edit="notesDone" name="notesDone" type="checkbox" /> Hinweise erledigt</label>
         <div class="drawer-actions">
@@ -394,6 +404,16 @@ const { view, eventId = "" } = Astro.props;
     els.drawerForm.elements.name.value = row.name;
     els.drawerForm.elements.email.value = row.email;
     els.drawerForm.elements.partySize.value = row.partySize;
+    const ipMeta = els.drawerForm.querySelector("[data-meta-ip]");
+    const privacyMeta = els.drawerForm.querySelector("[data-meta-privacy]");
+    if (ipMeta) {
+      ipMeta.textContent = row.ipFingerprint || "-";
+    }
+    if (privacyMeta) {
+      privacyMeta.textContent = row.privacyAcceptedAt
+        ? new Date(row.privacyAcceptedAt).toLocaleString("de-DE")
+        : "-";
+    }
     els.drawerForm.elements.notes.value = row.notes || "";
     els.drawerForm.elements.notesDone.checked = row.notesDone;
     els.drawer.hidden = false;
@@ -874,6 +894,31 @@ const { view, eventId = "" } = Astro.props;
     display: flex;
     align-items: center;
     flex-direction: row;
+  }
+  .drawer-form .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .drawer-form .meta-grid div {
+    border: 1px solid #d5dbe6;
+    border-radius: 8px;
+    background: #f8fafc;
+    padding: 0.6rem 0.7rem;
+    display: grid;
+    gap: 0.25rem;
+  }
+  .drawer-form .meta-grid span {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: none;
+  }
+  .drawer-form .meta-grid strong {
+    font-size: 0.88rem;
+    color: #111827;
+    overflow-wrap: anywhere;
+    text-transform: none;
   }
   .drawer-actions {
     display: flex;

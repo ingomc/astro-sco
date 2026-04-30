@@ -1,4 +1,12 @@
 import type { APIRoute } from "astro";
+import {
+  createIpFingerprint,
+  enforceSignupRateLimit,
+  getClientIp,
+  mapSecurityErrorToResponse,
+  securityLog,
+  verifyHCaptcha,
+} from "../../lib/abuse-protection";
 import { getEventSignupConfig } from "../../lib/event-signup-config";
 import {
   countEventReservedSeats,
@@ -54,6 +62,8 @@ function getServerErrorMessage(): string {
 
 export const POST: APIRoute = async ({ request }) => {
   let payload: EventSignupInput;
+  const clientIp = getClientIp(request);
+  const ipFingerprint = await createIpFingerprint(clientIp);
 
   try {
     payload = (await request.json()) as EventSignupInput;
@@ -84,9 +94,30 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
+    try {
+      await enforceSignupRateLimit(clientIp, signupConfig.eventId);
+      await verifyHCaptcha(payload.hcaptchaToken, clientIp);
+    } catch (securityError) {
+      const mapped = mapSecurityErrorToResponse(securityError);
+      if (mapped) {
+        if (mapped.type) {
+          securityLog(mapped.type, {
+            eventId: signupConfig.eventId,
+            clientIp,
+          });
+        }
+        return jsonResponse({ ok: false, message: mapped.message }, mapped.status);
+      }
+      throw securityError;
+    }
+
     const parsed = parseEventSignupInput(payload, signupConfig);
 
     if (parsed.isSpam) {
+      securityLog("honeypot_hit", {
+        eventId: signupConfig.eventId,
+        clientIp,
+      });
       return jsonResponse({ ok: true });
     }
 
@@ -113,6 +144,8 @@ export const POST: APIRoute = async ({ request }) => {
         createdAt: new Date().toISOString(),
         name: parsed.name,
         email: parsed.email,
+        ipFingerprint,
+        privacyAcceptedAt: new Date().toISOString(),
         notes: parsed.notes,
         notesDone: false,
         kind: signupConfig.mode,

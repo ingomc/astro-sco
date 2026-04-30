@@ -23,6 +23,8 @@ export type EventSignupInput = {
   eventId?: unknown;
   name?: unknown;
   email?: unknown;
+  privacyAccepted?: unknown;
+  hcaptchaToken?: unknown;
   notes?: unknown;
   partySize?: unknown;
   items?: unknown;
@@ -42,6 +44,8 @@ export type EventRegistration = {
   createdAt: string;
   name: string;
   email: string;
+  ipFingerprint: string;
+  privacyAcceptedAt: string;
   notes: string;
   notesDone: boolean;
   kind: EventSignupMode;
@@ -126,6 +130,7 @@ export function parseEventSignupInput(
 ): {
   name: string;
   email: string;
+  privacyAccepted: boolean;
   notes: string;
   partySize: number;
   items: EventRegistrationItem[];
@@ -135,6 +140,7 @@ export function parseEventSignupInput(
   const eventId = typeof input.eventId === "string" ? input.eventId.trim() : "";
   const name = typeof input.name === "string" ? input.name.trim() : "";
   const email = typeof input.email === "string" ? input.email.trim() : "";
+  const privacyAccepted = input.privacyAccepted === true;
   const notes = typeof input.notes === "string" ? input.notes.trim() : "";
   const website = typeof input.website === "string" ? input.website.trim() : "";
 
@@ -159,6 +165,12 @@ export function parseEventSignupInput(
   if (email.length > 200 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw new EventSignupValidationError(
       "Bitte geben Sie eine gültige E-Mail ein.",
+    );
+  }
+
+  if (!privacyAccepted) {
+    throw new EventSignupValidationError(
+      "Bitte stimmen Sie der Datenschutzerklaerung zu.",
     );
   }
 
@@ -224,6 +236,7 @@ export function parseEventSignupInput(
   return {
     name,
     email,
+    privacyAccepted,
     notes,
     partySize,
     items,
@@ -251,6 +264,8 @@ export function buildEventSignupsCsv(signups: EventSignupWithItems[]): string {
     "Typ",
     "Name",
     "E-Mail",
+    "IP Fingerprint",
+    "Datenschutz bestaetigt am",
     "Hinweise",
     "Hinweise erledigt",
     "Personen",
@@ -265,6 +280,8 @@ export function buildEventSignupsCsv(signups: EventSignupWithItems[]): string {
     signup.kind,
     signup.name,
     signup.email,
+    signup.ipFingerprint,
+    signup.privacyAcceptedAt,
     signup.notes,
     signup.notesDone ? "ja" : "nein",
     signup.partySize,

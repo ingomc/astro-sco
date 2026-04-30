@@ -82,3 +82,33 @@ For `registration`, no `items` are needed. Capacity blocks additional
 registrations once reserved seats exceed the limit.
 All modes support an optional `notes` text input in the form (for allergies
 or short questions), which is included in admin views and CSV export.
+
+## Signup Security v1
+
+Public signup requests are protected by:
+
+- hCaptcha (fail-closed)
+- Rate limits (`5/min` per IP, `30/h` per IP, `12/h` per event+IP)
+- Honeypot + server-side abuse logging (`captcha_failed`, `rate_limited`, `honeypot_hit`)
+
+Required environment variables:
+
+```env
+HCAPTCHA_SITE_KEY=...
+HCAPTCHA_SECRET_KEY=...
+KV_REST_API_URL=...
+KV_REST_API_TOKEN=...
+IP_FINGERPRINT_SALT=...
+```
+
+Local-only optional bypass:
+
+```env
+HCAPTCHA_DEV_BYPASS=true
+```
+
+`HCAPTCHA_DEV_BYPASS` is only honored in local `DEV` mode and should never be
+enabled for preview/production.
+
+For abuse analysis, each signup stores a masked (hashed) IP fingerprint
+(`ip_fingerprint`), never the raw IP.

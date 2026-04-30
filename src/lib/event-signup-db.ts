@@ -89,12 +89,22 @@ export async function ensureEventSignupSchema(): Promise<void> {
           created_at timestamptz not null default now(),
           name text not null,
           email text not null,
+          ip_fingerprint text not null default '',
+          privacy_accepted_at timestamptz,
           notes text not null default '',
           notes_done boolean not null default false,
           kind text not null check (kind in ('registration', 'order', 'both')),
           party_size integer not null default 1 check (party_size >= 1),
           total_items integer not null default 0 check (total_items >= 0)
         )
+      `;
+      await sql`
+        alter table event_registrations
+        add column if not exists ip_fingerprint text not null default ''
+      `;
+      await sql`
+        alter table event_registrations
+        add column if not exists privacy_accepted_at timestamptz
       `;
       await sql`
         alter table event_registrations
@@ -131,12 +141,22 @@ export async function ensureEventSignupSchema(): Promise<void> {
         created_at timestamptz not null default now(),
         name text not null,
         email text not null,
+        ip_fingerprint text not null default '',
+        privacy_accepted_at timestamptz,
         notes text not null default '',
         notes_done boolean not null default false,
         kind text not null check (kind in ('registration', 'order', 'both')),
         party_size integer not null default 1 check (party_size >= 1),
         total_items integer not null default 0 check (total_items >= 0)
       )
+    `);
+    await pool.query(`
+      alter table event_registrations
+      add column if not exists ip_fingerprint text not null default ''
+    `);
+    await pool.query(`
+      alter table event_registrations
+      add column if not exists privacy_accepted_at timestamptz
     `);
     await pool.query(`
       alter table event_registrations
@@ -211,6 +231,8 @@ export async function saveEventSignup(
           created_at,
           name,
           email,
+          ip_fingerprint,
+          privacy_accepted_at,
           notes,
           notes_done,
           kind,
@@ -223,6 +245,8 @@ export async function saveEventSignup(
           ${registration.createdAt},
           ${registration.name},
           ${registration.email},
+          ${registration.ipFingerprint},
+          ${registration.privacyAcceptedAt},
           ${registration.notes},
           ${registration.notesDone},
           ${registration.kind},
@@ -265,13 +289,15 @@ export async function saveEventSignup(
           created_at,
           name,
           email,
+          ip_fingerprint,
+          privacy_accepted_at,
           notes,
           notes_done,
           kind,
           party_size,
           total_items
         )
-        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
       `,
       [
         registration.id,
@@ -279,6 +305,8 @@ export async function saveEventSignup(
         registration.createdAt,
         registration.name,
         registration.email,
+        registration.ipFingerprint,
+        registration.privacyAcceptedAt,
         registration.notes,
         registration.notesDone,
         registration.kind,
@@ -317,6 +345,8 @@ type RegistrationRow = {
   created_at: string | Date;
   name: string;
   email: string;
+  ip_fingerprint: string;
+  privacy_accepted_at: string | Date | null;
   notes: string;
   notes_done: boolean;
   kind: EventRegistration["kind"];
@@ -343,13 +373,13 @@ export async function listEventSignups(
     registrationRows = (
       eventId
         ? await sql`
-          select id, event_id, created_at, name, email, notes, notes_done, kind, party_size, total_items
+          select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, notes, notes_done, kind, party_size, total_items
           from event_registrations
           where event_id = ${eventId}
           order by created_at asc
         `
         : await sql`
-          select id, event_id, created_at, name, email, notes, notes_done, kind, party_size, total_items
+          select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, notes, notes_done, kind, party_size, total_items
           from event_registrations
           order by created_at asc
         `
@@ -376,7 +406,7 @@ export async function listEventSignups(
     const registrationResult = eventId
       ? await pool.query<RegistrationRow>(
           `
-            select id, event_id, created_at, name, email, notes, notes_done, kind, party_size, total_items
+            select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, notes, notes_done, kind, party_size, total_items
             from event_registrations
             where event_id = $1
             order by created_at asc
@@ -385,7 +415,7 @@ export async function listEventSignups(
         )
       : await pool.query<RegistrationRow>(
           `
-            select id, event_id, created_at, name, email, notes, notes_done, kind, party_size, total_items
+            select id, event_id, created_at, name, email, ip_fingerprint, privacy_accepted_at, notes, notes_done, kind, party_size, total_items
             from event_registrations
             order by created_at asc
           `,
@@ -433,6 +463,10 @@ export async function listEventSignups(
     createdAt: new Date(row.created_at).toISOString(),
     name: row.name,
     email: row.email,
+    ipFingerprint: row.ip_fingerprint ?? "",
+    privacyAcceptedAt: row.privacy_accepted_at
+      ? new Date(row.privacy_accepted_at).toISOString()
+      : "",
     notes: row.notes ?? "",
     notesDone: row.notes_done ?? false,
     kind: row.kind,

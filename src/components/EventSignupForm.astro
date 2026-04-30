@@ -1,5 +1,9 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import {
+  getHCaptchaSiteKeyForRender,
+  isCaptchaBypassEnabledForDevRender,
+} from "../lib/abuse-protection";
 
 type SignupConfig = NonNullable<
   CollectionEntry<"veranstaltungen">["data"]["signup"]
@@ -35,12 +39,20 @@ const closedLabel =
   signup.mode === "registration"
     ? "Die Anmeldung ist geschlossen."
     : "Der Bestellschluss ist vorbei.";
+const hCaptchaSiteKey = getHCaptchaSiteKeyForRender();
+const captchaBypassInDev = isCaptchaBypassEnabledForDevRender();
+const captchaEnforced = !captchaBypassInDev;
+const captchaWidgetReady = Boolean(hCaptchaSiteKey);
+const canSubmit = captchaBypassInDev || captchaWidgetReady;
 const clientConfig = {
   eventId: signup.eventId,
   mode: signup.mode,
   items,
   showPartySize,
   maxPartySize,
+  captchaEnforced,
+  captchaWidgetReady,
+  canSubmit,
   eventTitle,
 };
 ---
@@ -128,6 +140,33 @@ const clientConfig = {
             />
           </div>
 
+          <div class="event-signup__captcha">
+            {
+              captchaBypassInDev ? (
+                <p class="event-signup__captcha-note">
+                  Lokaler DEV-Modus: Captcha-Bypass aktiv.
+                </p>
+              ) : hCaptchaSiteKey ? (
+                <div class="h-captcha" data-sitekey={hCaptchaSiteKey} />
+              ) : (
+                <p class="event-signup__captcha-note">
+                  Sicherheitspruefung ist aktuell nicht verfuegbar. Bitte spaeter erneut versuchen.
+                </p>
+              )
+            }
+          </div>
+
+          <label class="event-signup__privacy">
+            <input
+              name="privacyAccepted"
+              type="checkbox"
+              required
+            />
+            <span>
+              Ich habe die <a href="/datenschutz" target="_blank" rel="noopener noreferrer">Datenschutzerklaerung</a> gelesen und stimme der Verarbeitung meiner Daten zur Veranstaltungsabwicklung zu.
+            </span>
+          </label>
+
           {hasItems && (
             <fieldset class="event-signup__items">
               <legend>Auswahl</legend>
@@ -151,7 +190,7 @@ const clientConfig = {
             </fieldset>
           )}
 
-          <button type="submit">{actionLabel}</button>
+          <button type="submit" disabled={!canSubmit}>{actionLabel}</button>
           <p
             class="event-signup__message"
             role="status"
@@ -185,6 +224,10 @@ const clientConfig = {
   }
 </section>
 
+{captchaWidgetReady && (
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+)}
+
 <script define:vars={{ clientConfig, actionLabel }}>
   const root = document.querySelector(
     `[data-event-signup-root="${clientConfig.eventId}"]`,
@@ -216,11 +259,25 @@ const clientConfig = {
     confirmationId instanceof HTMLElement &&
     signupAgainButton instanceof HTMLButtonElement
   ) {
+    const readHCaptchaToken = () => {
+      const hcaptchaApi = window.hcaptcha;
+      if (!hcaptchaApi?.getResponse) {
+        return "";
+      }
+      return hcaptchaApi.getResponse().trim();
+    };
+
+    const resetHCaptcha = () => {
+      const hcaptchaApi = window.hcaptcha;
+      hcaptchaApi?.reset?.();
+    };
+
     signupAgainButton.addEventListener("click", () => {
       delete confirmation.dataset.visible;
       confirmation.hidden = true;
       form.hidden = false;
       form.reset();
+      resetHCaptcha();
       message.textContent = "";
       message.dataset.state = "";
       form.querySelector("input[name='name']")?.focus();
@@ -245,8 +302,28 @@ const clientConfig = {
         notes: formData.get("notes"),
         partySize: clientConfig.showPartySize ? formData.get("partySize") : "1",
         website: formData.get("website"),
+        privacyAccepted: formData.get("privacyAccepted") === "on",
         items,
+        hcaptchaToken: "",
       };
+
+      if (!clientConfig.canSubmit) {
+        message.textContent =
+          "Anmeldung momentan nicht moeglich: Sicherheitspruefung ist nicht konfiguriert.";
+        message.dataset.state = "error";
+        return;
+      }
+
+      if (clientConfig.captchaEnforced) {
+        const captchaToken = readHCaptchaToken();
+        if (!captchaToken) {
+          message.textContent =
+            "Bitte bestaetigen Sie zuerst die Sicherheitspruefung (Captcha).";
+          message.dataset.state = "error";
+          return;
+        }
+        payload.hcaptchaToken = captchaToken;
+      }
 
       message.textContent = "";
       message.dataset.state = "";
@@ -254,13 +331,17 @@ const clientConfig = {
       submitButton.textContent = "Wird gespeichert ...";
 
       try {
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 12000);
         const response = await fetch("/api/event-signups", {
           method: "POST",
           headers: {
             "content-type": "application/json",
           },
+          signal: controller.signal,
           body: JSON.stringify(payload),
         });
+        window.clearTimeout(timeout);
         const result = await response.json();
 
         if (!response.ok || !result.ok) {
@@ -307,15 +388,20 @@ const clientConfig = {
           confirmation.dataset.visible = "true";
           confirmation.focus();
         });
+        resetHCaptcha();
       } catch (error) {
         message.textContent =
-          error instanceof Error
-            ? error.message
-            : "Die Anmeldung konnte nicht gespeichert werden.";
+          error instanceof Error && error.name === "AbortError"
+            ? "Zeitueberschreitung beim Speichern. Bitte erneut versuchen."
+            : error instanceof Error
+              ? error.message
+              : "Die Anmeldung konnte nicht gespeichert werden.";
         message.dataset.state = "error";
       } finally {
         submitButton.disabled = false;
-        submitButton.textContent = actionLabel;
+        submitButton.textContent = clientConfig.canSubmit
+          ? actionLabel
+          : "Aktuell nicht verfuegbar";
       }
     });
   }
@@ -401,6 +487,41 @@ const clientConfig = {
     left: -9999px;
   }
 
+  .event-signup__captcha {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .event-signup__captcha-note {
+    margin: 0;
+    color: #57534e;
+    font-size: 0.9375rem;
+  }
+
+  .event-signup__privacy {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 0.6rem;
+    color: #292524;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .event-signup__privacy input[type="checkbox"] {
+    width: 1.1rem;
+    height: 1.1rem;
+    min-height: 1.1rem;
+    margin-top: 0.1rem;
+    accent-color: #b91c1c;
+  }
+
+  .event-signup__privacy a {
+    color: #991b1b;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
   .event-signup__items {
     margin: 0;
     border: 0;
@@ -438,7 +559,7 @@ const clientConfig = {
   }
 
   .event-signup button:disabled {
-    cursor: wait;
+    cursor: not-allowed;
     opacity: 0.7;
   }
 
