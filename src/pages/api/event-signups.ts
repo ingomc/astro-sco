@@ -114,6 +114,7 @@ export const POST: APIRoute = async ({ request }) => {
         name: parsed.name,
         email: parsed.email,
         notes: parsed.notes,
+        notesDone: false,
         kind: signupConfig.mode,
         partySize: parsed.partySize,
         totalItems: parsed.totalItems,

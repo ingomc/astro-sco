@@ -59,7 +59,9 @@ DB_DRIVER=neon
 
 Admin endpoints:
 
-- `/api/admin/event-signups?token=<ADMIN_EXPORT_TOKEN>`
+- `/admin/event-signups?token=<ADMIN_EXPORT_TOKEN>`
+- `/admin/event-signups/kerwa-2026?token=<ADMIN_EXPORT_TOKEN>`
+- `/admin/event-signups/system/open-notes?token=<ADMIN_EXPORT_TOKEN>`
 - `/api/admin/event-signups.csv?token=<ADMIN_EXPORT_TOKEN>&eventId=kerwa-2026`
 
 Second event example (`registration` mode):

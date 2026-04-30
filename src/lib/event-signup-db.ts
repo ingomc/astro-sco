@@ -90,6 +90,7 @@ export async function ensureEventSignupSchema(): Promise<void> {
           name text not null,
           email text not null,
           notes text not null default '',
+          notes_done boolean not null default false,
           kind text not null check (kind in ('registration', 'order', 'both')),
           party_size integer not null default 1 check (party_size >= 1),
           total_items integer not null default 0 check (total_items >= 0)
@@ -98,6 +99,10 @@ export async function ensureEventSignupSchema(): Promise<void> {
       await sql`
         alter table event_registrations
         add column if not exists notes text not null default ''
+      `;
+      await sql`
+        alter table event_registrations
+        add column if not exists notes_done boolean not null default false
       `;
 
       await sql`
@@ -127,6 +132,7 @@ export async function ensureEventSignupSchema(): Promise<void> {
         name text not null,
         email text not null,
         notes text not null default '',
+        notes_done boolean not null default false,
         kind text not null check (kind in ('registration', 'order', 'both')),
         party_size integer not null default 1 check (party_size >= 1),
         total_items integer not null default 0 check (total_items >= 0)
@@ -135,6 +141,10 @@ export async function ensureEventSignupSchema(): Promise<void> {
     await pool.query(`
       alter table event_registrations
       add column if not exists notes text not null default ''
+    `);
+    await pool.query(`
+      alter table event_registrations
+      add column if not exists notes_done boolean not null default false
     `);
     await pool.query(`
       create table if not exists event_registration_items (
@@ -202,6 +212,7 @@ export async function saveEventSignup(
           name,
           email,
           notes,
+          notes_done,
           kind,
           party_size,
           total_items
@@ -213,6 +224,7 @@ export async function saveEventSignup(
           ${registration.name},
           ${registration.email},
           ${registration.notes},
+          ${registration.notesDone},
           ${registration.kind},
           ${registration.partySize},
           ${registration.totalItems}
@@ -254,11 +266,12 @@ export async function saveEventSignup(
           name,
           email,
           notes,
+          notes_done,
           kind,
           party_size,
           total_items
         )
-        values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       `,
       [
         registration.id,
@@ -267,6 +280,7 @@ export async function saveEventSignup(
         registration.name,
         registration.email,
         registration.notes,
+        registration.notesDone,
         registration.kind,
         registration.partySize,
         registration.totalItems,
@@ -304,6 +318,7 @@ type RegistrationRow = {
   name: string;
   email: string;
   notes: string;
+  notes_done: boolean;
   kind: EventRegistration["kind"];
   party_size: number;
   total_items: number;
@@ -328,13 +343,13 @@ export async function listEventSignups(
     registrationRows = (
       eventId
         ? await sql`
-          select id, event_id, created_at, name, email, notes, kind, party_size, total_items
+          select id, event_id, created_at, name, email, notes, notes_done, kind, party_size, total_items
           from event_registrations
           where event_id = ${eventId}
           order by created_at asc
         `
         : await sql`
-          select id, event_id, created_at, name, email, notes, kind, party_size, total_items
+          select id, event_id, created_at, name, email, notes, notes_done, kind, party_size, total_items
           from event_registrations
           order by created_at asc
         `
@@ -361,7 +376,7 @@ export async function listEventSignups(
     const registrationResult = eventId
       ? await pool.query<RegistrationRow>(
           `
-            select id, event_id, created_at, name, email, notes, kind, party_size, total_items
+            select id, event_id, created_at, name, email, notes, notes_done, kind, party_size, total_items
             from event_registrations
             where event_id = $1
             order by created_at asc
@@ -370,7 +385,7 @@ export async function listEventSignups(
         )
       : await pool.query<RegistrationRow>(
           `
-            select id, event_id, created_at, name, email, notes, kind, party_size, total_items
+            select id, event_id, created_at, name, email, notes, notes_done, kind, party_size, total_items
             from event_registrations
             order by created_at asc
           `,
@@ -419,6 +434,7 @@ export async function listEventSignups(
     name: row.name,
     email: row.email,
     notes: row.notes ?? "",
+    notesDone: row.notes_done ?? false,
     kind: row.kind,
     partySize: row.party_size,
     totalItems: row.total_items,
@@ -435,6 +451,18 @@ function matchesSignupQuery(
   }
 
   if (query.kind && signup.kind !== query.kind) {
+    return false;
+  }
+
+  if (query.notesOnly && !signup.notes.trim()) {
+    return false;
+  }
+
+  if (query.openNotesOnly && (!signup.notes.trim() || signup.notesDone)) {
+    return false;
+  }
+
+  if (query.groupsOnly && signup.partySize <= 1) {
     return false;
   }
 
@@ -508,6 +536,7 @@ export type EventSignupCollectionRow = {
   signups: number;
   partySize: number;
   items: number;
+  openNotes: number;
   lastSignupAt: string;
 };
 
@@ -595,6 +624,7 @@ export async function listEventSignupCollections(): Promise<
       signups: number;
       partySize: number;
       items: number;
+      openNotes: number;
       lastSignupAt: string;
     }
   >();
@@ -608,6 +638,7 @@ export async function listEventSignupCollections(): Promise<
         signups: 1,
         partySize: row.partySize,
         items: row.totalItems,
+        openNotes: row.notes.trim() && !row.notesDone ? 1 : 0,
         lastSignupAt: row.createdAt,
       });
       continue;
@@ -616,6 +647,9 @@ export async function listEventSignupCollections(): Promise<
     current.signups += 1;
     current.partySize += row.partySize;
     current.items += row.totalItems;
+    if (row.notes.trim() && !row.notesDone) {
+      current.openNotes += 1;
+    }
     if (row.createdAt > current.lastSignupAt) {
       current.lastSignupAt = row.createdAt;
     }
@@ -649,6 +683,7 @@ export async function updateEventSignupById(
   const name = patch.name ?? existing.name;
   const email = patch.email ?? existing.email;
   const notes = patch.notes ?? existing.notes;
+  const notesDone = patch.notesDone ?? existing.notesDone;
   const partySize = patch.partySize ?? existing.partySize;
   const itemsMap = patch.items;
   const nextItems = itemsMap
@@ -676,6 +711,7 @@ export async function updateEventSignupById(
         set name = ${name},
             email = ${email},
             notes = ${notes},
+            notes_done = ${notesDone},
             party_size = ${partySize},
             total_items = ${totalItems}
         where id = ${id}
@@ -715,11 +751,12 @@ export async function updateEventSignupById(
           set name = $1,
               email = $2,
               notes = $3,
-              party_size = $4,
-              total_items = $5
-          where id = $6
+              notes_done = $4,
+              party_size = $5,
+              total_items = $6
+          where id = $7
         `,
-        [name, email, notes, partySize, totalItems, id],
+        [name, email, notes, notesDone, partySize, totalItems, id],
       );
 
       await client.query(

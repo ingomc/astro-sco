@@ -43,6 +43,7 @@ export type EventRegistration = {
   name: string;
   email: string;
   notes: string;
+  notesDone: boolean;
   kind: EventSignupMode;
   partySize: number;
   totalItems: number;
@@ -64,6 +65,9 @@ export type EventSignupAdminQuery = {
   eventId?: string;
   q?: string;
   kind?: EventSignupMode;
+  notesOnly?: boolean;
+  openNotesOnly?: boolean;
+  groupsOnly?: boolean;
   createdAfter?: string;
   createdBefore?: string;
   sortBy: EventSignupSortField;
@@ -76,6 +80,7 @@ export type EventSignupAdminPatch = {
   name?: string;
   email?: string;
   notes?: string;
+  notesDone?: boolean;
   partySize?: number;
   items?: Record<string, number>;
 };
@@ -247,6 +252,7 @@ export function buildEventSignupsCsv(signups: EventSignupWithItems[]): string {
     "Name",
     "E-Mail",
     "Hinweise",
+    "Hinweise erledigt",
     "Personen",
     "Auswahl",
     "Gesamt",
@@ -260,6 +266,7 @@ export function buildEventSignupsCsv(signups: EventSignupWithItems[]): string {
     signup.name,
     signup.email,
     signup.notes,
+    signup.notesDone ? "ja" : "nein",
     signup.partySize,
     formatSignupItems(signup.items),
     signup.totalItems,
@@ -312,6 +319,13 @@ function normalizeIsoDate(value: unknown): string | undefined {
   return date.toISOString();
 }
 
+function parseBooleanFlag(value: unknown): boolean | undefined {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  return value === true || value === "true" || value === "1";
+}
+
 function isEventSignupMode(value: unknown): value is EventSignupMode {
   return value === "registration" || value === "order" || value === "both";
 }
@@ -351,6 +365,9 @@ export function parseEventSignupAdminQuery(
     eventId: normalizeOptionalString(input.eventId),
     q: normalizeOptionalString(input.q),
     kind: kindInput,
+    notesOnly: parseBooleanFlag(input.notesOnly),
+    openNotesOnly: parseBooleanFlag(input.openNotesOnly),
+    groupsOnly: parseBooleanFlag(input.groupsOnly),
     createdAfter: normalizeIsoDate(input.createdAfter),
     createdBefore: normalizeIsoDate(input.createdBefore),
     sortBy,
@@ -409,6 +426,10 @@ export function parseEventSignupAdminPatch(
     patch.notes = notes;
   }
 
+  if (Object.hasOwn(input, "notesDone")) {
+    patch.notesDone = parseBooleanFlag(input.notesDone) === true;
+  }
+
   if (Object.hasOwn(input, "partySize")) {
     const partySize = parseInteger(input.partySize, Number.NaN);
 
@@ -451,6 +472,7 @@ export function parseEventSignupAdminPatch(
     patch.name === undefined &&
     patch.email === undefined &&
     patch.notes === undefined &&
+    patch.notesDone === undefined &&
     patch.partySize === undefined &&
     patch.items === undefined
   ) {
