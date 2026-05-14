@@ -83,8 +83,8 @@ test.describe('Visual Regression Tests - Critical Components', () => {
       `
     });
     
-    // Screenshot nur den ersten Event-Artikel mit den Badges
-    const firstEvent = page.locator('article').first();
+    // Screenshot des ersten Event-Listenelements mit Badges
+    const firstEvent = page.locator('main ul > li').first();
     await firstEvent.waitFor({ state: 'visible' });
     await expect(firstEvent).toHaveScreenshot('badge-mini-in-event.png', {
       threshold: 0.2,
