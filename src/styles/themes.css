@@ -1,0 +1,58 @@
+/* Summer theme is the default visual language for the public site. */
+:root,
+[data-theme="summer"] {
+  --color-surface-page: #ffffff;
+  --color-surface-muted: #fafaf9;
+  --color-focus-offset: #ffffff;
+  --hero-band-gradient: linear-gradient(
+    135deg,
+    #b91c1c 0%,
+    #b91c1c 50%,
+    #171717 50%,
+    #171717 100%
+  );
+  --image-stage-overlay: linear-gradient(
+    180deg,
+    rgba(35, 32, 39, 0) 0%,
+    rgba(35, 32, 39, 0.011) 8.1%,
+    rgba(35, 32, 39, 0.042) 15.5%,
+    rgba(35, 32, 39, 0.09) 22.5%,
+    rgba(35, 32, 39, 0.153) 29%,
+    rgba(35, 32, 39, 0.226) 35.3%,
+    rgba(35, 32, 39, 0.306) 41.2%,
+    rgba(35, 32, 39, 0.392) 47.1%,
+    rgba(35, 32, 39, 0.478) 52.9%,
+    rgba(35, 32, 39, 0.564) 58.8%,
+    rgba(35, 32, 39, 0.644) 64.7%,
+    rgba(35, 32, 39, 0.717) 71%,
+    rgba(35, 32, 39, 0.78) 77.5%,
+    rgba(35, 32, 39, 0.828) 84.5%,
+    rgba(35, 32, 39, 0.859) 91.9%,
+    rgba(35, 32, 39, 0.87) 100%
+  );
+}
+
+[data-theme="winter"] {
+  --color-surface-page: #f8fafc;
+  --color-surface-muted: #f1f5f9;
+  --color-border-default: #cbd5e1;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #334155;
+  --color-focus-offset: #f8fafc;
+  --hero-band-gradient: linear-gradient(
+    135deg,
+    #991b1b 0%,
+    #991b1b 46%,
+    #0f172a 46%,
+    #0f172a 100%
+  );
+  --image-stage-overlay: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0) 0%,
+    rgba(15, 23, 42, 0.05) 18%,
+    rgba(15, 23, 42, 0.16) 36%,
+    rgba(15, 23, 42, 0.36) 58%,
+    rgba(15, 23, 42, 0.62) 82%,
+    rgba(15, 23, 42, 0.8) 100%
+  );
+}

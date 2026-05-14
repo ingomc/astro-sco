@@ -1,6 +1,17 @@
 # SCO Website
 
-```
+## Design System (Public Site)
+
+Die zentrale UI-Governance liegt hier:
+
+- `docs/design-system/DESIGN-TOKENS.md`
+- `docs/design-system/DESIGN-SYSTEM.md`
+- `docs/design-system/COMPONENT-PATTERNS.md`
+- `docs/design-system/CONTRIBUTING-UI.md`
+
+Diese Dokumente sind die Single Source of Truth fuer neue Public-UI-Features (z. B. Bestellsystem).
+
+```text
 TODO:
 
  - [ ] Mobile Menu

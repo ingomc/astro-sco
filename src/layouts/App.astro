@@ -4,7 +4,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import SkipLinks from "../components/SkipLinks.astro";
 import HeaderLink from "../components/HeaderLink.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_THEME } from "../consts";
 import { version } from "../../package.json";
 // import Snow from "../components/Snow.astro";
 import NextMatch from "../components/NextMatch.astro";
@@ -14,7 +14,7 @@ const { title, description, image, robots } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="de">
+<html lang="de" data-theme={SITE_THEME}>
   <head>
     <BaseHead
       title={title || SITE_TITLE}
@@ -85,7 +85,7 @@ const { title, description, image, robots } = Astro.props;
 
   /* Focus-visible support for better keyboard navigation */
   :focus-visible {
-    outline: 2px solid #dc2626;
-    outline-offset: 2px;
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
   }
 </style>

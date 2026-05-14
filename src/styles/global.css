@@ -1,12 +1,81 @@
+@import "./tokens.css";
+@import "./themes.css";
+
 /* The integration's default injected base.css file */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:where(a, button) {
-  @apply transition-colors duration-200;
+@layer base {
+  body {
+    background: var(--color-surface-page);
+    color: var(--color-text-primary);
+    font-family: var(--font-family-sans);
+  }
+
+  :where(a, button) {
+    transition-property: color, background-color, border-color, text-decoration-color,
+      fill, stroke;
+    transition-duration: var(--duration-normal);
+    transition-timing-function: var(--ease-standard);
+  }
+
+  :where(a, button):hover {
+    color: var(--color-text-secondary);
+  }
 }
 
-:where(a, button):hover {
-  @apply text-slate-700 transition-colors duration-200;
+@layer components {
+  .ds-focus-ring:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 var(--focus-ring-width) var(--color-focus-ring),
+      0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset))
+        var(--color-focus-offset);
+  }
+
+  .ds-card {
+    @apply bg-white rounded-lg border border-slate-300 overflow-hidden;
+    border-color: var(--color-border-default);
+    border-radius: var(--radius-lg);
+  }
+
+  .ds-card-hover {
+    transition: box-shadow var(--duration-normal) var(--ease-standard);
+  }
+
+  .ds-card-hover:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .ds-btn {
+    @apply inline-flex items-center justify-center font-semibold rounded-full;
+    min-height: 2.5rem;
+    padding: 0.5rem 1rem;
+    transition:
+      background-color var(--duration-normal) var(--ease-standard),
+      color var(--duration-normal) var(--ease-standard);
+  }
+
+  .ds-btn-primary {
+    background: var(--color-interactive-primary);
+    color: var(--color-interactive-on-primary);
+  }
+
+  .ds-btn-primary:hover {
+    background: var(--color-interactive-primary-hover);
+    color: var(--color-interactive-on-primary);
+  }
+
+  .ds-section-container {
+    @apply container mx-auto px-4;
+  }
+
+  .ds-eyebrow {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-700);
+  }
 }
