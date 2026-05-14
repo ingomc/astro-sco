@@ -25,7 +25,7 @@ const menuSections = [
   {
     name: "Bier",
     rows: [
-      { drink: "Bier, Radler, Weizen", volume: "1,0 l", price: "50,70 EUR" },
+      { drink: "Bier, Radler, Weizen", volume: "1,0 l", price: "5,70 EUR" },
       { drink: "Bier, Radler, Weizen", volume: "0,5 l", price: "3,00 EUR" },
       { drink: "Bier, Radler, Weizen", volume: "0,25 l", price: "1,70 EUR" },
       { drink: "Leichtbier, alkoholfreies Weizenbier", volume: "0,5 l", price: "3,00 EUR" }
@@ -518,7 +518,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
 
     .print-title-wrap h1 {
       margin: 0.2mm 0 0;
-      font-size: 30pt;
+      font-size: 27.5pt;
       line-height: 1.05;
       font-weight: 900;
       letter-spacing: 0.01em;
@@ -536,9 +536,9 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
     .print-logo-left,
     .print-logo-right {
       justify-self: center;
-      width: 24mm;
+      width: 27mm;
       height: auto;
-      max-height: 24mm;
+      max-height: 27mm;
       object-fit: contain;
     }
 
