@@ -1,0 +1,252 @@
+---
+import App from "../layouts/App.astro";
+import HpCard from "../components/HpCard.astro";
+import HpStage from "../components/HpStage.astro";
+
+const title = "Getränkekarte - SCO-OGV Oberfüllbach";
+const description = "Aktuelle Getränkekarte im Sportheim des SCO-OGV Oberfüllbach.";
+
+const sectionMeta = {
+  Bier: { icon: "beer" },
+  "Alkoholfreie Getränke": { icon: "sparkle" },
+  "Wein und Spirituosen": { icon: "glass" }
+} as const;
+
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replaceAll("ä", "ae")
+    .replaceAll("ö", "oe")
+    .replaceAll("ü", "ue")
+    .replaceAll("ß", "ss")
+    .replaceAll(" ", "-");
+
+const menuSections = [
+  {
+    name: "Bier",
+    rows: [
+      { drink: "Bier, Radler, Weizen", volume: "1,0 l", price: "5,40 EUR" },
+      { drink: "Bier, Radler, Weizen", volume: "0,5 l", price: "2,70 EUR" },
+      { drink: "Bier, Radler, Weizen", volume: "0,25 l", price: "1,40 EUR" },
+      { drink: "Leichtbier, alkoholfreies Weizenbier", volume: "0,5 l", price: "2,70 EUR" }
+    ]
+  },
+  {
+    name: "Alkoholfreie Getränke",
+    rows: [
+      { drink: "Limo, Spezi", volume: "0,5 l", price: "2,20 EUR" },
+      { drink: "Cola", volume: "0,5 l", price: "2,20 EUR" },
+      { drink: "Apfelsaftschorle", volume: "0,5 l", price: "2,20 EUR" },
+      { drink: "Mineralwasser", volume: "0,5 l", price: "2,20 EUR" }
+    ]
+  },
+  {
+    name: "Wein und Spirituosen",
+    rows: [
+      { drink: "Frankenwein, Rotwein", volume: "0,2 l", price: "2,70 EUR" },
+      { drink: "Frankenwein, Rotwein", volume: "0,1 l", price: "1,40 EUR" },
+      { drink: "Weinschorle", volume: "0,5 l", price: "3,50 EUR" },
+      { drink: "Weinschorle", volume: "0,25 l", price: "1,80 EUR" },
+      { drink: "Schnaps", volume: "0,02 l", price: "1,50 EUR" }
+    ]
+  }
+] as const;
+---
+
+<App title={title} description={description}>
+  <HpStage image="/src/media/buehne-sportheim.jpg" title="Getränkekarte" />
+
+  <div class="container mx-auto px-4 py-6 md:py-10">
+    <div class="menu-shell rounded-2xl border border-slate-200 p-4 md:p-8">
+      <header class="mb-6 md:mb-8">
+        <p class="eyebrow">Sportheim SCO-OGV Oberfüllbach</p>
+        <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Unsere Getränke</h2>
+        <p class="mt-2 max-w-2xl text-slate-700">
+          Alle Preise verstehen sich inklusive Mehrwertsteuer. Informationen zu Zusatzstoffen und Allergenen
+          halten wir vor Ort bereit. Stand: 1. Mai 2026.
+        </p>
+      </header>
+
+      <div class="grid gap-4 md:gap-6" role="list" aria-label="Getränkekarte nach Kategorien">
+        {
+          menuSections.map((section) => {
+            const id = `section-${slugify(section.name)}`;
+            const meta = sectionMeta[section.name];
+
+            return (
+            <section role="listitem" aria-labelledby={id}>
+              <HpCard>
+                <div slot="title" class="flex items-center justify-between gap-3">
+                  <h3 id={id} class="flex items-center gap-2 font-bold text-lg text-slate-900">
+                    <span class="section-icon" aria-hidden="true">
+                      {
+                        meta.icon === "beer" && (
+                          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6h8v10a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3z"></path>
+                            <path d="M14 9h2a2 2 0 0 1 0 4h-2"></path>
+                            <path d="M8 4v2M11 4v2"></path>
+                          </svg>
+                        )
+                      }
+                      {
+                        meta.icon === "sparkle" && (
+                          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 3v4M12 17v4M3 12h4M17 12h4"></path>
+                            <circle cx="12" cy="12" r="4"></circle>
+                          </svg>
+                        )
+                      }
+                      {
+                        meta.icon === "glass" && (
+                          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M7 4h10l-2 7a3 3 0 0 1-3 2 3 3 0 0 1-3-2z"></path>
+                            <path d="M12 13v5"></path>
+                            <path d="M9 20h6"></path>
+                          </svg>
+                        )
+                      }
+                    </span>
+                    {section.name}
+                  </h3>
+                </div>
+
+                <div class="overflow-x-auto">
+                  <table class="menu-table">
+                    <caption class="sr-only">{section.name}</caption>
+                    <colgroup>
+                      <col class="col-drink" />
+                      <col class="col-volume" />
+                      <col class="col-price" />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th scope="col">Getränk</th>
+                        <th scope="col">Menge</th>
+                        <th scope="col" class="text-right">Preis</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        section.rows.map((row) => (
+                          <tr>
+                            <th scope="row">{row.drink}</th>
+                            <td>{row.volume}</td>
+                            <td class="text-right whitespace-nowrap">{row.price}</td>
+                          </tr>
+                        ))
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </HpCard>
+            </section>
+          )})
+        }
+      </div>
+
+    </div>
+  </div>
+</App>
+
+<style>
+  .menu-shell {
+    background: #ffffff;
+    box-shadow: 0 18px 50px -28px rgb(15 23 42 / 0.25);
+  }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #b91c1c;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6);
+  }
+
+  .menu-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .menu-table .col-drink {
+    width: 60%;
+  }
+
+  .menu-table .col-volume,
+  .menu-table .col-price {
+    width: 20%;
+  }
+
+  .menu-table thead th {
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #475569;
+    font-weight: 700;
+    border-bottom: 2px solid #cbd5e1;
+    padding: 0.65rem 0.5rem;
+    text-align: left;
+  }
+
+  .menu-table thead th:last-child,
+  .menu-table tbody td:last-child {
+    text-align: right;
+  }
+
+  .menu-table tbody th,
+  .menu-table tbody td {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.7rem 0.5rem;
+    color: #0f172a;
+  }
+
+  .menu-table tbody th {
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .menu-table thead th:first-child,
+  .menu-table tbody th:first-child {
+    text-align: left;
+  }
+
+  .menu-table tbody tr:last-child th,
+  .menu-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .menu-table tbody tr:nth-child(odd) {
+    background: rgb(248 250 252 / 0.65);
+  }
+
+  @media (max-width: 767px) {
+    .menu-table .col-drink {
+      width: 54%;
+    }
+
+    .menu-table .col-volume,
+    .menu-table .col-price {
+      width: 23%;
+    }
+
+    .menu-table thead th,
+    .menu-table tbody th,
+    .menu-table tbody td {
+      font-size: 0.92rem;
+      padding: 0.58rem 0.38rem;
+    }
+  }
+</style>
