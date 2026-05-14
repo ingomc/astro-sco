@@ -62,8 +62,7 @@ const menuSections = [
         <p class="eyebrow">Sportheim SCO-OGV Oberfüllbach</p>
         <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Unsere Getränke</h2>
         <p class="mt-2 max-w-2xl text-slate-700">
-          Alle Preise verstehen sich inklusive Mehrwertsteuer. Informationen zu Zusatzstoffen und Allergenen
-          halten wir vor Ort bereit. Stand: 1. Mai 2026.
+          Die aktuelle Getränkekarte für das Sportheim des SCO-OGV Oberfüllbach.
         </p>
       </header>
 
@@ -144,6 +143,13 @@ const menuSections = [
         }
       </div>
 
+      <footer class="mt-6 md:mt-8 border-t border-slate-200 pt-4 text-sm text-slate-600 legal-notes" aria-label="Rechtliche Hinweise">
+        <p>Alle Preise in EUR inkl. gesetzlicher MwSt. Stand: 14. Mai 2026. Änderungen und Irrtümer vorbehalten.</p>
+        <p>Die Angaben auf dieser Website sind unverbindlich; maßgeblich ist die vor Ort ausgehängte Getränkekarte.</p>
+        <p>Informationen zu Allergenen und Zusatzstoffen erhalten Sie beim Personal.</p>
+        <p>Ausschank alkoholischer Getränke gemäß Jugendschutzgesetz.</p>
+      </footer>
+
     </div>
   </div>
 </App>
@@ -161,6 +167,10 @@ const menuSections = [
     font-weight: 700;
     color: #b91c1c;
     margin-bottom: 0.5rem;
+  }
+
+  .legal-notes p + p {
+    margin-top: 0.35rem;
   }
 
   .section-icon {
