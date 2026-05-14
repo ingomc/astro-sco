@@ -196,10 +196,22 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
         }
       </div>
 
+      <p class="payment-callout" aria-label="Hinweis zur Kartenzahlung">
+        <span class="payment-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+            <path d="M2 10h20"></path>
+            <path d="M6 15h4"></path>
+          </svg>
+        </span>
+        Kartenzahlung ist bei uns möglich.
+      </p>
+
       <footer class="mt-6 md:mt-8 border-t border-slate-200 pt-4 text-sm text-slate-600 legal-notes" aria-label="Rechtliche Hinweise">
         <p>Alle Preise in EUR inkl. gesetzlicher MwSt. Stand: 14. Mai 2026. Änderungen und Irrtümer vorbehalten.</p>
         <p>Die Angaben auf dieser Website sind unverbindlich; maßgeblich ist die vor Ort ausgehängte Getränkekarte.</p>
         <p>Informationen zu Allergenen und Zusatzstoffen erhalten Sie beim Personal.</p>
+        <p>Kartenzahlung ist möglich.</p>
         <p>Ausschank alkoholischer Getränke gemäß Jugendschutzgesetz.</p>
       </footer>
 
@@ -213,6 +225,16 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
           <p class="print-kicker">Sportheim SCO-OGV Oberfüllbach</p>
           <h1>Getränkekarte</h1>
           <p class="print-darts-note">Sonntags ab 18 Uhr: Steel-Darts auf 5 Scheiben. Gäste sind herzlich willkommen, bitte kurz vorher anmelden.</p>
+          <p class="print-payment-callout" aria-label="Hinweis zur Kartenzahlung Druckansicht">
+            <span class="payment-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                <path d="M2 10h20"></path>
+                <path d="M6 15h4"></path>
+              </svg>
+            </span>
+            Kartenzahlung möglich
+          </p>
         </div>
 
         <img
@@ -231,7 +253,9 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
               printRows.map((row) =>
                 isPrintSectionRow(row) ? (
                   <tr class="print-section-row">
-                    <th scope="colgroup" colspan="3">{row.section}</th>
+                    <th scope="colgroup" colspan="3">
+                      <span class="print-section-label">{row.section}</span>
+                    </th>
                   </tr>
                 ) : (
                   <tr>
@@ -258,7 +282,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
       <footer class="print-legal" aria-label="Rechtliche Hinweise Druckansicht">
         <div class="print-legal-text">
           <p class="print-web-note">Mehr Infos, Termine &amp; Events: <span class="nowrap">www.sc-oberfuellbach.de</span></p>
-          <p>Alle Preise in EUR inkl. gesetzlicher MwSt. Stand: 14. Mai 2026. Änderungen und Irrtümer vorbehalten. Informationen zu Allergenen und Zusatzstoffen erhalten Sie beim Personal. Ausschank alkoholischer Getränke gemäß Jugendschutzgesetz.</p>
+          <p>Alle Preise in EUR inkl. gesetzlicher MwSt. Stand: 14. Mai 2026. Änderungen und Irrtümer vorbehalten. Informationen zu Allergenen und Zusatzstoffen erhalten Sie beim Personal. Kartenzahlung ist möglich. Ausschank alkoholischer Getränke gemäß Jugendschutzgesetz.</p>
         </div>
         <aside class="print-qr" aria-label="QR-Code zur Website">
           <img
@@ -322,6 +346,26 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
 
   .legal-notes p + p {
     margin-top: 0.35rem;
+  }
+
+  .payment-callout {
+    margin: 1rem 0 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.48rem 0.72rem;
+    border-radius: 999px;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 0.93rem;
+  }
+
+  .payment-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .section-icon {
@@ -499,17 +543,17 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
     .print-menu-head {
       display: grid;
       grid-template-columns: 0.9fr 2.4fr 0.9fr;
-      align-items: start;
-      gap: 2.8mm;
+      align-items: center;
+      gap: 3.6mm;
     }
 
     .print-title-wrap {
       text-align: center;
-      padding-top: 0.8mm;
+      padding-top: 0;
     }
 
     .print-kicker {
-      margin: 0;
+      margin: 0 0 0.5mm;
       font-size: 9pt;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -518,7 +562,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
     }
 
     .print-title-wrap h1 {
-      margin: 0.2mm 0 0;
+      margin: 0;
       font-size: 27.5pt;
       line-height: 1.05;
       font-weight: 900;
@@ -527,11 +571,27 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
     }
 
     .print-darts-note {
-      margin: 0.6mm 0 0;
+      margin: 1.2mm auto 0;
+      max-width: 120mm;
       font-size: 9.8pt;
-      line-height: 1.22;
+      line-height: 1.28;
       color: #334155;
       font-weight: 600;
+    }
+
+    .print-payment-callout {
+      margin: 2mm auto 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 1.5mm;
+      padding: 1.45mm 3.1mm;
+      border: 0.35mm solid #cbd5e1;
+      border-radius: 999px;
+      background: #f8fafc;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 10.4pt;
+      line-height: 1.1;
     }
 
     .print-logo-left,
@@ -544,11 +604,11 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
     }
 
     .print-menu-sheet {
-      margin: 4.5mm auto 0;
+      margin: 6.2mm auto 0;
       width: min(175mm, 100%);
       background: #fff;
       border: 1px solid #d6d3d1;
-      padding: 4.5mm 5mm;
+      padding: 5mm 5.6mm;
     }
 
     .print-table {
@@ -560,7 +620,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
     .print-table th,
     .print-table td {
       font-size: 13.2pt;
-      line-height: 1.24;
+      line-height: 1.27;
       padding: 1.4mm 1.1mm;
       color: #111;
       vertical-align: top;
@@ -597,6 +657,10 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
       color: #b91c1c;
       letter-spacing: 0.07em;
       text-transform: uppercase;
+    }
+
+    .print-section-label {
+      display: inline-block;
     }
 
     .print-table tbody tr.print-section-row:not(:first-child) th {
