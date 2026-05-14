@@ -8,7 +8,7 @@ const description = "Aktuelle Getränkekarte im Sportheim des SCO-OGV Oberfüllb
 
 const sectionMeta = {
   Bier: { icon: "beer" },
-  "Alkoholfreie Getränke": { icon: "sparkle" },
+  "Alkoholfreie Getränke": { icon: "bottle" },
   "Wein und Spirituosen": { icon: "glass" }
 } as const;
 
@@ -54,16 +54,31 @@ const menuSections = [
 ---
 
 <App title={title} description={description}>
-  <HpStage image="/src/media/buehne-sportheim.jpg" title="Getränkekarte" />
+  <div class="screen-only">
+    <HpStage image="/src/media/buehne-sportheim.jpg" title="Getränkekarte" />
+  </div>
 
   <div class="container mx-auto px-4 py-6 md:py-10">
     <div class="menu-shell rounded-2xl border border-slate-200 p-4 md:p-8">
       <header class="mb-6 md:mb-8">
-        <p class="eyebrow">Sportheim SCO-OGV Oberfüllbach</p>
-        <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Unsere Getränke</h2>
-        <p class="mt-2 max-w-2xl text-slate-700">
-          Die aktuelle Getränkekarte für das Sportheim des SCO-OGV Oberfüllbach.
-        </p>
+        <div class="menu-header">
+          <div class="brand-lockup">
+            <img
+              src="/logos/sco-logo.svg"
+              alt="SCO-OGV Oberfüllbach Logo"
+              class="brand-logo"
+              loading="eager"
+              decoding="async"
+            />
+            <div>
+              <p class="eyebrow">Sportheim SCO-OGV Oberfüllbach</p>
+              <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Getränkekarte</h2>
+              <p class="mt-2 max-w-2xl text-slate-700">
+                Frisch, fair und unkompliziert - für Spieltag, Feier und gemütliches Beisammensein.
+              </p>
+            </div>
+          </div>
+        </div>
       </header>
 
       <div class="grid gap-4 md:gap-6" role="list" aria-label="Getränkekarte nach Kategorien">
@@ -73,7 +88,7 @@ const menuSections = [
             const meta = sectionMeta[section.name];
 
             return (
-            <section role="listitem" aria-labelledby={id}>
+            <section role="listitem" aria-labelledby={id} class="print-section">
               <HpCard>
                 <div slot="title" class="flex items-center justify-between gap-3">
                   <h3 id={id} class="flex items-center gap-2 font-bold text-lg text-slate-900">
@@ -88,10 +103,10 @@ const menuSections = [
                         )
                       }
                       {
-                        meta.icon === "sparkle" && (
+                        meta.icon === "bottle" && (
                           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 3v4M12 17v4M3 12h4M17 12h4"></path>
-                            <circle cx="12" cy="12" r="4"></circle>
+                            <path d="M10 3h4"></path>
+                            <path d="M11 3v3l-3 4v8a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-8l-3-4V3"></path>
                           </svg>
                         )
                       }
@@ -155,9 +170,32 @@ const menuSections = [
 </App>
 
 <style>
+  .screen-only {
+    display: block;
+  }
+
   .menu-shell {
     background: #ffffff;
-    box-shadow: 0 18px 50px -28px rgb(15 23 42 / 0.25);
+    box-shadow: none;
+  }
+
+  .menu-header {
+    border-bottom: 1px solid #dbe3ef;
+    padding-bottom: 0.85rem;
+  }
+
+  .brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .brand-logo {
+    width: 3.25rem;
+    height: 3.25rem;
+    object-fit: contain;
+    flex: 0 0 auto;
+    filter: none;
   }
 
   .eyebrow {
@@ -182,7 +220,16 @@ const menuSections = [
     border-radius: 0.5rem;
     border: 1px solid #e2e8f0;
     color: #334155;
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6);
+    box-shadow: none;
+  }
+
+  .menu-shell,
+  .menu-shell *,
+  .menu-shell *::before,
+  .menu-shell *::after {
+    box-shadow: none !important;
+    filter: none !important;
+    text-shadow: none !important;
   }
 
   .menu-table {
@@ -243,6 +290,15 @@ const menuSections = [
   }
 
   @media (max-width: 767px) {
+    .brand-lockup {
+      align-items: flex-start;
+    }
+
+    .brand-logo {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+
     .menu-table .col-drink {
       width: 54%;
     }
@@ -257,6 +313,150 @@ const menuSections = [
     .menu-table tbody td {
       font-size: 0.92rem;
       padding: 0.58rem 0.38rem;
+    }
+  }
+
+  @page {
+    size: A4;
+    margin: 8mm;
+  }
+
+  @media print {
+    :global(html),
+    :global(body),
+    :global(.app),
+    :global(.app > main) {
+      background: #ffffff !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    :global(body > .skip-links),
+    :global(.app > header),
+    :global(.app > footer),
+    :global(#mobile-backdrop),
+    :global(#mobile-menu) {
+      display: none !important;
+    }
+
+    :global(.app > main) {
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    :global(.app > main > *) {
+      display: none !important;
+    }
+
+    :global(.app > main > .container) {
+      display: block !important;
+    }
+
+    :global(.app > main),
+    :global(.app > main *) {
+      box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+    }
+
+    .screen-only {
+      display: none !important;
+    }
+
+    .container {
+      max-width: none;
+      width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .grid {
+      gap: 0.7rem !important;
+    }
+
+    .menu-shell {
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
+      background: #ffffff;
+    }
+
+    .menu-header {
+      border-bottom: 2px solid #334155;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.55rem;
+    }
+
+    .brand-logo {
+      width: 2.2rem;
+      height: 2.2rem;
+      filter: none;
+    }
+
+    .brand-lockup {
+      gap: 0.7rem;
+    }
+
+    .eyebrow {
+      margin-bottom: 0.25rem;
+      font-size: 8.6pt;
+      letter-spacing: 0.06em;
+    }
+
+    .menu-header h2 {
+      font-size: 18.5pt;
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    .menu-header p.mt-2 {
+      display: none;
+    }
+
+    .print-section {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .print-section > div {
+      border: 1px solid #d6deea;
+      border-radius: 0;
+      padding-left: 0.55rem;
+      padding-right: 0.55rem;
+      padding-bottom: 0.28rem;
+    }
+
+    .print-section > div > .py-3 {
+      padding-top: 0.45rem;
+      padding-bottom: 0.35rem;
+    }
+
+    .section-icon {
+      width: 1.3rem;
+      height: 1.3rem;
+      border: none;
+      box-shadow: none;
+    }
+
+    .menu-table thead th {
+      font-size: 8.7pt;
+      padding: 0.38rem 0.34rem;
+    }
+
+    .menu-table tbody tr:not(.section-row) th,
+    .menu-table tbody tr:not(.section-row) td {
+      font-size: 11pt;
+      padding: 0.4rem 0.34rem;
+      line-height: 1.24;
+    }
+
+    .menu-table tbody tr:nth-child(odd) {
+      background: transparent;
+    }
+
+    .legal-notes {
+      display: none;
     }
   }
 </style>
