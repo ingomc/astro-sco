@@ -124,6 +124,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
           menuSections.map((section) => {
             const id = `section-${slugify(section.name)}`;
             const meta = sectionMeta[section.name];
+            const groupedRows = groupPrintRows(section.rows);
 
             return (
             <section role="listitem" aria-labelledby={id} class="print-section">
@@ -179,11 +180,15 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
                     </thead>
                     <tbody>
                       {
-                        section.rows.map((row) => (
+                        groupedRows.map((row) => (
                           <tr>
                             <th scope="row">{row.drink}</th>
-                            <td>{row.volume}</td>
-                            <td class="text-right whitespace-nowrap">{row.price}</td>
+                            <td>
+                              {row.volumes.map((volume) => <div class="table-stacked">{volume}</div>)}
+                            </td>
+                            <td class="text-right whitespace-nowrap">
+                              {row.prices.map((price) => <div class="table-stacked">{price}</div>)}
+                            </td>
                           </tr>
                         ))
                       }
@@ -425,6 +430,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
     border-bottom: 1px solid #e2e8f0;
     padding: 0.7rem 0.5rem;
     color: #0f172a;
+    vertical-align: top;
   }
 
   .menu-table tbody th {
@@ -444,6 +450,10 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
 
   .menu-table tbody tr:nth-child(odd) {
     background: rgb(248 250 252 / 0.65);
+  }
+
+  .table-stacked + .table-stacked {
+    margin-top: 0.2rem;
   }
 
   @media (max-width: 767px) {
