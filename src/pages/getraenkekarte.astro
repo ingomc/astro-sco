@@ -25,7 +25,7 @@ const menuSections = [
   {
     name: "Bier",
     rows: [
-      { drink: "Bier, Radler, Weizen", volume: "1,0 l", price: "5,70 EUR" },
+      { drink: "Bier, Radler, Weizen", volume: "1,0 l", price: "50,70 EUR" },
       { drink: "Bier, Radler, Weizen", volume: "0,5 l", price: "3,00 EUR" },
       { drink: "Bier, Radler, Weizen", volume: "0,25 l", price: "1,70 EUR" },
       { drink: "Leichtbier, alkoholfreies Weizenbier", volume: "0,5 l", price: "3,00 EUR" }
@@ -60,56 +60,32 @@ type PrintMenuRow =
       prices: string[];
     };
 
-const printRows: PrintMenuRow[] = [
-  { section: "Bier" },
-  {
-    drink: "Bier, Radler, Weizen",
-    volumes: ["1,0 l", "0,5 l", "0,25 l"],
-    prices: ["5,70 EUR", "3,00 EUR", "1,70 EUR"]
-  },
-  {
-    drink: "Leichtbier, alkoholfreies Weizenbier",
-    volumes: ["0,5 l"],
-    prices: ["3,00 EUR"]
-  },
-  { section: "Alkoholfreie Getränke" },
-  {
-    drink: "Limo, Spezi",
-    volumes: ["0,5 l"],
-    prices: ["2,50 EUR"]
-  },
-  {
-    drink: "Cola",
-    volumes: ["0,5 l"],
-    prices: ["2,50 EUR"]
-  },
-  {
-    drink: "Apfelsaftschorle",
-    volumes: ["0,5 l"],
-    prices: ["2,50 EUR"]
-  },
-  {
-    drink: "Mineralwasser",
-    volumes: ["0,5 l"],
-    prices: ["2,50 EUR"]
-  },
-  { section: "Wein und Spirituosen" },
-  {
-    drink: "Frankenwein, Rotwein",
-    volumes: ["0,2 l", "0,1 l"],
-    prices: ["2,70 EUR", "1,40 EUR"]
-  },
-  {
-    drink: "Weinschorle",
-    volumes: ["0,5 l", "0,25 l"],
-    prices: ["3,50 EUR", "1,80 EUR"]
-  },
-  {
-    drink: "Schnaps",
-    volumes: ["0,02 l"],
-    prices: ["1,50 EUR"]
-  }
-];
+const groupPrintRows = (
+  rows: readonly { drink: string; volume: string; price: string }[]
+): Exclude<PrintMenuRow, { section: string }>[] => {
+  return rows.reduce<Exclude<PrintMenuRow, { section: string }>[]>((acc, row) => {
+    const last = acc.at(-1);
+
+    if (last && last.drink === row.drink) {
+      last.volumes.push(row.volume);
+      last.prices.push(row.price);
+      return acc;
+    }
+
+    acc.push({
+      drink: row.drink,
+      volumes: [row.volume],
+      prices: [row.price]
+    });
+
+    return acc;
+  }, []);
+};
+
+const printRows: PrintMenuRow[] = menuSections.flatMap((section) => [
+  { section: section.name },
+  ...groupPrintRows(section.rows)
+]);
 
 const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "section" in row;
 ---
@@ -228,7 +204,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
 
     </div>
 
-    <article class="print-menu" aria-label="Getränkekarte Druckansicht">
+    <article class="print-menu" hidden aria-label="Getränkekarte Druckansicht">
       <header class="print-menu-head">
         <img src="/assets/logo_sco.png" alt="SCO-OGV Oberfüllbach Logo" class="print-logo-left" />
 
@@ -512,19 +488,23 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
 
     .print-menu {
       display: block;
-      padding: 2mm 2mm 0;
+      padding: 1.2mm 1.6mm 0;
+    }
+
+    .print-menu[hidden] {
+      display: block !important;
     }
 
     .print-menu-head {
       display: grid;
-      grid-template-columns: 1fr 2.2fr 1fr;
+      grid-template-columns: 0.9fr 2.4fr 0.9fr;
       align-items: start;
-      gap: 4mm;
+      gap: 2.8mm;
     }
 
     .print-title-wrap {
       text-align: center;
-      padding-top: 2mm;
+      padding-top: 0.8mm;
     }
 
     .print-kicker {
@@ -537,7 +517,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
     }
 
     .print-title-wrap h1 {
-      margin: 1mm 0 0;
+      margin: 0.2mm 0 0;
       font-size: 30pt;
       line-height: 1.05;
       font-weight: 900;
@@ -546,7 +526,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
     }
 
     .print-darts-note {
-      margin: 1.2mm 0 0;
+      margin: 0.6mm 0 0;
       font-size: 9.8pt;
       line-height: 1.22;
       color: #334155;
@@ -556,14 +536,14 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
     .print-logo-left,
     .print-logo-right {
       justify-self: center;
-      width: 34mm;
+      width: 24mm;
       height: auto;
-      max-height: 34mm;
+      max-height: 24mm;
       object-fit: contain;
     }
 
     .print-menu-sheet {
-      margin: 7mm auto 0;
+      margin: 4.5mm auto 0;
       width: min(175mm, 100%);
       background: #fff;
       border: 1px solid #d6d3d1;
@@ -670,7 +650,11 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
       display: grid;
       grid-template-columns: 1fr 24mm;
       gap: 4mm;
-      align-items: start;
+      align-items: end;
+    }
+
+    .print-legal-text {
+      align-self: end;
     }
 
     .print-web-note {
