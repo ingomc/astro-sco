@@ -51,6 +51,67 @@ const menuSections = [
     ]
   }
 ] as const;
+
+type PrintMenuRow =
+  | { section: string }
+  | {
+      drink: string;
+      volumes: string[];
+      prices: string[];
+    };
+
+const printRows: PrintMenuRow[] = [
+  { section: "Bier" },
+  {
+    drink: "Bier, Radler, Weizen",
+    volumes: ["1,0 l", "0,5 l", "0,25 l"],
+    prices: ["5,70 EUR", "3,00 EUR", "1,70 EUR"]
+  },
+  {
+    drink: "Leichtbier, alkoholfreies Weizenbier",
+    volumes: ["0,5 l"],
+    prices: ["3,00 EUR"]
+  },
+  { section: "Alkoholfreie Getränke" },
+  {
+    drink: "Limo, Spezi",
+    volumes: ["0,5 l"],
+    prices: ["2,50 EUR"]
+  },
+  {
+    drink: "Cola",
+    volumes: ["0,5 l"],
+    prices: ["2,50 EUR"]
+  },
+  {
+    drink: "Apfelsaftschorle",
+    volumes: ["0,5 l"],
+    prices: ["2,50 EUR"]
+  },
+  {
+    drink: "Mineralwasser",
+    volumes: ["0,5 l"],
+    prices: ["2,50 EUR"]
+  },
+  { section: "Wein und Spirituosen" },
+  {
+    drink: "Frankenwein, Rotwein",
+    volumes: ["0,2 l", "0,1 l"],
+    prices: ["2,70 EUR", "1,40 EUR"]
+  },
+  {
+    drink: "Weinschorle",
+    volumes: ["0,5 l", "0,25 l"],
+    prices: ["3,50 EUR", "1,80 EUR"]
+  },
+  {
+    drink: "Schnaps",
+    volumes: ["0,02 l"],
+    prices: ["1,50 EUR"]
+  }
+];
+
+const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "section" in row;
 ---
 
 <App title={title} description={description}>
@@ -64,7 +125,7 @@ const menuSections = [
         <div class="menu-header">
           <div class="brand-lockup">
             <img
-              src="/logos/sco-logo.svg"
+              src="/assets/logo_sco.png"
               alt="SCO-OGV Oberfüllbach Logo"
               class="brand-logo"
               loading="eager"
@@ -166,12 +227,87 @@ const menuSections = [
       </footer>
 
     </div>
+
+    <article class="print-menu" aria-label="Getränkekarte Druckansicht">
+      <header class="print-menu-head">
+        <img src="/assets/logo_sco.png" alt="SCO-OGV Oberfüllbach Logo" class="print-logo-left" />
+
+        <div class="print-title-wrap">
+          <p class="print-kicker">Sportheim SCO-OGV Oberfüllbach</p>
+          <h1>Getränkekarte</h1>
+          <p class="print-darts-note">Sonntags ab 18 Uhr: Steel-Darts auf 5 Scheiben. Gäste sind herzlich willkommen, bitte kurz vorher anmelden.</p>
+        </div>
+
+        <img
+          src="/sco-fuelltreffer.png"
+          alt="SCO Fulltreffer Darts Logo"
+          class="print-logo-right"
+          loading="eager"
+          decoding="async"
+        />
+      </header>
+
+      <div class="print-menu-sheet">
+        <table class="print-table" aria-label="Getränke und Preise">
+          <tbody>
+            {
+              printRows.map((row) =>
+                isPrintSectionRow(row) ? (
+                  <tr class="print-section-row">
+                    <th scope="colgroup" colspan="3">{row.section}</th>
+                  </tr>
+                ) : (
+                  <tr>
+                    <th scope="row" class="print-drink">{row.drink}</th>
+                    <td>
+                      {row.volumes.map((volume) => <div class="stacked">{volume}</div>)}
+                    </td>
+                    <td class="text-right">
+                      {row.prices.map((price) => <div class="stacked">{price}</div>)}
+                    </td>
+                  </tr>
+                )
+              )
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <p class="print-greeting">
+        <span class="greet-line">Einen angenehmen Aufenthalt wünscht Ihnen der</span>
+        <span class="greet-club"><span class="nowrap">SCO&nbsp;&amp;&nbsp;OGV</span> Oberfüllbach</span>
+      </p>
+
+      <footer class="print-legal" aria-label="Rechtliche Hinweise Druckansicht">
+        <div class="print-legal-text">
+          <p class="print-web-note">Mehr Infos, Termine &amp; Events: <span class="nowrap">www.sc-oberfuellbach.de</span></p>
+          <p>Alle Preise in EUR inkl. gesetzlicher MwSt. Stand: 14. Mai 2026. Änderungen und Irrtümer vorbehalten. Informationen zu Allergenen und Zusatzstoffen erhalten Sie beim Personal. Ausschank alkoholischer Getränke gemäß Jugendschutzgesetz.</p>
+        </div>
+        <aside class="print-qr" aria-label="QR-Code zur Website">
+          <img
+            src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fwww.sc-oberfuellbach.de%2F%3Futm_source%3Dgetraenkekarte%26utm_medium%3Dqr%26utm_campaign%3Dprint"
+            alt="QR-Code zur Website sc-oberfuellbach.de"
+            loading="eager"
+            decoding="async"
+          />
+          <p>Jetzt online</p>
+        </aside>
+      </footer>
+    </article>
   </div>
 </App>
 
 <style>
   .screen-only {
     display: block;
+  }
+
+  .print-menu {
+    display: none;
+  }
+
+  .nowrap {
+    white-space: nowrap;
   }
 
   .menu-shell {
@@ -370,6 +506,212 @@ const menuSections = [
       margin: 0 !important;
     }
 
+    .menu-shell {
+      display: none;
+    }
+
+    .print-menu {
+      display: block;
+      padding: 2mm 2mm 0;
+    }
+
+    .print-menu-head {
+      display: grid;
+      grid-template-columns: 1fr 2.2fr 1fr;
+      align-items: start;
+      gap: 4mm;
+    }
+
+    .print-title-wrap {
+      text-align: center;
+      padding-top: 2mm;
+    }
+
+    .print-kicker {
+      margin: 0;
+      font-size: 9pt;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #b91c1c;
+      font-weight: 700;
+    }
+
+    .print-title-wrap h1 {
+      margin: 1mm 0 0;
+      font-size: 30pt;
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+      color: #000;
+    }
+
+    .print-darts-note {
+      margin: 1.2mm 0 0;
+      font-size: 9.8pt;
+      line-height: 1.22;
+      color: #334155;
+      font-weight: 600;
+    }
+
+    .print-logo-left,
+    .print-logo-right {
+      justify-self: center;
+      width: 34mm;
+      height: auto;
+      max-height: 34mm;
+      object-fit: contain;
+    }
+
+    .print-menu-sheet {
+      margin: 7mm auto 0;
+      width: min(175mm, 100%);
+      background: #fff;
+      border: 1px solid #d6d3d1;
+      padding: 4.5mm 5mm;
+    }
+
+    .print-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .print-table th,
+    .print-table td {
+      font-size: 14.3pt;
+      line-height: 1.32;
+      padding: 1.85mm 1.2mm;
+      color: #111;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .print-table td:last-child,
+    .print-table .text-right {
+      text-align: right;
+    }
+
+    .print-drink {
+      width: 56%;
+      font-weight: 800;
+    }
+
+    .print-table tbody tr:not(.print-section-row) th,
+    .print-table tbody tr:not(.print-section-row) td {
+      border-bottom: 0.35mm solid #d7dee8;
+    }
+
+    .print-table tbody tr:last-child th,
+    .print-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .print-section-row th {
+      border-top: 0.7mm solid #b8c5d6;
+      border-bottom: 0.35mm solid #d7dee8;
+      padding-top: 4.6mm;
+      padding-bottom: 2.1mm;
+      font-size: 9.6pt;
+      font-weight: 800;
+      color: #b91c1c;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .print-table tbody tr.print-section-row:not(:first-child) th {
+      padding-top: 5.8mm;
+    }
+
+    .print-table tbody tr.print-section-row + tr th,
+    .print-table tbody tr.print-section-row + tr td {
+      padding-top: 2.4mm;
+    }
+
+    .print-table tbody tr.print-section-row:first-child th {
+      border-top: none;
+      padding-top: 1.6mm;
+    }
+
+    .stacked + .stacked {
+      margin-top: 1.1mm;
+    }
+
+    .print-greeting {
+      margin: 8mm auto 0;
+      max-width: 140mm;
+      text-align: center;
+      font-size: 15.8pt;
+      line-height: 1.25;
+      color: #111827;
+    }
+
+    .print-greeting .greet-line,
+    .print-greeting .greet-club {
+      display: block;
+    }
+
+    .print-greeting .greet-line {
+      font-weight: 500;
+    }
+
+    .print-greeting .greet-club {
+      margin-top: 1.2mm;
+      font-size: 17.6pt;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+    }
+
+    .print-legal {
+      margin: 6mm auto 0;
+      width: min(175mm, 100%);
+      font-size: 8.4pt;
+      line-height: 1.28;
+      color: #64748b;
+      display: grid;
+      grid-template-columns: 1fr 24mm;
+      gap: 4mm;
+      align-items: start;
+    }
+
+    .print-web-note {
+      margin: 0 0 2.2mm;
+      font-size: 10pt;
+      line-height: 1.2;
+      font-weight: 800;
+      color: #b91c1c;
+      letter-spacing: 0.015em;
+    }
+
+    .print-legal-text p {
+      margin: 0;
+    }
+
+    .print-legal-text p + p {
+      margin-top: 1.1mm;
+    }
+
+    .print-qr {
+      margin: 0;
+      text-align: center;
+    }
+
+    .print-qr img {
+      width: 24mm;
+      height: 24mm;
+      display: block;
+      border: 0.25mm solid #cbd5e1;
+    }
+
+    .print-qr p {
+      margin: 1mm 0 0;
+      font-size: 7.2pt;
+      line-height: 1.1;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
     .grid {
       gap: 0.7rem !important;
     }
@@ -446,9 +788,9 @@ const menuSections = [
 
     .menu-table tbody tr:not(.section-row) th,
     .menu-table tbody tr:not(.section-row) td {
-      font-size: 11pt;
-      padding: 0.4rem 0.34rem;
-      line-height: 1.24;
+      font-size: 12.5pt;
+      padding: 0.43rem 0.34rem;
+      line-height: 1.26;
     }
 
     .menu-table tbody tr:nth-child(odd) {
