@@ -25,9 +25,9 @@ const menuSections = [
   {
     name: "Bier",
     rows: [
-      { drink: "Bier, Radler, Weizen", volume: "1,0 l", price: "5,70 EUR" },
-      { drink: "Bier, Radler, Weizen", volume: "0,5 l", price: "3,00 EUR" },
-      { drink: "Bier, Radler, Weizen", volume: "0,25 l", price: "1,70 EUR" },
+      { drink: "Bier, Radler", volume: "1,0 l", price: "5,70 EUR" },
+      { drink: "Bier, Radler", volume: "0,5 l", price: "3,00 EUR" },
+      { drink: "Bier, Radler", volume: "0,25 l", price: "1,70 EUR" },
       { drink: "Leichtbier, alkoholfreies Weizenbier", volume: "0,5 l", price: "3,00 EUR" }
     ]
   },
@@ -37,14 +37,15 @@ const menuSections = [
       { drink: "Limo, Spezi", volume: "0,5 l", price: "2,50 EUR" },
       { drink: "Cola", volume: "0,5 l", price: "2,50 EUR" },
       { drink: "Apfelsaftschorle", volume: "0,5 l", price: "2,50 EUR" },
+      { drink: "Iso Kirschschorle", volume: "0,5 l", price: "2,50 EUR" },
       { drink: "Mineralwasser", volume: "0,5 l", price: "2,50 EUR" }
     ]
   },
   {
     name: "Wein und Spirituosen",
     rows: [
-      { drink: "Frankenwein, Rotwein", volume: "0,2 l", price: "2,70 EUR" },
-      { drink: "Frankenwein, Rotwein", volume: "0,1 l", price: "1,40 EUR" },
+      { drink: "Frankenwein", volume: "0,2 l", price: "2,70 EUR" },
+      { drink: "Frankenwein", volume: "0,1 l", price: "1,40 EUR" },
       { drink: "Weinschorle", volume: "0,5 l", price: "3,50 EUR" },
       { drink: "Weinschorle", volume: "0,25 l", price: "1,80 EUR" },
       { drink: "Schnaps", volume: "0,02 l", price: "1,50 EUR" }
@@ -558,9 +559,9 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
 
     .print-table th,
     .print-table td {
-      font-size: 14.3pt;
-      line-height: 1.32;
-      padding: 1.85mm 1.2mm;
+      font-size: 13.2pt;
+      line-height: 1.24;
+      padding: 1.4mm 1.1mm;
       color: #111;
       vertical-align: top;
       text-align: left;
@@ -604,7 +605,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
 
     .print-table tbody tr.print-section-row + tr th,
     .print-table tbody tr.print-section-row + tr td {
-      padding-top: 2.4mm;
+      padding-top: 1.7mm;
     }
 
     .print-table tbody tr.print-section-row:first-child th {
@@ -613,7 +614,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
     }
 
     .stacked + .stacked {
-      margin-top: 1.1mm;
+      margin-top: 0.7mm;
     }
 
     .print-greeting {
