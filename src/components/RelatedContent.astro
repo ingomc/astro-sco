@@ -1,10 +1,21 @@
 ---
 import { Image } from "astro:assets";
+import { resolveHeroImage } from "../lib/hero-image";
 import FormattedDate from "./FormattedDate.astro";
 import BadgeMini from "./BadgeMini.astro";
 
 // Related content entries from veranstaltungen and berichte collections
 const { items } = Astro.props;
+type RelatedItem = {
+  slug: string;
+  collection: "berichte" | "veranstaltungen";
+  data: {
+    title: string;
+    eventDate: Date;
+    heroImage?: string;
+  };
+};
+const relatedItems = (items || []) as RelatedItem[];
 
 const images = import.meta.glob<{ default: ImageMetadata }>(
   "/public/assets/**/*.{jpeg,jpg,png,gif,avif}",
@@ -12,13 +23,12 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
 ---
 
 {
-  items && items.length > 0 && (
+  relatedItems.length > 0 && (
     <section class="related-content container mx-auto px-2 py-8">
       <h2 class="text-xl font-bold mb-4">Weitere Beiträge</h2>
       <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map((item) => {
-          const imageKey = `/public${item.data.heroImage}`;
-          const hasImage = item.data.heroImage && images[imageKey];
+        {relatedItems.map((item) => {
+          const resolvedHero = resolveHeroImage(item.data.heroImage, images);
           const isBericht = item.collection === "berichte";
           const path = isBericht ? "berichte" : "veranstaltungen";
           return (
@@ -28,18 +38,30 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
                 class="flex flex-col h-full bg-white rounded-lg border border-slate-300 overflow-hidden transition-all duration-200 hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
                 aria-label={`${isBericht ? "Bericht lesen" : "Veranstaltung ansehen"}: ${item.data.title} am ${item.data.eventDate.toLocaleDateString("de-DE")}`}
               >
-                {hasImage && (
+                {resolvedHero.kind !== "none" && (
                   <div class="overflow-hidden h-36 bg-slate-100">
-                    <Image
-                      width={400}
-                      height={200}
-                      alt={item.data.title}
-                      src={images[imageKey]()}
-                      widths={[200, 300, 400]}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      class="object-cover object-top w-full h-full"
-                      loading="lazy"
-                    />
+                    {
+                      resolvedHero.kind === "local" ? (
+                        <Image
+                          width={400}
+                          height={200}
+                          alt={item.data.title}
+                          src={resolvedHero.loader()}
+                          widths={[200, 300, 400]}
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          class="object-cover object-top w-full h-full"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <img
+                          src={resolvedHero.src}
+                          alt={item.data.title}
+                          class="object-cover object-top w-full h-full"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      )
+                    }
                   </div>
                 )}
                 <div class="flex flex-col flex-1 gap-2 p-3">

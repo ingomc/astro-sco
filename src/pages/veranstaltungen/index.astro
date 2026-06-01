@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getContentCollection } from "../../lib/content-source";
 import App from "../../layouts/App.astro";
 import BadgeMini from "../../components/BadgeMini.astro";
 import HpCard from "../../components/HpCard.astro";
@@ -9,6 +9,11 @@ import EventCardCompact from "../../components/EventCardCompact.astro";
 import FormattedDate from "../../components/FormattedDate.astro";
 import allshortevents from "../../data/shortevents.json";
 import NextMatch from "../../components/NextMatch.astro";
+
+type ShortEvent = {
+  title: string;
+  date: string;
+};
 
 const now = new Date().setHours(0, 0, 0, 0);
 const threeMonthsAgo = new Date();
@@ -23,7 +28,7 @@ const isRecentPast = (date: Date) => {
   return d < now && d >= threeMonthsAgo.getTime();
 };
 
-const allEvents = (await getCollection("veranstaltungen")).filter((ev) => ev.data.pubDate <= new Date() && !ev.data.hidden);
+const allEvents = (await getContentCollection("veranstaltungen")).filter((ev) => ev.data.pubDate <= new Date() && !ev.data.hidden);
 
 const futureEvents = allEvents.filter((ev) => dateInPast(ev.data.eventDate)).sort(
   (a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf(),
@@ -34,7 +39,7 @@ const recentPastEvents = allEvents.filter((ev) => isRecentPast(ev.data.eventDate
 );
 
 const currentYear = new Date().getFullYear();
-const pastEvents = (await getCollection("berichte"))
+const pastEvents = (await getContentCollection("berichte"))
   .filter((ev) => {
     const eventYear = ev.data.eventDate.getFullYear();
     return eventYear === currentYear || eventYear === currentYear - 1;
@@ -43,7 +48,7 @@ const pastEvents = (await getCollection("berichte"))
     (a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf(),
   ).reverse();
 
-const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev.date))).sort(
+const shortevents = (allshortevents.geplant as ShortEvent[]).filter((ev) => dateInPast(new Date(ev.date))).sort(
 	(a, b) => new Date(a.date).valueOf() -  new Date(b.date).valueOf()
 )
 const title = "Veranstaltungen - SCO-OGV Oberfüllbach";

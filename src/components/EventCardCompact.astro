@@ -1,10 +1,23 @@
 ---
 import { Image } from "astro:assets";
+import { resolveHeroImage } from "../lib/hero-image";
 import FormattedDate from "./FormattedDate.astro";
 import BadgeMini from "./BadgeMini.astro";
 
 // Kompakte Event-Karte für Startseite und vergangene Veranstaltungen
 const { data, path, isPast = false } = Astro.props;
+type EventCardItem = {
+  slug: string;
+  data: {
+    title: string;
+    description?: string;
+    eventDate: Date;
+    location?: string;
+    heroImage?: string;
+    cta?: string;
+  };
+};
+const items = data as EventCardItem[];
 const images = import.meta.glob<{ default: ImageMetadata }>(
   "/public/assets/**/*.{jpeg,jpg,png,gif,avif}",
 );
@@ -14,7 +27,7 @@ const isBerichtList = path === "berichte";
 <div>
   <ul class="grid grid-cols-1 gap-4">
     {
-      data.map((event) => {
+      items.map((event) => {
         const Element = isPast ? "div" : "a";
         const href = isPast
           ? undefined
@@ -39,16 +52,31 @@ const isBerichtList = path === "berichte";
             >
               {event.data.heroImage && (
                 <div class="shrink-0 overflow-hidden rounded w-32 md:w-48">
-                  <Image
-                    width={320}
-                    height={200}
-                    alt={event.data.title}
-                    src={images[`/public${event.data.heroImage}`]()}
-                    widths={[100, 150, 200, 320]}
-                    sizes="(max-width: 768px) 128px, 224px"
-                    class="object-contain object-top w-full h-auto"
-                    loading="eager"
-                  />
+                  {
+                    (() => {
+                      const resolvedHero = resolveHeroImage(event.data.heroImage, images);
+                      return resolvedHero.kind === "local" ? (
+                        <Image
+                          width={320}
+                          height={200}
+                          alt={event.data.title}
+                          src={resolvedHero.loader()}
+                          widths={[100, 150, 200, 320]}
+                          sizes="(max-width: 768px) 128px, 224px"
+                          class="object-contain object-top w-full h-auto"
+                          loading="eager"
+                        />
+                      ) : resolvedHero.kind === "remote" ? (
+                        <img
+                          src={resolvedHero.src}
+                          alt={event.data.title}
+                          class="object-contain object-top w-full h-auto"
+                          loading="eager"
+                          decoding="async"
+                        />
+                      ) : null;
+                    })()
+                  }
                 </div>
               )}
               <div class="flex flex-col justify-between w-full min-w-0 gap-1 md:gap-2">

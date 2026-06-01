@@ -1,0 +1,19 @@
+{
+  "servers": {
+    "directus": {
+      "type": "http",
+      "url": "https://cms.dart.ingomc.de/mcp",
+      "headers": {
+        "Authorization": "Bearer ${input:directus-token}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "id": "directus-token",
+      "type": "promptString",
+      "description": "Directus Access Token",
+      "password": true
+    }
+  ]
+}

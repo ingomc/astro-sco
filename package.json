@@ -18,7 +18,13 @@
     "test:visual:update": "playwright test tests/visual/ --config=playwright.visual.config.ts --update-snapshots",
     "test:visual:headed": "playwright test tests/visual/ --config=playwright.visual.config.ts --headed",
     "test:visual:ui": "playwright test tests/visual/ --config=playwright.visual.config.ts --ui",
-    "test:visual:report": "playwright show-report"
+    "test:visual:report": "playwright show-report",
+    "directus:provision": "node scripts/directus/provision-schema.mjs",
+    "directus:provision:sync": "node scripts/directus/provision-schema.mjs --sync",
+    "directus:import:dry": "node scripts/directus/import-content.mjs --dry-run",
+    "directus:import": "node scripts/directus/import-content.mjs --apply",
+    "directus:import:assets:dry": "node scripts/directus/import-content.mjs --dry-run --rewrite-assets",
+    "directus:import:assets": "node scripts/directus/import-content.mjs --apply --rewrite-assets"
   },
   "dependencies": {
     "@astrojs/mdx": "^3.1.2",
@@ -30,6 +36,8 @@
     "astro": "^4.11.3",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
+    "fast-glob": "^3.3.3",
+    "gray-matter": "^4.0.3",
     "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
