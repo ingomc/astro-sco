@@ -60,6 +60,21 @@ function dateTimeField(name, required = false) {
   };
 }
 
+function fileImageField(name, required = false, width = "half") {
+  return {
+    name,
+    type: "uuid",
+    meta: {
+      interface: "file-image",
+      required,
+      width,
+    },
+    schema: {
+      is_nullable: !required,
+    },
+  };
+}
+
 const commonContentFields = [
   {
     name: "slug",
@@ -78,7 +93,7 @@ const commonContentFields = [
   },
   textField("body", false, "full"),
   stringField("content_format", true, "half", 32),
-  stringField("source_path", true, "full", 500),
+  stringField("source_path", false, "full", 500),
 ];
 
 export const TARGET_SCHEMA = [
@@ -95,7 +110,9 @@ export const TARGET_SCHEMA = [
       dateTimeField("pub_date", true),
       dateTimeField("event_date", true),
       stringField("location", false, "half"),
-      stringField("hero_image", true, "half", 500),
+      stringField("hero_image", false, "half", 500),
+      fileImageField("hero_image_file", false, "half"),
+      stringField("hero_image_alt", false, "half", 255),
       stringField("cta", false, "half"),
       boolField("featured", false, false),
       boolField("hidden", false, false),
@@ -126,7 +143,9 @@ export const TARGET_SCHEMA = [
       dateTimeField("pub_date", true),
       dateTimeField("event_date", true),
       stringField("location", false, "half"),
-      stringField("hero_image", true, "half", 500),
+      stringField("hero_image", false, "half", 500),
+      fileImageField("hero_image_file", false, "half"),
+      stringField("hero_image_alt", false, "half", 255),
       boolField("hidden", false, false),
       {
         name: "tags",

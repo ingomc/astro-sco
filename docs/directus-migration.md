@@ -60,12 +60,14 @@ Importer behavior:
 Read-path behavior (implemented):
 
 - Migrated list/feed/detail metadata reads via adapter in src/lib/content-source.ts.
+- Start and sportheim pages now read and render markdown bodies through the adapter path.
 - Detail pages now render markdown bodies directly from Directus content_format=markdown.
 - MDX and unsupported body formats still fallback to local Astro render for stability.
 - Hero images are resolved through a shared helper, supporting both local /assets files and Directus asset URLs.
+- Adapter mapping now prefers hero_image_file relation (Directus file) and falls back to legacy hero_image string.
 
 ## Known Gaps
 
-- Hero image frontmatter values are still imported as strings and not converted to Directus file relations.
+- Import currently maps hero_image_file only when frontmatter contains a Directus file id or /assets/<directus-file-id> path.
+- Import does not yet upload local hero images to Directus file relations automatically.
 - MDX component semantics are preserved as raw body content; execution/rendering adaptation is still pending.
-- Start and sportheim body rendering are not yet migrated to direct Directus body rendering.

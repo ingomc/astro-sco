@@ -2,7 +2,7 @@ import { getCollection } from "astro:content";
 
 type SourceMode = "astro" | "directus" | "auto";
 
-export type SupportedCollection = "veranstaltungen" | "berichte" | "mitglieder";
+export type SupportedCollection = "veranstaltungen" | "berichte" | "mitglieder" | "start" | "sportheim";
 
 type VeranstaltungData = {
   title: string;
@@ -10,7 +10,7 @@ type VeranstaltungData = {
   pubDate: Date;
   eventDate: Date;
   location?: string;
-  heroImage: string;
+  heroImage?: string;
   cta?: string;
   featured: boolean;
   hidden: boolean;
@@ -23,7 +23,7 @@ type BerichtData = {
   pubDate: Date;
   eventDate: Date;
   location?: string;
-  heroImage: string;
+  heroImage?: string;
   hidden: boolean;
   tags: string[];
 };
@@ -37,10 +37,23 @@ type MitgliederData = {
   authorimage?: string;
 };
 
+type StartData = {
+  title: string;
+  order: number;
+};
+
+type SportheimData = {
+  title: string;
+  order?: number;
+  legacyId?: string;
+};
+
 type EntryDataByCollection = {
   veranstaltungen: VeranstaltungData;
   berichte: BerichtData;
   mitglieder: MitgliederData;
+  start: StartData;
+  sportheim: SportheimData;
 };
 
 export type ContentEntry<K extends SupportedCollection = SupportedCollection> = {
@@ -278,6 +291,66 @@ function toStringArray(value: unknown): string[] {
   return primitive ? [primitive] : [];
 }
 
+function toNumberOrUndefined(value: unknown): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+  return undefined;
+}
+
+function toRequiredNumber(value: unknown, field: string, collection: SupportedCollection, slug: string): number {
+  const parsed = toNumberOrUndefined(value);
+  if (parsed === undefined) {
+    throw new TypeError(`Missing required numeric field '${field}' in ${collection}/${slug}`);
+  }
+  return parsed;
+}
+
+function extractDirectusFileId(value: unknown): string | undefined {
+  const raw = toStringOrUndefined(value);
+  if (!raw) {
+    return undefined;
+  }
+
+  const directIdMatch = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.exec(raw);
+  if (directIdMatch) {
+    return raw;
+  }
+
+  const pathMatch = /\/assets\/([^/?#]+)/i.exec(raw);
+  const fromPath = pathMatch?.[1];
+  if (fromPath && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(fromPath)) {
+    return fromPath;
+  }
+
+  return undefined;
+}
+
+function resolveHeroImageValue(item: Record<string, unknown>): string | undefined {
+  const relationValue = item.hero_image_file;
+
+  if (relationValue && typeof relationValue === "object") {
+    const relationObject = relationValue as Record<string, unknown>;
+    const relationId = extractDirectusFileId(relationObject.id);
+    if (relationId) {
+      return `/assets/${relationId}`;
+    }
+  }
+
+  const relationId = extractDirectusFileId(relationValue);
+  if (relationId) {
+    return `/assets/${relationId}`;
+  }
+
+  return toStringOrUndefined(item.hero_image);
+}
+
 function mapDirectusItem<K extends SupportedCollection>(
   collection: K,
   item: Record<string, unknown>,
@@ -301,7 +374,7 @@ function mapDirectusItem<K extends SupportedCollection>(
         pubDate: toDate(item.pub_date, "pub_date", collection, slug),
         eventDate: toDate(item.event_date, "event_date", collection, slug),
         location: toStringOrUndefined(item.location),
-        heroImage: toRequiredString(item.hero_image, "hero_image", collection, slug),
+        heroImage: resolveHeroImageValue(item),
         cta: toStringOrUndefined(item.cta),
         featured: toBoolean(item.featured, false),
         hidden: toBoolean(item.hidden, false),
@@ -325,9 +398,42 @@ function mapDirectusItem<K extends SupportedCollection>(
         pubDate: toDate(item.pub_date, "pub_date", collection, slug),
         eventDate: toDate(item.event_date, "event_date", collection, slug),
         location: toStringOrUndefined(item.location),
-        heroImage: toRequiredString(item.hero_image, "hero_image", collection, slug),
+        heroImage: resolveHeroImageValue(item),
         hidden: toBoolean(item.hidden, false),
         tags: toStringArray(item.tags),
+      },
+    };
+    return mapped as ContentEntry<K>;
+  }
+
+  if (collection === "start") {
+    const mapped: ContentEntry<"start"> = {
+      slug,
+      collection,
+      source: "directus",
+      body: toStringOrUndefined(item.body),
+      contentFormat: toStringOrUndefined(item.content_format),
+      sourcePath: toStringOrUndefined(item.source_path),
+      data: {
+        title: toRequiredString(item.title, "title", collection, slug),
+        order: toRequiredNumber(item.order, "order", collection, slug),
+      },
+    };
+    return mapped as ContentEntry<K>;
+  }
+
+  if (collection === "sportheim") {
+    const mapped: ContentEntry<"sportheim"> = {
+      slug,
+      collection,
+      source: "directus",
+      body: toStringOrUndefined(item.body),
+      contentFormat: toStringOrUndefined(item.content_format),
+      sourcePath: toStringOrUndefined(item.source_path),
+      data: {
+        title: toRequiredString(item.title, "title", collection, slug),
+        order: toNumberOrUndefined(item.order),
+        legacyId: toStringOrUndefined(item.legacy_id),
       },
     };
     return mapped as ContentEntry<K>;
@@ -423,6 +529,38 @@ async function loadCollectionFromAstro<K extends SupportedCollection>(collection
         heroImage: entry.data.heroImage || "",
         hidden: Boolean(entry.data.hidden),
         tags: entry.data.tags ?? [],
+      },
+    })) as ContentEntry<K>[];
+  }
+
+  if (collection === "start") {
+    const entries = await getCollection("start");
+    return entries.map((entry) => ({
+      slug: entry.slug,
+      collection,
+      source: "astro",
+      body: entry.body,
+      contentFormat: "markdown",
+      data: {
+        title: entry.data.title,
+        order: Number(entry.data.order),
+      },
+    })) as ContentEntry<K>[];
+  }
+
+  if (collection === "sportheim") {
+    const entries = await getCollection("sportheim");
+    return entries.map((entry) => ({
+      slug: entry.slug,
+      collection,
+      source: "astro",
+      body: entry.body,
+      contentFormat: "markdown",
+      data: {
+        title: entry.data.title,
+        order: entry.data.order === undefined || entry.data.order === null
+          ? undefined
+          : Number(entry.data.order),
       },
     })) as ContentEntry<K>[];
   }
