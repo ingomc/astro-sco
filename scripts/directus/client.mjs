@@ -1,15 +1,36 @@
 import "dotenv/config";
 
-const rawBaseUrl = process.env.DIRECTUS_URL || process.env.DIRECTUS_BASE_URL;
+const mcpValue = process.env.MCP;
+const mcpUrl = isLikelyHttpUrl(mcpValue) ? mcpValue : undefined;
+const mcpToken = mcpValue && !mcpUrl ? mcpValue : undefined;
+
+const rawBaseUrl = process.env.DIRECTUS_URL || process.env.DIRECTUS_BASE_URL || process.env.DIRECTUS_PUBLIC_URL || mcpUrl;
 const explicitApiUrl = process.env.DIRECTUS_API_URL;
-const token = process.env.DIRECTUS_TOKEN || process.env.MCP;
+const token = process.env.DIRECTUS_TOKEN
+  || process.env.DIRECTUS_ACCESS_TOKEN
+  || process.env.MCP_TOKEN
+  || mcpToken
+  || process.env.ADMIN_EXPORT_TOKEN;
 
 if (!rawBaseUrl) {
-  throw new Error("Missing DIRECTUS_URL (or DIRECTUS_BASE_URL) in environment.");
+  throw new Error("Missing Directus URL in environment (DIRECTUS_URL, DIRECTUS_BASE_URL, DIRECTUS_PUBLIC_URL, or MCP URL).");
 }
 
 if (!token) {
-  throw new Error("Missing DIRECTUS_TOKEN (or MCP) in environment.");
+  throw new Error("Missing Directus token in environment (DIRECTUS_TOKEN, DIRECTUS_ACCESS_TOKEN, ADMIN_EXPORT_TOKEN, or MCP_TOKEN).");
+}
+
+function isLikelyHttpUrl(value) {
+  if (!value || typeof value !== "string") {
+    return false;
+  }
+
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 function appendQueryParams(searchParams, key, value) {
@@ -63,6 +84,16 @@ function resolveApiBaseUrls() {
       withDirectusPrefix.toString(),
       withoutMcp.toString(),
     ];
+  }
+
+  if (parsed.pathname.endsWith("/directus") || parsed.pathname.endsWith("/directus/")) {
+    const withoutDirectus = new URL(parsed.toString());
+    withoutDirectus.pathname = withoutDirectus.pathname.replace(/\/directus\/?$/, "/");
+
+    return unique([
+      ensureTrailingSlash(parsed.toString()),
+      ensureTrailingSlash(withoutDirectus.toString()),
+    ]);
   }
 
   return [ensureTrailingSlash(parsed.toString())];

@@ -7,10 +7,25 @@ import { resolveHeroImage, toMetaImageUrl } from "../lib/hero-image";
 import FormattedDate from "../components/FormattedDate.astro";
 import BadgeMini from "../components/BadgeMini.astro";
 import RelatedContent from "../components/RelatedContent.astro";
+import Map from "../components/Map.astro";
+import Gallery from "../components/Gallery.astro";
 
 // type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, eventDate, heroImage, location, hidden, relatedItems } =
+const {
+  title,
+  description,
+  eventDate,
+  heroImage,
+  location,
+  hidden,
+  relatedItems,
+  mapLocations,
+  mapZoom,
+  mapHeight,
+  galleryImages,
+  galleryColumns,
+} =
   Astro.props;
 const robots = hidden ? "noindex, nofollow" : undefined;
 const images = import.meta.glob<{ default: ImageMetadata }>(
@@ -38,6 +53,7 @@ const metaImage = resolvedHero.kind === "remote"
                 resolvedHero.kind === "local" ? (
                   <Image
                     src={resolvedHero.loader()}
+                    format="avif"
                     widths={[100, 200, 300, 500, 800]}
                     sizes={`(max-width: 360px) 100px, (max-width: 460px) 200px,(max-width: 560px) 300px,(max-width: 660px) 500px, 800px`}
                     alt=""
@@ -80,6 +96,29 @@ const metaImage = resolvedHero.kind === "remote"
         <div>
           <slot />
         </div>
+        {
+          Array.isArray(mapLocations) && mapLocations.length > 0 && (
+            <div>
+              <h2>Standorte</h2>
+              <Map
+                locations={mapLocations}
+                zoom={typeof mapZoom === "number" ? mapZoom : undefined}
+                height={typeof mapHeight === "string" ? mapHeight : undefined}
+              />
+            </div>
+          )
+        }
+        {
+          Array.isArray(galleryImages) && galleryImages.length > 0 && (
+            <div>
+              <h2>Impressionen</h2>
+              <Gallery
+                images={galleryImages}
+                columns={galleryColumns === 2 || galleryColumns === 4 ? galleryColumns : 3}
+              />
+            </div>
+          )
+        }
       </div>
     </article>
     {relatedItems && relatedItems.length > 0 && (

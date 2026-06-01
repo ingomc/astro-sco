@@ -1,14 +1,13 @@
 import { createMarkdownProcessor } from "@astrojs/markdown-remark";
 import type { ContentEntry } from "./content-source";
+import { toAbsoluteDirectusAssetUrl, toAvifDirectusAssetUrl } from "./hero-image";
 
 type RenderableDirectusEntry = ContentEntry<"veranstaltungen" | "berichte" | "start" | "sportheim">;
 
 let markdownProcessorPromise: ReturnType<typeof createMarkdownProcessor> | null = null;
 
 function getMarkdownProcessor() {
-  if (!markdownProcessorPromise) {
-    markdownProcessorPromise = createMarkdownProcessor();
-  }
+  markdownProcessorPromise ??= createMarkdownProcessor();
   return markdownProcessorPromise;
 }
 
@@ -47,6 +46,27 @@ export async function renderMarkdownToHtml(markdown: string): Promise<string> {
   return rendered.code;
 }
 
+function rewriteDirectusAssetLinks(html: string): string {
+  const withRewrittenSources = html.replace(/\bsrc=(["'])([^"']+)\1/gi, (fullMatch, quote, rawUrl) => {
+    if (typeof rawUrl !== "string") {
+      return fullMatch;
+    }
+
+    return `src=${quote}${toAvifDirectusAssetUrl(rawUrl)}${quote}`;
+  });
+
+  const withRewrittenLinks = withRewrittenSources.replace(/\bhref=(["'])([^"']+)\1/gi, (fullMatch, quote, rawUrl) => {
+    if (typeof rawUrl !== "string") {
+      return fullMatch;
+    }
+
+    const rewritten = toAbsoluteDirectusAssetUrl(rawUrl);
+    return `href=${quote}${rewritten}${quote}`;
+  });
+
+  return withRewrittenLinks;
+}
+
 export async function renderDirectusBodyToHtml(
   entry: RenderableDirectusEntry,
 ): Promise<string | null> {
@@ -55,8 +75,9 @@ export async function renderDirectusBodyToHtml(
   }
 
   if (entry.contentFormat === "markdown") {
-    return renderMarkdownToHtml(entry.body || "");
+    const rendered = await renderMarkdownToHtml(entry.body || "");
+    return rewriteDirectusAssetLinks(rendered);
   }
 
-  return entry.body || null;
+  return rewriteDirectusAssetLinks(entry.body || "");
 }

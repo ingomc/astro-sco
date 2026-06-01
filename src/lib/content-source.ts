@@ -1,4 +1,5 @@
 import { getCollection } from "astro:content";
+import { toAbsoluteDirectusAssetUrl } from "./hero-image";
 
 type SourceMode = "astro" | "directus" | "auto";
 
@@ -26,6 +27,11 @@ type BerichtData = {
   heroImage?: string;
   hidden: boolean;
   tags: string[];
+  mapLocations?: { name: string; lat: number; lon: number; type?: string; osmUrl?: string; description?: string }[];
+  mapZoom?: number;
+  mapHeight?: string;
+  galleryImages?: { src: string; alt: string }[];
+  galleryColumns?: 2 | 3 | 4;
 };
 
 type MitgliederData = {
@@ -82,7 +88,7 @@ function warnOnce(message: string) {
 }
 
 function getSourceMode(): SourceMode {
-  const rawMode = (process.env.CONTENT_SOURCE || "auto").toLowerCase();
+  const rawMode = (import.meta.env.CONTENT_SOURCE || process.env.CONTENT_SOURCE || "directus").toLowerCase();
   if (rawMode === "astro" || rawMode === "directus" || rawMode === "auto") {
     return rawMode;
   }
@@ -101,6 +107,19 @@ function ensureTrailingSlash(urlString: string): string {
 
 function unique<T>(values: T[]): T[] {
   return [...new Set(values)];
+}
+
+function isLikelyHttpUrl(value: unknown): value is string {
+  if (typeof value !== "string" || !value.trim()) {
+    return false;
+  }
+
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 function resolveApiBaseUrls(rawBaseUrl: string, explicitApiUrl?: string): string[] {
@@ -122,13 +141,42 @@ function resolveApiBaseUrls(rawBaseUrl: string, explicitApiUrl?: string): string
     ]);
   }
 
+  if (parsed.pathname.endsWith("/directus") || parsed.pathname.endsWith("/directus/")) {
+    const withoutDirectus = new URL(parsed.toString());
+    withoutDirectus.pathname = withoutDirectus.pathname.replace(/\/directus\/?$/, "/");
+
+    return unique([
+      ensureTrailingSlash(parsed.toString()),
+      ensureTrailingSlash(withoutDirectus.toString()),
+    ]);
+  }
+
   return [ensureTrailingSlash(parsed.toString())];
 }
 
 function getDirectusConfig(): DirectusConfig | null {
-  const rawBaseUrl = process.env.DIRECTUS_URL || process.env.DIRECTUS_BASE_URL;
-  const token = process.env.DIRECTUS_TOKEN || process.env.MCP;
-  const explicitApiUrl = process.env.DIRECTUS_API_URL;
+  const mcpValue = import.meta.env.MCP || process.env.MCP;
+  const mcpUrl = isLikelyHttpUrl(mcpValue) ? mcpValue : undefined;
+  const mcpToken = mcpValue && !mcpUrl ? mcpValue : undefined;
+
+  const rawBaseUrl = import.meta.env.DIRECTUS_URL
+    || import.meta.env.DIRECTUS_BASE_URL
+    || import.meta.env.DIRECTUS_PUBLIC_URL
+    || process.env.DIRECTUS_URL
+    || process.env.DIRECTUS_BASE_URL
+    || process.env.DIRECTUS_PUBLIC_URL
+    || mcpUrl;
+
+  const token = import.meta.env.DIRECTUS_TOKEN
+    || import.meta.env.DIRECTUS_ACCESS_TOKEN
+    || import.meta.env.MCP_TOKEN
+    || process.env.DIRECTUS_TOKEN
+    || process.env.DIRECTUS_ACCESS_TOKEN
+    || process.env.MCP_TOKEN
+    || mcpToken
+    || import.meta.env.ADMIN_EXPORT_TOKEN
+    || process.env.ADMIN_EXPORT_TOKEN;
+  const explicitApiUrl = import.meta.env.DIRECTUS_API_URL || process.env.DIRECTUS_API_URL;
 
   if (!rawBaseUrl || !token) {
     return null;
@@ -291,6 +339,89 @@ function toStringArray(value: unknown): string[] {
   return primitive ? [primitive] : [];
 }
 
+function toJsonValue(value: unknown): unknown {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return undefined;
+    }
+    try {
+      return JSON.parse(trimmed);
+    } catch {
+      return undefined;
+    }
+  }
+
+  return value;
+}
+
+function toMapLocations(value: unknown): BerichtData["mapLocations"] {
+  const parsed = toJsonValue(value);
+  if (!Array.isArray(parsed)) {
+    return undefined;
+  }
+
+  const locations: NonNullable<BerichtData["mapLocations"]> = [];
+  for (const item of parsed) {
+    if (!item || typeof item !== "object") {
+      continue;
+    }
+
+    const valueObj = item as Record<string, unknown>;
+    const name = toStringOrUndefined(valueObj.name);
+    const lat = toNumberOrUndefined(valueObj.lat);
+    const lon = toNumberOrUndefined(valueObj.lon);
+
+    if (!name || lat === undefined || lon === undefined) {
+      continue;
+    }
+
+    locations.push({
+      name,
+      lat,
+      lon,
+      type: toStringOrUndefined(valueObj.type),
+      osmUrl: toStringOrUndefined(valueObj.osmUrl),
+      description: toStringOrUndefined(valueObj.description),
+    });
+  }
+
+  return locations.length > 0 ? locations : undefined;
+}
+
+function toGalleryImages(value: unknown): BerichtData["galleryImages"] {
+  const parsed = toJsonValue(value);
+  if (!Array.isArray(parsed)) {
+    return undefined;
+  }
+
+  const images: NonNullable<BerichtData["galleryImages"]> = [];
+  for (const item of parsed) {
+    if (!item || typeof item !== "object") {
+      continue;
+    }
+
+    const valueObj = item as Record<string, unknown>;
+    const src = toStringOrUndefined(valueObj.src);
+    const alt = toStringOrUndefined(valueObj.alt);
+    if (!src || !alt) {
+      continue;
+    }
+
+    images.push({ src: toAbsoluteDirectusAssetUrl(src), alt });
+  }
+
+  return images.length > 0 ? images : undefined;
+}
+
+function toGalleryColumns(value: unknown): BerichtData["galleryColumns"] {
+  const parsed = toNumberOrUndefined(value);
+  if (parsed === 2 || parsed === 3 || parsed === 4) {
+    return parsed;
+  }
+  return undefined;
+}
+
 function toNumberOrUndefined(value: unknown): number | undefined {
   if (typeof value === "number" && Number.isFinite(value)) {
     return value;
@@ -370,7 +501,7 @@ function mapDirectusItem<K extends SupportedCollection>(
       sourcePath: toStringOrUndefined(item.source_path),
       data: {
         title: toRequiredString(item.title, "title", collection, slug),
-        description: toRequiredString(item.description, "description", collection, slug),
+        description: toStringOrUndefined(item.description) || "",
         pubDate: toDate(item.pub_date, "pub_date", collection, slug),
         eventDate: toDate(item.event_date, "event_date", collection, slug),
         location: toStringOrUndefined(item.location),
@@ -401,6 +532,11 @@ function mapDirectusItem<K extends SupportedCollection>(
         heroImage: resolveHeroImageValue(item),
         hidden: toBoolean(item.hidden, false),
         tags: toStringArray(item.tags),
+        mapLocations: toMapLocations(item.map_locations),
+        mapZoom: toNumberOrUndefined(item.map_zoom),
+        mapHeight: toStringOrUndefined(item.map_height),
+        galleryImages: toGalleryImages(item.gallery_images),
+        galleryColumns: toGalleryColumns(item.gallery_columns),
       },
     };
     return mapped as ContentEntry<K>;
@@ -461,7 +597,9 @@ function mapDirectusItem<K extends SupportedCollection>(
 async function loadCollectionFromDirectus<K extends SupportedCollection>(collection: K): Promise<ContentEntry<K>[]> {
   const config = getDirectusConfig();
   if (!config) {
-    throw new Error("DIRECTUS_URL (or DIRECTUS_BASE_URL) and token are required for directus mode.");
+    throw new Error(
+      "Directus env missing. Provide URL via DIRECTUS_URL, DIRECTUS_BASE_URL, DIRECTUS_PUBLIC_URL, or MCP (URL), and token via DIRECTUS_TOKEN, ADMIN_EXPORT_TOKEN, or MCP_TOKEN.",
+    );
   }
 
   const raw = await directusGet(`/items/${collection}`, {

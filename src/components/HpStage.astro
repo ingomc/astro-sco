@@ -17,10 +17,10 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/src/media/**/*.{jp
 const finalImageUrl = image;
 if (!images[finalImageUrl]) throw new Error(`"${finalImageUrl}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`);
 // const optimizedBackgroundXs = await getImage({src: images[finalImageUrl](), width:'50', height:'26'});
-const optimizedBackgroundXs = await getImage({src: images[finalImageUrl](), width:'500', height:'264'});
-const optimizedBackgroundSm = await getImage({src: images[finalImageUrl](), width:'1000', height:'528'});
-const optimizedBackgroundMd = await getImage({src: images[finalImageUrl](), width:'1500', height:'792'});
-const optimizedBackgroundLg = await getImage({src: images[finalImageUrl](), width:'2000', height:'1056'});
+const optimizedBackgroundXs = await getImage({ src: images[finalImageUrl](), width: "500", height: "264", format: "avif" });
+const optimizedBackgroundSm = await getImage({ src: images[finalImageUrl](), width: "1000", height: "528", format: "avif" });
+const optimizedBackgroundMd = await getImage({ src: images[finalImageUrl](), width: "1500", height: "792", format: "avif" });
+const optimizedBackgroundLg = await getImage({ src: images[finalImageUrl](), width: "2000", height: "1056", format: "avif" });
 const optimizedBackgroundXsSrc = `url('${ optimizedBackgroundXs.src}')`;
 const optimizedBackgroundSmSrc = `url('${ optimizedBackgroundSm.src}')`;
 const optimizedBackgroundMdSrc = `url('${ optimizedBackgroundMd.src}')`;

@@ -29,6 +29,8 @@
     "directus:seed": "node scripts/directus/import-content.mjs --apply --no-overwrite-existing",
     "directus:seed:assets:dry": "node scripts/directus/import-content.mjs --dry-run --rewrite-assets --no-overwrite-existing",
     "directus:seed:assets": "node scripts/directus/import-content.mjs --apply --rewrite-assets --no-overwrite-existing",
+    "directus:cleanup:dry": "node scripts/directus/cleanup-local-content.mjs",
+    "directus:cleanup": "node scripts/directus/cleanup-local-content.mjs --apply",
     "guard:content": "node scripts/guard/block-content-edits.mjs",
     "guard:content:staged": "node scripts/guard/block-content-edits.mjs --staged"
   },

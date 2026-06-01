@@ -29,12 +29,12 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
           return (
           <li>
             <a
-              class="flex flex-col md:flex-row w-full bg-white rounded-lg border border-slate-300 transition-all duration-200 p-0 md:p-4 overflow-hidden hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+              class="flex flex-col lg:flex-row w-full bg-white rounded-lg border border-slate-300 transition-all duration-200 p-0 lg:p-4 overflow-hidden hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
               href={href}
               aria-label={`Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`}
             >
               {event.data.heroImage && (
-                <div class="shrink-0 overflow-hidden w-full md:w-80 md:rounded">
+                <div class="shrink-0 overflow-hidden w-full lg:w-64 xl:w-72 lg:rounded">
                   {
                     (() => {
                       const resolvedHero = resolveHeroImage(event.data.heroImage, images);
@@ -42,10 +42,11 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
                         <Image
                           width={600}
                           height={400}
+                          format="avif"
                           alt={event.data.title}
                           src={resolvedHero.loader()}
                           widths={[300, 400, 600]}
-                          sizes="(max-width: 768px) 100vw, 320px"
+                          sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 256px, 288px"
                           class="object-contain object-top w-full h-auto"
                         />
                       ) : resolvedHero.kind === "remote" ? (
@@ -61,7 +62,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
                   }
                 </div>
               )}
-              <div class="flex flex-col justify-between w-full min-w-0 gap-2 md:gap-3 p-4 md:p-0 md:pl-4">
+              <div class="flex flex-col justify-between w-full min-w-0 gap-2 md:gap-3 p-4 lg:p-0 lg:pl-4">
                 <div class="flex flex-col gap-2">
                   <h2 class="font-bold text-lg md:text-xl hyphens-auto break-words" lang="de">{event.data.title}</h2>
                   <div class="flex flex-wrap gap-2 md:gap-4 gap-y-1 md:gap-y-2">

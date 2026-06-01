@@ -1,5 +1,4 @@
 ---
-import { getCollection } from 'astro:content';
 import { getContentCollection, type ContentEntry } from '../../lib/content-source';
 import { renderDirectusBodyToHtml } from '../../lib/body-content';
 import EventPost from '../../layouts/EventPost.astro';
@@ -35,22 +34,12 @@ type Props = {
 const { event, relatedItems } = Astro.props;
 const renderedBodyHtml = await renderDirectusBodyToHtml(event);
 
-let rendered = null;
-if (!renderedBodyHtml) {
-	const astroEntries = await getCollection('veranstaltungen');
-	const astroEntry = astroEntries.find((entry) => entry.slug === event.slug);
-	rendered = astroEntry ? await astroEntry.render() : null;
-}
-
-
 ---
 
 <EventPost {...event.data} relatedItems={relatedItems}>
 	{
 		renderedBodyHtml ? (
 			<Fragment set:html={renderedBodyHtml} />
-		) : rendered ? (
-			<rendered.Content />
 		) : (
 			<p>{event.data.description}</p>
 		)
