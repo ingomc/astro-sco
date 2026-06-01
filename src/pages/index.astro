@@ -1,6 +1,6 @@
 ---
 import { getContentCollection } from "../lib/content-source";
-import { canRenderDirectusMarkdown, renderMarkdownToHtml } from "../lib/body-content";
+import { renderDirectusBodyToHtml } from "../lib/body-content";
 import HpStage from "../components/HpStage.astro";
 import App from "../layouts/App.astro";
 import HpCard from "../components/HpCard.astro";
@@ -21,14 +21,7 @@ const startPosts = (await getContentCollection("start")).sort(
 );
 
 const renderedStartPosts = await Promise.all(startPosts.map(async (post) => {
-	if (!canRenderDirectusMarkdown(post)) {
-		return {
-			slug: post.slug,
-			html: null,
-		};
-	}
-
-	const html = await renderMarkdownToHtml(post.body || "");
+	const html = await renderDirectusBodyToHtml(post);
 	return {
 		slug: post.slug,
 		html,

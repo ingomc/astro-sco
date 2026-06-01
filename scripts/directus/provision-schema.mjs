@@ -1,5 +1,5 @@
 import { directusRequest, getDirectusBaseUrl } from "./client.mjs";
-import { TARGET_SCHEMA } from "./schema.mjs";
+import { TARGET_RELATIONS, TARGET_SCHEMA } from "./schema.mjs";
 
 const args = new Set(process.argv.slice(2));
 const syncExisting = args.has("--sync");
@@ -88,6 +88,53 @@ async function ensureField(collectionName, field, counters) {
   counters.fieldsUpdated += 1;
 }
 
+function relationPayload(relation) {
+  return {
+    collection: relation.collection,
+    field: relation.field,
+    related_collection: relation.related_collection,
+    meta: relation.meta,
+    schema: relation.schema,
+  };
+}
+
+async function ensureRelation(relation, counters) {
+  const existing = await directusRequest(`/relations/${relation.collection}/${relation.field}`, {
+    allow404: true,
+  });
+
+  if (!existing) {
+    await directusRequest("/relations", {
+      method: "POST",
+      body: relationPayload(relation),
+    });
+    counters.relationsCreated += 1;
+    return;
+  }
+
+  counters.relationsExisting += 1;
+
+  if (!syncExisting) {
+    return;
+  }
+
+  await directusRequest(`/relations/${relation.collection}/${relation.field}`, {
+    method: "PATCH",
+    body: {
+      related_collection: relation.related_collection,
+      meta: {
+        ...existing.meta,
+        ...relation.meta,
+      },
+      schema: {
+        ...existing.schema,
+        ...relation.schema,
+      },
+    },
+  });
+  counters.relationsUpdated += 1;
+}
+
 async function main() {
   const counters = {
     collectionsCreated: 0,
@@ -96,6 +143,9 @@ async function main() {
     fieldsCreated: 0,
     fieldsExisting: 0,
     fieldsUpdated: 0,
+    relationsCreated: 0,
+    relationsExisting: 0,
+    relationsUpdated: 0,
   };
 
   console.log(`Provisioning Directus schema at ${getDirectusBaseUrl()}`);
@@ -107,6 +157,13 @@ async function main() {
 
     for (const field of collection.fields) {
       await ensureField(collection.name, field, counters);
+    }
+  }
+
+  if (TARGET_RELATIONS.length > 0) {
+    console.log("\nRelations:");
+    for (const relation of TARGET_RELATIONS) {
+      await ensureRelation(relation, counters);
     }
   }
 

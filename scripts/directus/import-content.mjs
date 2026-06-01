@@ -9,6 +9,7 @@ const args = process.argv.slice(2);
 const applyChanges = args.includes("--apply");
 const dryRun = args.includes("--dry-run") || !applyChanges;
 const rewriteAssets = args.includes("--rewrite-assets");
+const noOverwriteExisting = args.includes("--no-overwrite-existing");
 
 function getArgValue(name) {
   const entry = args.find((arg) => arg.startsWith(`${name}=`));
@@ -182,6 +183,11 @@ function buildAssetTitle(sourcePath, absoluteAssetPath) {
   return `import:${sourcePath}:${relativeAssetPath}`;
 }
 
+function buildHeroAssetTitle(sourcePath, absoluteAssetPath) {
+  const relativeAssetPath = normalizePath(path.relative(workspaceRoot, absoluteAssetPath));
+  return `hero:${sourcePath}:${relativeAssetPath}`;
+}
+
 async function findExistingAssetByTitle(assetTitle) {
   const matches = await directusRequest("/files", {
     query: {
@@ -322,6 +328,165 @@ async function rewriteBodyAssetReferences(options) {
 
   rewrittenBody += body.slice(cursor);
   return rewrittenBody;
+}
+
+function isHttpUrl(ref) {
+  if (!ref) {
+    return false;
+  }
+
+  return ref.startsWith("http://") || ref.startsWith("https://");
+}
+
+function resolveHeroAssetAbsolutePath(heroImage, sourceFilePath) {
+  if (!heroImage || isHttpUrl(heroImage)) {
+    return null;
+  }
+
+  const normalized = stripQueryAndHash(normalizeImageUrlToken(heroImage.trim()));
+  if (!normalized || normalized.startsWith("#")) {
+    return null;
+  }
+
+  if (normalized.startsWith("/")) {
+    return path.join(workspaceRoot, "public", normalized.slice(1));
+  }
+
+  return path.resolve(path.dirname(sourceFilePath), normalized);
+}
+
+function applyHeroAssetPathToPayload(payload, assetPath) {
+  const assetId = extractDirectusFileId(assetPath);
+  if (assetId) {
+    payload.hero_image_file = assetId;
+  }
+  payload.hero_image = assetPath;
+}
+
+function applyCachedHeroAsset(cacheKey, payload, assetCache, counters) {
+  if (!assetCache.has(cacheKey)) {
+    return false;
+  }
+
+  const cachedPath = assetCache.get(cacheKey);
+  if (!cachedPath) {
+    counters.heroMissing += 1;
+    return true;
+  }
+
+  applyHeroAssetPathToPayload(payload, cachedPath);
+  counters.heroCached += 1;
+  return true;
+}
+
+async function ensureStoredHeroAssetPath(options) {
+  const {
+    absoluteHeroPath,
+    sourcePath,
+    originalHeroValue,
+    counters,
+    warnings,
+    assetCache,
+    payload,
+  } = options;
+
+  const cacheKey = normalizePath(absoluteHeroPath);
+  if (applyCachedHeroAsset(cacheKey, payload, assetCache, counters)) {
+    return payload.hero_image || null;
+  }
+
+  if (!(await fileExists(absoluteHeroPath))) {
+    warnings.push(`missing hero image asset in ${sourcePath}: ${originalHeroValue}`);
+    counters.heroMissing += 1;
+    assetCache.set(cacheKey, null);
+    return null;
+  }
+
+  if (dryRun) {
+    const dryRunPath = `/assets/DRYRUN-${path.basename(absoluteHeroPath)}`;
+    counters.heroPlannedUpload += 1;
+    assetCache.set(cacheKey, dryRunPath);
+    return dryRunPath;
+  }
+
+  const assetTitle = buildHeroAssetTitle(sourcePath, absoluteHeroPath);
+  const existing = await findExistingAssetByTitle(assetTitle);
+  if (existing?.id) {
+    const existingPath = getAssetPathForFileId(existing.id);
+    counters.heroReused += 1;
+    assetCache.set(cacheKey, existingPath);
+    return existingPath;
+  }
+
+  const uploaded = await uploadAssetFile(absoluteHeroPath, assetTitle);
+  if (!uploaded?.id) {
+    warnings.push(`hero image upload returned no id in ${sourcePath}: ${originalHeroValue}`);
+    counters.heroMissing += 1;
+    assetCache.set(cacheKey, null);
+    return null;
+  }
+
+  const uploadedPath = getAssetPathForFileId(uploaded.id);
+  counters.heroUploaded += 1;
+  assetCache.set(cacheKey, uploadedPath);
+  return uploadedPath;
+}
+
+async function ensureHeroImageFileRelation(options) {
+  const {
+    collectionName,
+    sourceFilePath,
+    payload,
+    counters,
+    warnings,
+    assetCache,
+  } = options;
+
+  if (collectionName !== "veranstaltungen" && collectionName !== "berichte") {
+    return payload;
+  }
+
+  const heroImage = ensureOptionalString(payload.hero_image);
+  if (!heroImage) {
+    return payload;
+  }
+
+  counters.heroRefs += 1;
+
+  const directusFileId = extractDirectusFileId(heroImage);
+  if (directusFileId) {
+    applyHeroAssetPathToPayload(payload, `/assets/${directusFileId}`);
+    counters.heroMappedFromId += 1;
+    return payload;
+  }
+
+  if (isHttpUrl(heroImage)) {
+    counters.heroExternal += 1;
+    return payload;
+  }
+
+  const absoluteHeroPath = resolveHeroAssetAbsolutePath(heroImage, sourceFilePath);
+  if (!absoluteHeroPath) {
+    warnings.push(`unable to resolve hero image path in ${payload.source_path}: ${heroImage}`);
+    counters.heroMissing += 1;
+    return payload;
+  }
+
+  const storedAssetPath = await ensureStoredHeroAssetPath({
+    absoluteHeroPath,
+    sourcePath: payload.source_path,
+    originalHeroValue: heroImage,
+    counters,
+    warnings,
+    assetCache,
+    payload,
+  });
+
+  if (storedAssetPath) {
+    applyHeroAssetPathToPayload(payload, storedAssetPath);
+  }
+
+  return payload;
 }
 
 function createCommonPayload(filePath, frontmatter, body, extension) {
@@ -494,6 +659,11 @@ async function upsertBySlug(collectionName, payload, counters) {
     return;
   }
 
+  if (noOverwriteExisting) {
+    counters.skippedExisting += 1;
+    return;
+  }
+
   if (!dryRun) {
     await directusRequest(`/items/${collectionName}/${existing.id}`, {
       method: "PATCH",
@@ -554,6 +724,15 @@ async function importCollection(config, counters, warnings, assetCache) {
       assetCache,
     });
 
+    payload = await ensureHeroImageFileRelation({
+      collectionName: config.name,
+      sourceFilePath: filePath,
+      payload,
+      counters,
+      warnings,
+      assetCache,
+    });
+
     await upsertBySlug(config.name, payload, counters);
   }
 }
@@ -603,6 +782,7 @@ async function main() {
     created: 0,
     updated: 0,
     skipped: 0,
+    skippedExisting: 0,
     relativeBodyRefs: 0,
     bodyRefsRewritten: 0,
     assetsPlannedUpload: 0,
@@ -610,6 +790,14 @@ async function main() {
     assetsReused: 0,
     assetsCached: 0,
     assetsMissing: 0,
+    heroRefs: 0,
+    heroMappedFromId: 0,
+    heroExternal: 0,
+    heroPlannedUpload: 0,
+    heroUploaded: 0,
+    heroReused: 0,
+    heroCached: 0,
+    heroMissing: 0,
     settingsCreated: 0,
     settingsUpdated: 0,
     settingsSkipped: 0,
@@ -620,6 +808,7 @@ async function main() {
   console.log(`Importing content to ${getDirectusBaseUrl()}`);
   console.log(`Mode: ${dryRun ? "dry-run" : "apply"}`);
   console.log(`Asset rewrite: ${rewriteAssets ? "enabled" : "disabled"}`);
+  console.log(`Overwrite existing: ${noOverwriteExisting ? "disabled" : "enabled"}`);
 
   for (const config of collectionConfig) {
     if (selectedCollections && !selectedCollections.has(config.name)) {

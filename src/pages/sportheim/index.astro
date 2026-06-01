@@ -1,6 +1,6 @@
 ---
 import { getContentCollection } from '../../lib/content-source';
-import { canRenderDirectusMarkdown, renderMarkdownToHtml } from '../../lib/body-content';
+import { renderDirectusBodyToHtml } from '../../lib/body-content';
 import App from '../../layouts/App.astro';
 import HpCard from '../../components/HpCard.astro';
 import HpStage from '../../components/HpStage.astro';
@@ -9,14 +9,7 @@ const posts = (await getContentCollection('sportheim'))
 	.sort((a, b) => (a.data.order ?? Number.MAX_SAFE_INTEGER) - (b.data.order ?? Number.MAX_SAFE_INTEGER));
 
 const renderedPosts = await Promise.all(posts.map(async (post) => {
-	if (!canRenderDirectusMarkdown(post)) {
-		return {
-			slug: post.slug,
-			html: null,
-		};
-	}
-
-	const html = await renderMarkdownToHtml(post.body || '');
+	const html = await renderDirectusBodyToHtml(post);
 	return {
 		slug: post.slug,
 		html,

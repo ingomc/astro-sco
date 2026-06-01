@@ -24,7 +24,13 @@
     "directus:import:dry": "node scripts/directus/import-content.mjs --dry-run",
     "directus:import": "node scripts/directus/import-content.mjs --apply",
     "directus:import:assets:dry": "node scripts/directus/import-content.mjs --dry-run --rewrite-assets",
-    "directus:import:assets": "node scripts/directus/import-content.mjs --apply --rewrite-assets"
+    "directus:import:assets": "node scripts/directus/import-content.mjs --apply --rewrite-assets",
+    "directus:seed:dry": "node scripts/directus/import-content.mjs --dry-run --no-overwrite-existing",
+    "directus:seed": "node scripts/directus/import-content.mjs --apply --no-overwrite-existing",
+    "directus:seed:assets:dry": "node scripts/directus/import-content.mjs --dry-run --rewrite-assets --no-overwrite-existing",
+    "directus:seed:assets": "node scripts/directus/import-content.mjs --apply --rewrite-assets --no-overwrite-existing",
+    "guard:content": "node scripts/guard/block-content-edits.mjs",
+    "guard:content:staged": "node scripts/guard/block-content-edits.mjs --staged"
   },
   "dependencies": {
     "@astrojs/mdx": "^3.1.2",

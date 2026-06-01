@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { getContentCollection, type ContentEntry } from '../../lib/content-source';
-import { canRenderDirectusMarkdown, renderMarkdownToHtml } from '../../lib/body-content';
+import { renderDirectusBodyToHtml } from '../../lib/body-content';
 import EventPost from '../../layouts/EventPost.astro';
 
 export async function getStaticPaths() {
@@ -33,13 +33,10 @@ type Props = {
 };
 
 const { event, relatedItems } = Astro.props;
-const markdownBody = canRenderDirectusMarkdown(event)
-	? event.body || ""
-	: null;
-const markdownHtml = markdownBody ? await renderMarkdownToHtml(markdownBody) : null;
+const renderedBodyHtml = await renderDirectusBodyToHtml(event);
 
 let rendered = null;
-if (!markdownHtml) {
+if (!renderedBodyHtml) {
 	const astroEntries = await getCollection('veranstaltungen');
 	const astroEntry = astroEntries.find((entry) => entry.slug === event.slug);
 	rendered = astroEntry ? await astroEntry.render() : null;
@@ -50,8 +47,8 @@ if (!markdownHtml) {
 
 <EventPost {...event.data} relatedItems={relatedItems}>
 	{
-		markdownHtml ? (
-			<Fragment set:html={markdownHtml} />
+		renderedBodyHtml ? (
+			<Fragment set:html={renderedBodyHtml} />
 		) : rendered ? (
 			<rendered.Content />
 		) : (
