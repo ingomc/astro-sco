@@ -1,31 +1,66 @@
-function textField(name, required = false, width = "full") {
+function textField(name, required = false, width = "full", interfaceType = "input", options = {}) {
+  const { note, hidden = false } = options;
+
+  const meta = {
+    interface: interfaceType,
+    required,
+    width,
+  };
+
+  if (note) {
+    meta.note = note;
+  }
+
+  if (hidden) {
+    meta.hidden = true;
+  }
+
   return {
     name,
     type: "text",
-    meta: {
-      interface: "input",
-      required,
-      width,
-    },
+    meta,
     schema: {
       is_nullable: !required,
     },
   };
 }
 
-function stringField(name, required = false, width = "half", maxLength = 255) {
+function stringField(name, required = false, width = "half", maxLength = 255, options = {}) {
+  const {
+    note,
+    hidden = false,
+    defaultValue,
+    interfaceType = "input",
+  } = options;
+
+  const meta = {
+    interface: interfaceType,
+    required,
+    width,
+  };
+
+  if (note) {
+    meta.note = note;
+  }
+
+  if (hidden) {
+    meta.hidden = true;
+  }
+
+  const schema = {
+    is_nullable: !required,
+    max_length: maxLength,
+  };
+
+  if (defaultValue !== undefined) {
+    schema.default_value = defaultValue;
+  }
+
   return {
     name,
     type: "string",
-    meta: {
-      interface: "input",
-      required,
-      width,
-    },
-    schema: {
-      is_nullable: !required,
-      max_length: maxLength,
-    },
+    meta,
+    schema,
   };
 }
 
@@ -60,15 +95,27 @@ function dateTimeField(name, required = false) {
   };
 }
 
-function fileImageField(name, required = false, width = "half") {
+function fileImageField(name, required = false, width = "half", options = {}) {
+  const { note, hidden = false } = options;
+
+  const meta = {
+    interface: "file-image",
+    required,
+    width,
+  };
+
+  if (note) {
+    meta.note = note;
+  }
+
+  if (hidden) {
+    meta.hidden = true;
+  }
+
   return {
     name,
     type: "uuid",
-    meta: {
-      interface: "file-image",
-      required,
-      width,
-    },
+    meta,
     schema: {
       is_nullable: !required,
     },
@@ -91,9 +138,18 @@ const commonContentFields = [
       max_length: 255,
     },
   },
-  textField("body", false, "full"),
-  stringField("content_format", true, "half", 32),
-  stringField("source_path", false, "full", 500),
+  textField("body", false, "full", "input-rich-text-html", {
+    note: "Primary editor field for CMS content.",
+  }),
+  stringField("content_format", true, "half", 32, {
+    defaultValue: "html",
+    hidden: true,
+    note: "Technical format marker (html, markdown, mdx).",
+  }),
+  stringField("source_path", false, "full", 500, {
+    hidden: true,
+    note: "Legacy migration metadata.",
+  }),
 ];
 
 export const TARGET_SCHEMA = [
@@ -110,8 +166,13 @@ export const TARGET_SCHEMA = [
       dateTimeField("pub_date", true),
       dateTimeField("event_date", true),
       stringField("location", false, "half"),
-      stringField("hero_image", false, "half", 500),
-      fileImageField("hero_image_file", false, "half"),
+      stringField("hero_image", false, "half", 500, {
+        hidden: true,
+        note: "Legacy hero image path. Prefer hero_image_file.",
+      }),
+      fileImageField("hero_image_file", false, "half", {
+        note: "Upload/select hero image in Directus files.",
+      }),
       stringField("hero_image_alt", false, "half", 255),
       stringField("cta", false, "half"),
       boolField("featured", false, false),
@@ -143,8 +204,13 @@ export const TARGET_SCHEMA = [
       dateTimeField("pub_date", true),
       dateTimeField("event_date", true),
       stringField("location", false, "half"),
-      stringField("hero_image", false, "half", 500),
-      fileImageField("hero_image_file", false, "half"),
+      stringField("hero_image", false, "half", 500, {
+        hidden: true,
+        note: "Legacy hero image path. Prefer hero_image_file.",
+      }),
+      fileImageField("hero_image_file", false, "half", {
+        note: "Upload/select hero image in Directus files.",
+      }),
       stringField("hero_image_alt", false, "half", 255),
       boolField("hidden", false, false),
       {
@@ -249,4 +315,30 @@ export const TARGET_SCHEMA = [
       stringField("posts_thumb", true, "half", 500),
     ],
   },
+];
+
+function fileRelation(collection, field) {
+  return {
+    collection,
+    field,
+    related_collection: "directus_files",
+    schema: {
+      on_delete: "SET NULL",
+      on_update: "NO ACTION",
+    },
+    meta: {
+      many_collection: collection,
+      many_field: field,
+      one_collection: "directus_files",
+      one_field: null,
+      one_deselect_action: "nullify",
+      junction_field: null,
+      sort_field: null,
+    },
+  };
+}
+
+export const TARGET_RELATIONS = [
+  fileRelation("veranstaltungen", "hero_image_file"),
+  fileRelation("berichte", "hero_image_file"),
 ];
