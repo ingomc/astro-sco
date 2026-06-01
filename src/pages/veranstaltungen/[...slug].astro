@@ -1,10 +1,12 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
+import { getCollection } from 'astro:content';
+import { getContentCollection, type ContentEntry } from '../../lib/content-source';
+import { canRenderDirectusMarkdown, renderMarkdownToHtml } from '../../lib/body-content';
 import EventPost from '../../layouts/EventPost.astro';
 
 export async function getStaticPaths() {
-	const allVeranstaltungen = (await getCollection('veranstaltungen')).filter((ev) => ev.data.pubDate <= new Date());
-	const allBerichte = await getCollection('berichte');
+	const allVeranstaltungen = (await getContentCollection('veranstaltungen')).filter((ev) => ev.data.pubDate <= new Date());
+	const allBerichte = await getContentCollection('berichte');
 
 	return allVeranstaltungen.map((event) => {
 		const tags = event.data.tags ?? [];
@@ -25,20 +27,35 @@ export async function getStaticPaths() {
 	});
 }
 
-type Props = { event: CollectionEntry<'veranstaltungen'>; relatedItems: (CollectionEntry<'veranstaltungen'> | CollectionEntry<'berichte'>)[] };
+type Props = {
+	event: ContentEntry<'veranstaltungen'>;
+	relatedItems: (ContentEntry<'veranstaltungen'> | ContentEntry<'berichte'>)[];
+};
 
 const { event, relatedItems } = Astro.props;
-const { Content, headings } = await event.render();
+const markdownBody = canRenderDirectusMarkdown(event)
+	? event.body || ""
+	: null;
+const markdownHtml = markdownBody ? await renderMarkdownToHtml(markdownBody) : null;
+
+let rendered = null;
+if (!markdownHtml) {
+	const astroEntries = await getCollection('veranstaltungen');
+	const astroEntry = astroEntries.find((entry) => entry.slug === event.slug);
+	rendered = astroEntry ? await astroEntry.render() : null;
+}
 
 
 ---
 
 <EventPost {...event.data} relatedItems={relatedItems}>
-	<!-- <h1>{post.data.title}</h1>
-	<ol>
-		{headings.map(heading => 
-			heading.depth == 2 && (<li><a href={`#${heading.slug}`} title={heading.text}>{heading.text}</a></li>)
-		)}
-	</ol> -->		
-	<Content />
+	{
+		markdownHtml ? (
+			<Fragment set:html={markdownHtml} />
+		) : rendered ? (
+			<rendered.Content />
+		) : (
+			<p>{event.data.description}</p>
+		)
+	}
 </EventPost>

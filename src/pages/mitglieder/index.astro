@@ -1,9 +1,9 @@
 ---
-import { getCollection } from "astro:content";
+import { getContentCollection } from "../../lib/content-source";
 import App from "../../layouts/App.astro";
 import { Picture } from 'astro:assets';
 
-const members = await getCollection("mitglieder");
+const members = await getContentCollection("mitglieder");
 const title = "Mitglieder - SCO-OGV Oberfüllbach";
 const description = "Auflistung aller Mitglieder - SCO-OGV Oberfüllbach";
 ---
@@ -54,7 +54,6 @@ const description = "Auflistung aller Mitglieder - SCO-OGV Oberfüllbach";
                     <div class="img">
                       {authorimage && (
                         <Picture
-                          fit="cover"
                           width="250"
                           height="250"
                           alt={name}
@@ -85,7 +84,6 @@ const description = "Auflistung aller Mitglieder - SCO-OGV Oberfüllbach";
                     <div class="img">
                       {authorimage && (
                         <Picture
-                          fit="cover"
                           width="250"
                           height="250"
                           alt={name}

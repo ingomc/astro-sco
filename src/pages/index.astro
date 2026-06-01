@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { getContentCollection } from "../lib/content-source";
 import HpStage from "../components/HpStage.astro";
 import App from "../layouts/App.astro";
 import HpCard from "../components/HpCard.astro";
@@ -10,11 +11,16 @@ import EventBanner from "../components/EventBanner.astro";
 import NextMatch from "../components/NextMatch.astro";
 import allshortevents from "../data/shortevents.json";
 
+type ShortEvent = {
+	title: string;
+	date: string;
+};
+
 const posts = (await getCollection("start")).sort(
 	(a, b) => a.data.order.valueOf() - b.data.order.valueOf(),
 );
 
-const pastEvents = (await getCollection("berichte"))
+const pastEvents = (await getContentCollection("berichte"))
 	.sort((a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf())
 	.reverse();
 
@@ -28,12 +34,12 @@ const isNew = (date: Date) => date.valueOf() >= threeWeeksAgo.valueOf();
 const dateInPast = (date: Date) => date.setHours(0, 0, 0, 0) >= now;
 
 // TODO Events + News
-const events = (await getCollection("veranstaltungen"))
+const events = (await getContentCollection("veranstaltungen"))
 	.filter((ev) => dateInPast(ev.data.eventDate))
 	.filter((ev) => ev.data.pubDate <= new Date() && !ev.data.hidden)
 	.sort((a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf());
 
-const shortevents = allshortevents.geplant
+const shortevents = (allshortevents.geplant as ShortEvent[])
 	.filter((ev) => dateInPast(new Date(ev.date)))
 	.sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf());
 
