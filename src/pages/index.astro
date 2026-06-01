@@ -1,6 +1,6 @@
 ---
-import { getCollection } from "astro:content";
 import { getContentCollection } from "../lib/content-source";
+import { canRenderDirectusMarkdown, renderMarkdownToHtml } from "../lib/body-content";
 import HpStage from "../components/HpStage.astro";
 import App from "../layouts/App.astro";
 import HpCard from "../components/HpCard.astro";
@@ -16,9 +16,24 @@ type ShortEvent = {
 	date: string;
 };
 
-const posts = (await getCollection("start")).sort(
+const startPosts = (await getContentCollection("start")).sort(
 	(a, b) => a.data.order.valueOf() - b.data.order.valueOf(),
 );
+
+const renderedStartPosts = await Promise.all(startPosts.map(async (post) => {
+	if (!canRenderDirectusMarkdown(post)) {
+		return {
+			slug: post.slug,
+			html: null,
+		};
+	}
+
+	const html = await renderMarkdownToHtml(post.body || "");
+	return {
+		slug: post.slug,
+		html,
+	};
+}));
 
 const pastEvents = (await getContentCollection("berichte"))
 	.sort((a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf())
@@ -90,12 +105,9 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
 				)
 			}
 
-			{
-				posts.map(async (post) => {
-					const { Content } = await post.render();
-					return <Content />;
-				})
-			}
+			{renderedStartPosts.map((post) => post.html && (
+				<Fragment set:html={post.html} />
+			))}
 		</main>
 
 		<!-- Berichte  -->

@@ -1,10 +1,28 @@
 ---
-import { getCollection } from 'astro:content';
+import { getContentCollection } from '../../lib/content-source';
+import { canRenderDirectusMarkdown, renderMarkdownToHtml } from '../../lib/body-content';
 import App from '../../layouts/App.astro';
 import HpCard from '../../components/HpCard.astro';
 import HpStage from '../../components/HpStage.astro';
 
-const posts = (await getCollection('sportheim'));
+const posts = (await getContentCollection('sportheim'))
+	.sort((a, b) => (a.data.order ?? Number.MAX_SAFE_INTEGER) - (b.data.order ?? Number.MAX_SAFE_INTEGER));
+
+const renderedPosts = await Promise.all(posts.map(async (post) => {
+	if (!canRenderDirectusMarkdown(post)) {
+		return {
+			slug: post.slug,
+			html: null,
+		};
+	}
+
+	const html = await renderMarkdownToHtml(post.body || '');
+	return {
+		slug: post.slug,
+		html,
+	};
+}));
+
 const title = "Sportheim - SCO-OGV Oberfüllbach";
 const description = "Überblick über Aktivitäten in und um unser Sportheim in Oberfüllbach.";
 ---
@@ -29,12 +47,9 @@ const description = "Überblick über Aktivitäten in und um unser Sportheim in 
 			</aside>
 			<main class="content prose max-w-none">
 				{
-					posts.map(async (post) => {
-						const { Content } = await post.render();
-						return (
-								<Content />
-						)
-					})
+					renderedPosts.map((post) => post.html && (
+						<Fragment set:html={post.html} />
+					))
 				}
 				<!-- <h1>Öffnungszeiten als eigene Collection machen, dann im Widget nur aufrufen und anzeigen</h1> -->
 			</main>

@@ -24,6 +24,7 @@ const selectedCollections = collectionFilterArg
   : null;
 
 const workspaceRoot = process.cwd();
+const UUID_V4_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function normalizePath(value) {
   return value.split(path.sep).join("/");
@@ -117,6 +118,25 @@ function normalizeImageUrlToken(token) {
     return token.slice(1, -1);
   }
   return token;
+}
+
+function extractDirectusFileId(value) {
+  const normalized = ensureOptionalString(value);
+  if (!normalized) {
+    return null;
+  }
+
+  if (UUID_V4_REGEX.test(normalized)) {
+    return normalized;
+  }
+
+  const pathMatch = /\/assets\/([^/?#]+)/i.exec(normalized);
+  if (!pathMatch) {
+    return null;
+  }
+
+  const candidate = pathMatch[1];
+  return UUID_V4_REGEX.test(candidate) ? candidate : null;
 }
 
 function parseMarkdownImageTarget(target) {
@@ -326,19 +346,34 @@ const collectionConfig = [
         ...parsed.data,
         __collection: "veranstaltungen",
       };
-      return {
+
+      const heroImage = ensureOptionalString(fm.heroImage);
+      const heroImageFileId = extractDirectusFileId(heroImage);
+      const heroImageAlt = ensureOptionalString(fm.heroImageAlt);
+
+      const payload = {
         ...createCommonPayload(filePath, fm, parsed.content, extension),
         title: ensureString(fm.title),
         description: ensureString(fm.description),
         pub_date: ensureDate(fm.pubDate, "pubDate", filePath),
         event_date: ensureDate(fm.eventDate, "eventDate", filePath),
         location: ensureOptionalString(fm.location),
-        hero_image: ensureString(fm.heroImage),
+        hero_image: heroImage,
         cta: ensureOptionalString(fm.cta),
         featured: ensureBoolean(fm.featured, false),
         hidden: ensureBoolean(fm.hidden, false),
         tags: ensureStringArray(fm.tags),
       };
+
+      if (heroImageFileId) {
+        payload.hero_image_file = heroImageFileId;
+      }
+
+      if (heroImageAlt) {
+        payload.hero_image_alt = heroImageAlt;
+      }
+
+      return payload;
     },
   },
   {
@@ -350,17 +385,32 @@ const collectionConfig = [
         ...parsed.data,
         __collection: "berichte",
       };
-      return {
+
+      const heroImage = ensureOptionalString(fm.heroImage);
+      const heroImageFileId = extractDirectusFileId(heroImage);
+      const heroImageAlt = ensureOptionalString(fm.heroImageAlt);
+
+      const payload = {
         ...createCommonPayload(filePath, fm, parsed.content, extension),
         title: ensureString(fm.title),
         description: ensureOptionalString(fm.description),
         pub_date: ensureDate(fm.pubDate, "pubDate", filePath),
         event_date: ensureDate(fm.eventDate, "eventDate", filePath),
         location: ensureOptionalString(fm.location),
-        hero_image: ensureString(fm.heroImage),
+        hero_image: heroImage,
         hidden: ensureBoolean(fm.hidden, false),
         tags: ensureStringArray(fm.tags),
       };
+
+      if (heroImageFileId) {
+        payload.hero_image_file = heroImageFileId;
+      }
+
+      if (heroImageAlt) {
+        payload.hero_image_alt = heroImageAlt;
+      }
+
+      return payload;
     },
   },
   {
@@ -458,10 +508,6 @@ function validatePayload(collectionName, payload, filePath) {
 
   if (!payload.slug) {
     issues.push("missing slug");
-  }
-
-  if ((collectionName === "veranstaltungen" || collectionName === "berichte") && !payload.hero_image) {
-    issues.push("missing hero_image (required by runtime)");
   }
 
   if (collectionName === "start" && !Number.isFinite(payload.order)) {

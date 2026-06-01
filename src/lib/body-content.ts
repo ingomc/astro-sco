@@ -10,7 +10,9 @@ function getMarkdownProcessor() {
   return markdownProcessorPromise;
 }
 
-export function canRenderDirectusMarkdown(entry: ContentEntry<"veranstaltungen" | "berichte">): boolean {
+export function canRenderDirectusMarkdown(
+  entry: ContentEntry<"veranstaltungen" | "berichte" | "start" | "sportheim">,
+): boolean {
   return (
     entry.source === "directus" &&
     entry.contentFormat === "markdown" &&
