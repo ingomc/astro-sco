@@ -80,6 +80,69 @@ function boolField(name, required = false, defaultValue = false) {
   };
 }
 
+function integerField(name, required = false, width = "half", options = {}) {
+  const { note, hidden = false, defaultValue } = options;
+
+  const meta = {
+    interface: "input",
+    required,
+    width,
+  };
+
+  if (note) {
+    meta.note = note;
+  }
+
+  if (hidden) {
+    meta.hidden = true;
+  }
+
+  const schema = {
+    is_nullable: !required,
+  };
+
+  if (defaultValue !== undefined) {
+    schema.default_value = defaultValue;
+  }
+
+  return {
+    name,
+    type: "integer",
+    meta,
+    schema,
+  };
+}
+
+function jsonField(name, required = false, width = "full", options = {}) {
+  const { note, hidden = false } = options;
+
+  const meta = {
+    interface: "input-code",
+    required,
+    width,
+    options: {
+      language: "json",
+    },
+  };
+
+  if (note) {
+    meta.note = note;
+  }
+
+  if (hidden) {
+    meta.hidden = true;
+  }
+
+  return {
+    name,
+    type: "json",
+    meta,
+    schema: {
+      is_nullable: !required,
+    },
+  };
+}
+
 function dateTimeField(name, required = false) {
   return {
     name,
@@ -189,6 +252,23 @@ export const TARGET_SCHEMA = [
           is_nullable: true,
         },
       },
+      jsonField("map_locations", false, "full", {
+        note: "Optional map markers for this report.",
+      }),
+      integerField("map_zoom", false, "half", {
+        note: "Map zoom level.",
+        defaultValue: 15,
+      }),
+      stringField("map_height", false, "half", 32, {
+        note: "Map container height (for example 450px).",
+      }),
+      jsonField("gallery_images", false, "full", {
+        note: "Optional gallery images [{src, alt}] for this report.",
+      }),
+      integerField("gallery_columns", false, "half", {
+        note: "Gallery columns (2, 3, or 4).",
+        defaultValue: 3,
+      }),
     ],
   },
   {

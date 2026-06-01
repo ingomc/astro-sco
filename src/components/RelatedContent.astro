@@ -45,6 +45,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
                         <Image
                           width={400}
                           height={200}
+                          format="avif"
                           alt={item.data.title}
                           src={resolvedHero.loader()}
                           widths={[200, 300, 400]}

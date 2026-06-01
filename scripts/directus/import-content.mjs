@@ -157,6 +157,83 @@ function parseMarkdownImageTarget(target) {
   };
 }
 
+function parseMdxAssetImports(content) {
+  const imports = {};
+  const importRegex = /^import\s+([A-Za-z_$][\w$]*)\s+from\s+["']([^"']+)["'];?\s*$/gm;
+  let match = importRegex.exec(content);
+
+  while (match) {
+    imports[match[1]] = match[2];
+    match = importRegex.exec(content);
+  }
+
+  return imports;
+}
+
+function evaluateDataExpression(expression, context = {}) {
+  const keys = Object.keys(context);
+  const values = Object.values(context);
+
+  // Content source files are trusted repository assets; we use controlled eval for mdx-to-typed migration.
+  return new Function(...keys, `"use strict"; return (${expression});`)(...values);
+}
+
+function stripMdxImportsAndComponents(body) {
+  let nextBody = body.replace(/^import\s+.+$/gm, "");
+  nextBody = nextBody.replace(/<Map[\s\S]*?\/>/gm, "");
+  nextBody = nextBody.replace(/<Gallery[\s\S]*?\/>/gm, "");
+  return nextBody.replace(/\n{3,}/g, "\n\n").trim();
+}
+
+function extractMdxMapData(content) {
+  const mapBlockMatch = /<Map[\s\S]*?\/>/m.exec(content);
+  if (!mapBlockMatch) {
+    return null;
+  }
+
+  const mapBlock = mapBlockMatch[0];
+  const locationsMatch = /locations=\{(\[[\s\S]*?\])\}/m.exec(mapBlock);
+  if (!locationsMatch) {
+    return null;
+  }
+
+  const mapLocations = evaluateDataExpression(locationsMatch[1]);
+  const mapZoomMatch = /zoom=\{(\d+)\}/m.exec(mapBlock);
+  const mapHeightMatch = /height="([^"]+)"/m.exec(mapBlock);
+
+  return {
+    mapLocations: Array.isArray(mapLocations) ? mapLocations : null,
+    mapZoom: mapZoomMatch ? Number(mapZoomMatch[1]) : null,
+    mapHeight: mapHeightMatch ? mapHeightMatch[1] : null,
+  };
+}
+
+function extractMdxGalleryData(content, importAliases) {
+  const galleryBlockMatch = /<Gallery[\s\S]*?\/>/m.exec(content);
+  if (!galleryBlockMatch) {
+    return null;
+  }
+
+  const galleryBlock = galleryBlockMatch[0];
+  const imagesMatch = /images=\{(\[[\s\S]*?\])\}/m.exec(galleryBlock);
+  if (!imagesMatch) {
+    return null;
+  }
+
+  const context = {};
+  for (const [alias, srcPath] of Object.entries(importAliases)) {
+    context[alias] = { src: srcPath };
+  }
+
+  const images = evaluateDataExpression(imagesMatch[1], context);
+  const columnsMatch = /columns=\{(\d+)\}/m.exec(galleryBlock);
+
+  return {
+    images: Array.isArray(images) ? images : null,
+    columns: columnsMatch ? Number(columnsMatch[1]) : null,
+  };
+}
+
 function inferMimeType(filePath) {
   const ext = path.extname(filePath).toLowerCase();
   switch (ext) {
@@ -276,6 +353,216 @@ async function ensureAssetForRelativeRef(options) {
   counters.assetsUploaded += 1;
   assetCache.set(cacheKey, uploadedPath);
   return uploadedPath;
+}
+
+async function ensureAssetForAbsolutePublicRef(options) {
+  const {
+    sourcePath,
+    absoluteAssetPath,
+    counters,
+    warnings,
+    assetCache,
+  } = options;
+
+  const cacheKey = normalizePath(absoluteAssetPath);
+  if (assetCache.has(cacheKey)) {
+    counters.assetsCached += 1;
+    return assetCache.get(cacheKey);
+  }
+
+  if (!(await fileExists(absoluteAssetPath))) {
+    warnings.push(`missing absolute body asset in ${sourcePath}: ${normalizePath(path.relative(workspaceRoot, absoluteAssetPath))}`);
+    counters.assetsMissing += 1;
+    assetCache.set(cacheKey, null);
+    return null;
+  }
+
+  if (dryRun) {
+    const dryRunPath = `/assets/DRYRUN-${path.basename(absoluteAssetPath)}`;
+    counters.assetsPlannedUpload += 1;
+    assetCache.set(cacheKey, dryRunPath);
+    return dryRunPath;
+  }
+
+  const assetTitle = buildAssetTitle(sourcePath, absoluteAssetPath);
+  const existing = await findExistingAssetByTitle(assetTitle);
+  if (existing?.id) {
+    const existingPath = getAssetPathForFileId(existing.id);
+    counters.assetsReused += 1;
+    assetCache.set(cacheKey, existingPath);
+    return existingPath;
+  }
+
+  const uploaded = await uploadAssetFile(absoluteAssetPath, assetTitle);
+  if (!uploaded?.id) {
+    warnings.push(`asset upload returned no id for ${sourcePath}: ${normalizePath(path.relative(workspaceRoot, absoluteAssetPath))}`);
+    counters.assetsMissing += 1;
+    assetCache.set(cacheKey, null);
+    return null;
+  }
+
+  const uploadedPath = getAssetPathForFileId(uploaded.id);
+  counters.assetsUploaded += 1;
+  assetCache.set(cacheKey, uploadedPath);
+  return uploadedPath;
+}
+
+async function normalizeImageSourceForDirectus(options) {
+  const {
+    imageSrc,
+    sourceFilePath,
+    sourcePath,
+    counters,
+    warnings,
+    assetCache,
+  } = options;
+
+  const normalized = normalizeImageUrlToken(String(imageSrc || "").trim());
+  if (!normalized) {
+    return null;
+  }
+
+  const directusId = extractDirectusFileId(normalized);
+  if (directusId) {
+    return `/assets/${directusId}`;
+  }
+
+  if (isHttpUrl(normalized)) {
+    return normalized;
+  }
+
+  if (isRelativeAssetRef(normalized)) {
+    return ensureAssetForRelativeRef({
+      sourceFilePath,
+      sourcePath,
+      relativeRef: normalized,
+      counters,
+      warnings,
+      assetCache,
+    });
+  }
+
+  if (normalized.startsWith("/")) {
+    const absoluteAssetPath = path.join(workspaceRoot, "public", stripQueryAndHash(normalized).slice(1));
+    return ensureAssetForAbsolutePublicRef({
+      sourcePath,
+      absoluteAssetPath,
+      counters,
+      warnings,
+      assetCache,
+    });
+  }
+
+  return normalized;
+}
+
+function applyMdxBodyAndMap(payload, parsedContent) {
+  const mapData = extractMdxMapData(parsedContent);
+
+  payload.body = stripMdxImportsAndComponents(parsedContent);
+  payload.content_format = "markdown";
+
+  if (!mapData?.mapLocations || mapData.mapLocations.length === 0) {
+    return;
+  }
+
+  payload.map_locations = mapData.mapLocations;
+  if (Number.isFinite(mapData.mapZoom)) {
+    payload.map_zoom = mapData.mapZoom;
+  }
+  if (mapData.mapHeight) {
+    payload.map_height = mapData.mapHeight;
+  }
+}
+
+async function normalizeGalleryImages(options) {
+  const {
+    images,
+    filePath,
+    sourcePath,
+    counters,
+    warnings,
+    assetCache,
+  } = options;
+
+  const normalizedImages = [];
+
+  for (const image of images) {
+    if (!image || typeof image !== "object") {
+      continue;
+    }
+
+    const imageObj = image;
+    const rawSrc = ensureOptionalString(imageObj.src);
+    const alt = ensureOptionalString(imageObj.alt) || "Bild";
+    if (!rawSrc) {
+      continue;
+    }
+
+    const normalizedSrc = await normalizeImageSourceForDirectus({
+      imageSrc: rawSrc,
+      sourceFilePath: filePath,
+      sourcePath,
+      counters,
+      warnings,
+      assetCache,
+    });
+
+    if (!normalizedSrc) {
+      continue;
+    }
+
+    normalizedImages.push({ src: normalizedSrc, alt });
+  }
+
+  return normalizedImages;
+}
+
+async function applyMdxGallery(payload, filePath, parsedContent, counters, warnings, assetCache) {
+  const imports = parseMdxAssetImports(parsedContent);
+  const galleryData = extractMdxGalleryData(parsedContent, imports);
+  if (!galleryData?.images || galleryData.images.length === 0) {
+    return;
+  }
+
+  const normalizedImages = await normalizeGalleryImages({
+    images: galleryData.images,
+    filePath,
+    sourcePath: payload.source_path,
+    counters,
+    warnings,
+    assetCache,
+  });
+
+  if (normalizedImages.length === 0) {
+    return;
+  }
+
+  payload.gallery_images = normalizedImages;
+  if (galleryData.columns === 2 || galleryData.columns === 3 || galleryData.columns === 4) {
+    payload.gallery_columns = galleryData.columns;
+  }
+}
+
+async function enrichBerichtePayloadFromMdx(options) {
+  const {
+    filePath,
+    parsed,
+    payload,
+    counters,
+    warnings,
+    assetCache,
+  } = options;
+
+  const extension = path.extname(filePath).toLowerCase();
+  if (extension !== ".mdx") {
+    return payload;
+  }
+
+  applyMdxBodyAndMap(payload, parsed.content);
+  await applyMdxGallery(payload, filePath, parsed.content, counters, warnings, assetCache);
+
+  return payload;
 }
 
 async function rewriteBodyAssetReferences(options) {
@@ -723,6 +1010,17 @@ async function importCollection(config, counters, warnings, assetCache) {
       warnings,
       assetCache,
     });
+
+    if (config.name === "berichte") {
+      payload = await enrichBerichtePayloadFromMdx({
+        filePath,
+        parsed,
+        payload,
+        counters,
+        warnings,
+        assetCache,
+      });
+    }
 
     payload = await ensureHeroImageFileRelation({
       collectionName: config.name,
