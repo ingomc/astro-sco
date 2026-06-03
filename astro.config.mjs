@@ -29,6 +29,9 @@ export default defineConfig({
   server: {
     port: 4328,
   },
+  image: {
+    domains: ["cms.dart.ingomc.de"],
+  },
   integrations: [
     mdx(),
     sitemap({
