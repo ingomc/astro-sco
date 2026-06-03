@@ -47,24 +47,35 @@ export async function renderMarkdownToHtml(markdown: string): Promise<string> {
 }
 
 function rewriteDirectusAssetLinks(html: string): string {
-  const withRewrittenSources = html.replace(/\bsrc=(["'])([^"']+)\1/gi, (fullMatch, quote, rawUrl) => {
+  // 1. Rewrite <img> tags to be fully responsive
+  const withResponsiveImages = html.replace(/<img\b([^>]*)\bsrc=(["'])([^"'\s>]+)\2([^>]*)/gi, (fullMatch, beforeSrc, quote, rawUrl, afterSrc) => {
     if (typeof rawUrl !== "string") {
       return fullMatch;
     }
 
-    const avifUrl = toAvifDirectusAssetUrl(rawUrl);
+    const avifUrlBase = toAvifDirectusAssetUrl(rawUrl);
     try {
-      const parsed = new URL(avifUrl);
-      if (!parsed.searchParams.has("width")) {
-        parsed.searchParams.set("width", "800");
-      }
-      return `src=${quote}${parsed.toString()}${quote}`;
+      const parsed = new URL(avifUrlBase);
+      // Remove any existing width parameters from the base URL
+      parsed.searchParams.delete("width");
+      const baseWithAvif = parsed.toString();
+
+      // Construct srcset for different widths
+      const srcset = `${baseWithAvif}&width=400 400w, ${baseWithAvif}&width=800 800w, ${baseWithAvif}&width=1200 1200w`;
+      
+      // Default src is 800px width
+      parsed.searchParams.set("width", "800");
+      const defaultSrc = parsed.toString();
+
+      // Return rewritten <img> tag
+      return `<img${beforeSrc}src=${quote}${defaultSrc}${quote} srcset=${quote}${srcset}${quote} sizes=${quote}(max-width: 768px) 100vw, 800px${quote}${afterSrc}`;
     } catch {
-      return `src=${quote}${avifUrl}${quote}`;
+      return `src=${quote}${avifUrlBase}${quote}`;
     }
   });
 
-  const withRewrittenLinks = withRewrittenSources.replace(/\bhref=(["'])([^"']+)\1/gi, (fullMatch, quote, rawUrl) => {
+  // 2. Rewrite remaining href links
+  const withRewrittenLinks = withResponsiveImages.replace(/\bhref=(["'])([^"']+)\1/gi, (fullMatch, quote, rawUrl) => {
     if (typeof rawUrl !== "string") {
       return fullMatch;
     }
