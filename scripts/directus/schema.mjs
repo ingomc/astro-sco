@@ -379,6 +379,8 @@ export const TARGET_SCHEMA = [
     },
     fields: [
       stringField("site_title", true, "full"),
+      textField("site_description", false, "full"),
+      fileImageField("default_og_image", false, "half"),
       {
         name: "posts_front_limit",
         type: "integer",
@@ -393,8 +395,264 @@ export const TARGET_SCHEMA = [
       },
       stringField("posts_author", true, "half"),
       stringField("posts_thumb", true, "half", 500),
+      stringField("phone", false, "half"),
+      stringField("email", false, "half"),
+      stringField("address_street", false, "half"),
+      stringField("address_city", false, "half"),
+      {
+        name: "payment_methods",
+        type: "json",
+        meta: {
+          interface: "list",
+          required: false,
+          width: "half",
+          note: "Accepted payment methods.",
+          options: {
+            template: "{{name}}",
+            fields: [
+              {
+                field: "name",
+                name: "Zahlungsart",
+                type: "string",
+                meta: {
+                  interface: "input",
+                  width: "full",
+                  required: true,
+                  options: {
+                    placeholder: "Bargeld"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        schema: {
+          is_nullable: true
+        }
+      },
+      {
+        name: "opening_hours",
+        type: "json",
+        meta: {
+          interface: "list",
+          required: false,
+          width: "full",
+          note: "Opening hours shown on the homepage.",
+          options: {
+            template: "{{hour}}",
+            fields: [
+              {
+                field: "hour",
+                name: "Öffnungszeit / Info",
+                type: "string",
+                meta: {
+                  interface: "input",
+                  width: "full",
+                  required: true,
+                  options: {
+                    placeholder: "jeden Sonntag ab 18:30 Uhr"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        schema: {
+          is_nullable: true
+        }
+      },
+      {
+        name: "regular_events",
+        type: "json",
+        meta: {
+          interface: "list",
+          required: false,
+          width: "full",
+          note: "Regular meetings shown on the events page.",
+          options: {
+            template: "{{time}} - {{label}}",
+            fields: [
+              {
+                field: "time",
+                name: "Tag / Uhrzeit",
+                type: "string",
+                meta: {
+                  interface: "input",
+                  width: "half",
+                  required: true,
+                  options: {
+                    placeholder: "So: ab 18:00 Uhr"
+                  }
+                }
+              },
+              {
+                field: "label",
+                name: "Termin / Name",
+                type: "string",
+                meta: {
+                  interface: "input",
+                  width: "half",
+                  required: true,
+                  options: {
+                    placeholder: "Steel-Darts"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        schema: {
+          is_nullable: true
+        }
+      },
+      boolField("use_winter_mode", false, false),
+      boolField("use_winter_stage", false, false),
+      fileImageField("logo_normal", false, "half"),
+      fileImageField("logo_winter", false, "half"),
     ],
   },
+  {
+    name: "drink_categories",
+    meta: {
+      icon: "local_bar",
+      note: "Drinks categories (e.g. Bier, Alkoholfreie Getränke, Wein und Spirituosen)",
+      sort_field: "sort",
+      display_template: "{{name}}",
+    },
+    fields: [
+      {
+        name: "sort",
+        type: "integer",
+        meta: {
+          interface: "input",
+          hidden: true,
+        },
+        schema: {},
+      },
+      stringField("name", true, "full"),
+      stringField("icon", false, "half", 255, {
+        interfaceType: "select-dropdown",
+        options: {
+          choices: [
+            { text: "Bier (beer)", value: "beer" },
+            { text: "Flasche (bottle)", value: "bottle" },
+            { text: "Glas (glass)", value: "glass" }
+          ]
+        }
+      }),
+      {
+        name: "drinks",
+        type: "alias",
+        meta: {
+          interface: "list-o2m",
+          special: ["o2m"],
+          display: "related-values",
+          display_options: {
+            template: "{{name}}"
+          }
+        },
+        schema: null
+      }
+    ]
+  },
+  {
+    name: "drinks",
+    meta: {
+      icon: "liquor",
+      note: "Individual drinks with sizes and prices",
+      sort_field: "sort",
+    },
+    fields: [
+      {
+        name: "sort",
+        type: "integer",
+        meta: {
+          interface: "input",
+          hidden: true,
+        },
+        schema: {},
+      },
+      stringField("name", true, "full"),
+      {
+        name: "category",
+        type: "integer",
+        meta: {
+          interface: "select-dropdown-m2o",
+          special: ["m2o"],
+          required: true,
+          width: "half",
+          options: {
+            template: "{{name}}"
+          },
+          display: "related-values",
+          display_options: {
+            template: "{{name}}"
+          }
+        },
+        schema: {},
+      },
+      {
+        name: "prices",
+        type: "json",
+        meta: {
+          interface: "list",
+          required: true,
+          width: "full",
+          options: {
+            template: "{{size}} {{unit}} - {{price}} €",
+            fields: [
+              {
+                field: "size",
+                name: "Größe (Wert)",
+                type: "string",
+                meta: {
+                  interface: "input",
+                  width: "one-third",
+                  required: true,
+                  options: {
+                    placeholder: "0,5"
+                  }
+                }
+              },
+              {
+                field: "unit",
+                name: "Einheit",
+                type: "string",
+                meta: {
+                  interface: "select-dropdown",
+                  width: "one-third",
+                  required: true,
+                  options: {
+                    choices: [
+                      { text: "l", value: "l" },
+                      { text: "cl", value: "cl" },
+                      { text: "ml", value: "ml" }
+                    ]
+                  }
+                }
+              },
+              {
+                field: "price",
+                name: "Preis (in €)",
+                type: "string",
+                meta: {
+                  interface: "input",
+                  width: "one-third",
+                  required: true,
+                  options: {
+                    placeholder: "3,00"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        schema: {
+          is_nullable: false
+        }
+      }
+    ]
+  }
 ];
 
 function fileRelation(collection, field) {
@@ -421,4 +679,25 @@ function fileRelation(collection, field) {
 export const TARGET_RELATIONS = [
   fileRelation("veranstaltungen", "hero_image_file"),
   fileRelation("berichte", "hero_image_file"),
+  fileRelation("settings", "default_og_image"),
+  fileRelation("settings", "logo_normal"),
+  fileRelation("settings", "logo_winter"),
+  {
+    collection: "drinks",
+    field: "category",
+    related_collection: "drink_categories",
+    schema: {
+      on_delete: "SET NULL",
+      on_update: "NO ACTION",
+    },
+    meta: {
+      many_collection: "drinks",
+      many_field: "category",
+      one_collection: "drink_categories",
+      one_field: "drinks",
+      one_deselect_action: "nullify",
+      junction_field: null,
+      sort_field: null,
+    },
+  }
 ];

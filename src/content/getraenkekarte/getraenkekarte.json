@@ -1,0 +1,84 @@
+[
+  {
+    "name": "Bier",
+    "icon": "beer",
+    "drinks": [
+      {
+        "name": "Bier, Radler",
+        "prices": [
+          { "size": "1,0", "unit": "l", "price": "5,70" },
+          { "size": "0,5", "unit": "l", "price": "3,00" },
+          { "size": "0,25", "unit": "l", "price": "1,70" }
+        ]
+      },
+      {
+        "name": "Leichtbier",
+        "prices": [
+          { "size": "0,5", "unit": "l", "price": "3,00" }
+        ]
+      },
+      {
+        "name": "alkoholfr. Bier, alkoholfr. Weizen",
+        "prices": [
+          { "size": "0,5", "unit": "l", "price": "3,00" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Alkoholfreie Getränke",
+    "icon": "bottle",
+    "drinks": [
+      {
+        "name": "Limo, Spezi, Cola",
+        "prices": [
+          { "size": "0,5", "unit": "l", "price": "2,50" }
+        ]
+      },
+      {
+        "name": "Apfelsaftschorle",
+        "prices": [
+          { "size": "0,5", "unit": "l", "price": "2,50" }
+        ]
+      },
+      {
+        "name": "Iso Kirschschorle",
+        "prices": [
+          { "size": "0,5", "unit": "l", "price": "2,50" }
+        ]
+      },
+      {
+        "name": "Mineralwasser",
+        "prices": [
+          { "size": "0,5", "unit": "l", "price": "2,50" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Wein und Spirituosen",
+    "icon": "glass",
+    "drinks": [
+      {
+        "name": "Frankenwein",
+        "prices": [
+          { "size": "0,2", "unit": "l", "price": "2,70" },
+          { "size": "0,1", "unit": "l", "price": "1,40" }
+        ]
+      },
+      {
+        "name": "Weinschorle",
+        "prices": [
+          { "size": "0,5", "unit": "l", "price": "3,50" },
+          { "size": "0,25", "unit": "l", "price": "1,80" }
+        ]
+      },
+      {
+        "name": "Schnaps",
+        "prices": [
+          { "size": "0,02", "unit": "l", "price": "1,50" }
+        ]
+      }
+    ]
+  }
+]

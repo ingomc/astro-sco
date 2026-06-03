@@ -5,12 +5,15 @@ const args = new Set(process.argv.slice(2));
 const syncExisting = args.has("--sync");
 
 function fieldPayload(field) {
-  return {
+  const payload = {
     field: field.name,
     type: field.type,
     meta: field.meta,
-    schema: field.schema,
   };
+  if (field.schema !== null && field.schema !== undefined) {
+    payload.schema = field.schema;
+  }
+  return payload;
 }
 
 async function ensureCollection(definition, counters) {
@@ -71,19 +74,24 @@ async function ensureField(collectionName, field, counters) {
     return;
   }
 
+  const patchBody = {
+    type: field.type,
+    meta: {
+      ...existing.meta,
+      ...field.meta,
+    },
+  };
+
+  if (field.schema !== null && field.schema !== undefined && existing.schema !== null && existing.schema !== undefined) {
+    patchBody.schema = {
+      ...existing.schema,
+      ...field.schema,
+    };
+  }
+
   await directusRequest(`/fields/${collectionName}/${field.name}`, {
     method: "PATCH",
-    body: {
-      type: field.type,
-      meta: {
-        ...existing.meta,
-        ...field.meta,
-      },
-      schema: {
-        ...existing.schema,
-        ...field.schema,
-      },
-    },
+    body: patchBody,
   });
   counters.fieldsUpdated += 1;
 }
@@ -151,7 +159,19 @@ async function main() {
   console.log(`Provisioning Directus schema at ${getDirectusBaseUrl()}`);
   console.log(`Mode: ${syncExisting ? "sync existing" : "create missing only"}`);
 
-  for (const collection of TARGET_SCHEMA) {
+  const limitCols = process.env.LIMIT_COLLECTIONS 
+    ? process.env.LIMIT_COLLECTIONS.split(",").map(c => c.trim()) 
+    : null;
+
+  const collectionsToProvision = limitCols 
+    ? TARGET_SCHEMA.filter(c => limitCols.includes(c.name)) 
+    : TARGET_SCHEMA;
+
+  const relationsToProvision = limitCols 
+    ? TARGET_RELATIONS.filter(r => limitCols.includes(r.collection)) 
+    : TARGET_RELATIONS;
+
+  for (const collection of collectionsToProvision) {
     console.log(`\nCollection: ${collection.name}`);
     await ensureCollection(collection, counters);
 
@@ -160,9 +180,9 @@ async function main() {
     }
   }
 
-  if (TARGET_RELATIONS.length > 0) {
+  if (relationsToProvision.length > 0) {
     console.log("\nRelations:");
-    for (const relation of TARGET_RELATIONS) {
+    for (const relation of relationsToProvision) {
       await ensureRelation(relation, counters);
     }
   }

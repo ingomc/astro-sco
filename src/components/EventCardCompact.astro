@@ -38,10 +38,10 @@ const isBerichtList = path === "berichte";
           <li>
             <Element
               class:list={[
-                "flex flex-row w-full bg-white rounded-lg border border-slate-300 transition-all duration-200 gap-3 md:gap-4 p-3 md:p-4",
+                "flex flex-row w-full rounded-lg border border-slate-300 transition-all duration-200 gap-3 md:gap-4 p-3 md:p-4",
                 !isPast &&
-                  "hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2",
-                isPast && "opacity-60 grayscale cursor-not-allowed",
+                  "bg-white hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2",
+                isPast && "bg-slate-50 grayscale cursor-not-allowed",
               ]}
               href={href}
               aria-label={
@@ -115,7 +115,7 @@ const isBerichtList = path === "berichte";
                   class:list={[
                     "self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-1.5 px-3 md:py-2 md:px-4 justify-center rounded-full",
                     isPast
-                      ? "bg-slate-200 text-slate-500"
+                      ? "bg-slate-200 text-slate-700"
                       : event.data.cta
                         ? "bg-red-700 text-white hover:bg-red-800"
                         : "bg-slate-100 hover:bg-slate-300",

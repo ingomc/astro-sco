@@ -35,6 +35,9 @@ const resolvedHero = resolveHeroImage(heroImage, images);
 const metaImage = resolvedHero.kind === "remote"
   ? resolvedHero.src
   : toMetaImageUrl(heroImage);
+
+const slotContent = await Astro.slots.render("default");
+const hasImpressionenHeading = /<h[1-6][^>]*>\s*Impressionen\s*<\/h[1-6]>/i.test(slotContent);
 ---
 
 <App title={title} description={description} image={metaImage} robots={robots}>
@@ -111,7 +114,7 @@ const metaImage = resolvedHero.kind === "remote"
         {
           Array.isArray(galleryImages) && galleryImages.length > 0 && (
             <div>
-              <h2>Impressionen</h2>
+              {!hasImpressionenHeading && <h2>Impressionen</h2>}
               <Gallery
                 images={galleryImages}
                 columns={galleryColumns === 2 || galleryColumns === 4 ? galleryColumns : 3}

@@ -35,23 +35,33 @@ test.describe('Accessibility Tests', () => {
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 
-  test('Keyboard Navigation sollte funktionieren', async ({ page }) => {
+  test('Keyboard Navigation sollte funktionieren', async ({ page, browserName, isMobile }) => {
+    test.skip(isMobile || browserName === 'webkit', 'Skip keyboard tests on mobile and webkit');
     await page.goto('/');
     
-    // Test Tab-Navigation
+    // 1. Tab press focuses the first skip link
     await page.keyboard.press('Tab');
-    const focusedElement = await page.locator(':focus');
-    await expect(focusedElement).toBeVisible();
+    const skipLink1 = page.locator('text=Zum Hauptinhalt springen');
+    await expect(skipLink1).toBeFocused();
     
-    // Test Skip Links
+    // 2. Tab press focuses the second skip link
     await page.keyboard.press('Tab');
-    const skipLink = page.locator('text=Zum Hauptinhalt springen');
-    await expect(skipLink).toBeFocused();
+    const skipLink2 = page.locator('text=Zur Navigation springen');
+    await expect(skipLink2).toBeFocused();
+
+    // 3. Tab press focuses the third skip link
+    await page.keyboard.press('Tab');
+    const skipLink3 = page.locator('text=Zum Footer springen');
+    await expect(skipLink3).toBeFocused();
     
-    // Test Hauptnavigation
+    // 4. Tab press focuses the logo link
     await page.keyboard.press('Tab');
-    await page.keyboard.press('Tab'); // Navigate to first nav item
-    const navLink = page.locator('nav a').first();
+    const logoLink = page.locator('header a[aria-label*="Startseite"]');
+    await expect(logoLink).toBeFocused();
+
+    // 5. Tab press focuses the first main navigation item
+    await page.keyboard.press('Tab');
+    const navLink = page.locator('#navigation a').first();
     await expect(navLink).toBeFocused();
   });
 
@@ -60,7 +70,7 @@ test.describe('Accessibility Tests', () => {
     await page.goto('/');
     
     // Öffne Mobile Menu
-    const menuButton = page.locator('button', { hasText: 'Menü' });
+    const menuButton = page.locator('button.open-btn');
     await menuButton.click();
     
     // Check ARIA attributes

@@ -90,12 +90,52 @@ const settings = defineCollection({
   type: 'data',
   schema: z.object({
     site_title: z.string(),
+    site_description: z.string().optional(),
+    default_og_image: z.string().optional(),
     posts: z.object({
       front_limit: z.number(),
       author: z.string(),
       thumb: z.string(),
     }),
+    phone: z.string().optional(),
+    email: z.string().optional(),
+    address_street: z.string().optional(),
+    address_city: z.string().optional(),
+    payment_methods: z.array(z.string()).or(z.array(z.object({ name: z.string() }))).optional(),
+    opening_hours: z.array(z.string()).or(z.array(z.object({ hour: z.string() }))).optional(),
+    regular_events: z.array(
+      z.object({
+        time: z.string(),
+        label: z.string(),
+      })
+    ).optional(),
+    use_winter_mode: z.boolean().optional(),
+    use_winter_stage: z.boolean().optional(),
+    logo_normal: z.string().optional(),
+    logo_winter: z.string().optional(),
   }),
+});
+
+const getraenkekarte = defineCollection({
+  type: 'data',
+  schema: z.array(
+    z.object({
+      name: z.string(),
+      icon: z.string().optional(),
+      drinks: z.array(
+        z.object({
+          name: z.string(),
+          prices: z.array(
+            z.object({
+              size: z.string(),
+              unit: z.string(),
+              price: z.string(),
+            })
+          ),
+        })
+      ),
+    })
+  ),
 });
 
 export const collections = {
@@ -104,5 +144,6 @@ export const collections = {
   start,
   mitglieder,
   sportheim,
-  settings
+  settings,
+  getraenkekarte
 };

@@ -1,5 +1,5 @@
 ---
-import { getContentCollection } from "../../lib/content-source";
+import { getContentCollection, getSiteSettings } from "../../lib/content-source";
 import App from "../../layouts/App.astro";
 import BadgeMini from "../../components/BadgeMini.astro";
 import HpCard from "../../components/HpCard.astro";
@@ -51,6 +51,12 @@ const pastEvents = (await getContentCollection("berichte"))
 const shortevents = (allshortevents.geplant as ShortEvent[]).filter((ev) => dateInPast(new Date(ev.date))).sort(
 	(a, b) => new Date(a.date).valueOf() -  new Date(b.date).valueOf()
 )
+const settings = await getSiteSettings();
+const regularEvents = settings.regular_events || [
+  { time: "So: ab 18:00 Uhr", label: "Steel-Darts" },
+  { time: "So: ab 18:30 Uhr", label: "Stammtisch" }
+];
+
 const title = "Veranstaltungen - SCO-OGV Oberfüllbach";
 const description =
   "Überblick über alle Veranstaltungen des SCO-OGV Oberfüllbach";
@@ -67,22 +73,16 @@ const description =
           <h2 class="font-bold">Regeltermine</h2>
         </div>
         <table>
-          <tr>
-            <td>
-              <BadgeMini>
-                <span class="font-semibold">So: ab 18:00 Uhr</span>
-              </BadgeMini></td
-            >
-            <td>Steel-Darts</td>
-          </tr>
-          <tr>
-            <td
-              ><BadgeMini>
-                <span class="font-semibold">So: ab 18:30 Uhr</span>
-              </BadgeMini></td
-            >
-            <td>Stammtisch</td>
-          </tr>
+          {regularEvents.map((event) => (
+            <tr>
+              <td>
+                <BadgeMini>
+                  <span class="font-semibold">{event.time}</span>
+                </BadgeMini>
+              </td>
+              <td>{event.label}</td>
+            </tr>
+          ))}
         </table>
       </HpCard>
     </aside>

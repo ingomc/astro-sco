@@ -1,5 +1,5 @@
 ---
-import { getContentCollection } from "../lib/content-source";
+import { getContentCollection, getSiteSettings } from "../lib/content-source";
 import { renderDirectusBodyToHtml } from "../lib/body-content";
 import HpStage from "../components/HpStage.astro";
 import App from "../layouts/App.astro";
@@ -15,6 +15,12 @@ type ShortEvent = {
 	title: string;
 	date: string;
 };
+
+const settings = await getSiteSettings();
+const openingHours = settings.opening_hours || [
+	"jeden Sonntag ab 18:30 Uhr",
+	"jeden 1. Freitag im Monat ab 19:30 Uhr (ohne Gewähr)"
+];
 
 const startPosts = (await getContentCollection("start")).sort(
 	(a, b) => a.data.order.valueOf() - b.data.order.valueOf(),
@@ -65,7 +71,7 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
 ---
 
 <App>
-	<HpStage />
+	<HpStage settings={settings} />
 	<div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
 		<!-- MAIN CONTENT - kommt jetzt ZUERST im DOM für korrekte Tab-Reihenfolge -->
 		<main class="content prose pb-4">
@@ -293,10 +299,9 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
 					</h2>
 				</div>
 				<ul class="prose list-disc pl-4 list-outside">
-					<li class="">jeden Sonntag ab 18:30 Uhr</li>
-					<li class="">
-						jeden 1. Freitag im Monat ab 19:30 Uhr (ohne Gewähr)
-					</li>
+					{openingHours.map((hour) => (
+						<li>{hour}</li>
+					))}
 				</ul>
 			</HpCard>
 		</aside>

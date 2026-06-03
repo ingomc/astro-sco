@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Visual Regression Tests - Critical Components', () => {
   
   test('Mobile Side-Drawer Open', async ({ page }) => {
-    await page.goto('http://localhost:4321/');
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
     
     // Set mobile viewport first
@@ -37,7 +37,7 @@ test.describe('Visual Regression Tests - Critical Components', () => {
   });
 
   test('Desktop Header Only', async ({ page }) => {
-    await page.goto('http://localhost:4321/');
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
     
     // Set desktop viewport
@@ -65,7 +65,7 @@ test.describe('Visual Regression Tests - Critical Components', () => {
   });
 
   test('BadgeMini Component on Events Page', async ({ page }) => {
-    await page.goto('http://localhost:4321/veranstaltungen/');
+    await page.goto('/veranstaltungen/');
     await page.waitForLoadState('networkidle');
     
     // Set desktop viewport
