@@ -13,6 +13,10 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
       {
         data.map((event) => {
           const href = `/${path ? path : 'veranstaltungen' }/${event.slug}/`;
+          const imageKey = event.data.heroImage
+            ? `/public${event.data.heroImage}`
+            : "";
+          const hasImage = Boolean(imageKey && images[imageKey]);
           return (
           <li>
             <a
@@ -20,13 +24,13 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
               href={href}
               aria-label={`Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`}
             >
-              {event.data.heroImage && (
+              {hasImage && (
                 <div class="shrink-0 overflow-hidden w-full md:w-80 md:rounded">
                   <Image
                     width={600}
                     height={400}
                     alt={event.data.title}
-                    src={images[`/public${event.data.heroImage}`]()}
+                    src={images[imageKey]()}
                     widths={[300, 400, 600]}
                     sizes="(max-width: 768px) 100vw, 320px"
                     class="object-contain object-top w-full h-auto"

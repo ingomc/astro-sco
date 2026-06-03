@@ -1,0 +1,134 @@
+<section class="panel signups-filters">
+  <div class="filters" id="filters">
+    <label data-wide="true">Suche
+      <input id="q" type="text" placeholder="Name oder E-Mail" />
+    </label>
+    <label data-wide="true">Event
+      <input id="eventId" type="text" placeholder="z.B. kerwa-2026" />
+    </label>
+    <label>Typ
+      <select id="kind">
+        <option value="">Alle</option>
+        <option value="registration">registration</option>
+        <option value="order">order</option>
+        <option value="both">both</option>
+      </select>
+    </label>
+    <label>Von
+      <input id="createdAfter" type="datetime-local" />
+    </label>
+    <label>Bis
+      <input id="createdBefore" type="datetime-local" />
+    </label>
+  </div>
+  <div class="filters-actions">
+    <button class="button-primary" id="apply">Anwenden</button>
+    <button class="button-soft" id="reset">Zuruecksetzen</button>
+    <button class="button-danger" id="bulk-delete">Auswahl loeschen</button>
+    <a id="csv-link" href="#">CSV Export</a>
+  </div>
+  <p id="status" class="muted"></p>
+</section>
+
+<style is:global>
+  .signups-filters.panel {
+    margin-top: 1rem;
+    padding: 1.15rem 1.2rem;
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    background: var(--card);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  }
+  .signups-filters .filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.9rem 0.75rem;
+  }
+  .signups-filters label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #374151;
+    display: grid;
+    gap: 0.38rem;
+  }
+  .signups-filters .filters label[data-wide="true"] {
+    grid-column: span 2;
+  }
+  .signups-filters input,
+  .signups-filters select,
+  .signups-filters button {
+    min-height: 2.5rem;
+    border: 1px solid var(--line);
+    border-radius: 0.55rem;
+    padding: 0 0.7rem;
+    font-size: 0.97rem;
+    background: #fff;
+  }
+  .signups-filters input::placeholder {
+    color: #9ca3af;
+  }
+  .signups-filters input:focus,
+  .signups-filters select:focus,
+  .signups-filters button:focus,
+  .signups-filters a:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+  .signups-filters button {
+    cursor: pointer;
+    font-weight: 700;
+    transition: transform 120ms ease, background-color 120ms ease;
+  }
+  .signups-filters button:hover {
+    transform: translateY(-1px);
+  }
+  .signups-filters .button-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .signups-filters .button-primary:hover {
+    background: var(--accent-strong);
+  }
+  .signups-filters .filters-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.1rem;
+    align-items: center;
+  }
+  .signups-filters .button-soft {
+    background: #fff;
+  }
+  .signups-filters .button-danger {
+    color: #991b1b;
+    border-color: #fda4af;
+    background: #fff1f2;
+  }
+  .signups-filters #csv-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.2rem;
+    border: 1px solid #93c5fd;
+    border-radius: 0.55rem;
+    padding: 0 0.8rem;
+    color: #1d4ed8;
+    font-weight: 700;
+    text-decoration: none;
+    background: #eff6ff;
+  }
+  .signups-filters #status {
+    margin: 0.6rem 0 0;
+    color: var(--muted);
+  }
+  @media (max-width: 640px) {
+    .signups-filters.panel {
+      padding: 0.8rem;
+    }
+    .signups-filters .filters label[data-wide="true"] {
+      grid-column: span 1;
+    }
+  }
+</style>

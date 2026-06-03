@@ -1,0 +1,297 @@
+---
+import {
+  getHCaptchaSiteKeyForRender,
+  isCaptchaBypassEnabledForDevRender,
+} from "../lib/abuse-protection";
+import type { DartOpenPlaySlot } from "../lib/dart-open-play";
+
+type Props = {
+  slots: DartOpenPlaySlot[];
+};
+
+const { slots } = Astro.props;
+const hCaptchaSiteKey = getHCaptchaSiteKeyForRender();
+const captchaBypassInDev = isCaptchaBypassEnabledForDevRender();
+const captchaEnforced = !captchaBypassInDev;
+const captchaWidgetReady = Boolean(hCaptchaSiteKey);
+const canSubmit = captchaBypassInDev || captchaWidgetReady;
+const clientConfig = {
+  eventId: "dart-open-play",
+  slots,
+  captchaEnforced,
+  canSubmit,
+};
+---
+
+<section class="dart-signup" id="dart-open-play-signup">
+  <h2>Kostenlos zum offenen Dart-Spiel anmelden</h2>
+  <p>Wählen Sie einen Termin aus und melden Sie sich direkt an.</p>
+
+  <form class="dart-signup__form" data-dart-form>
+    <label>
+      Name
+      <input name="name" maxlength="100" required />
+    </label>
+    <label>
+      E-Mail
+      <input name="email" type="email" maxlength="200" required />
+    </label>
+
+    <fieldset class="dart-signup__slots">
+      <legend>Naechste Sonntage (18:00)</legend>
+      {slots.map((slot, index) => (
+        <label class="dart-signup__slot" for={`dart-slot-${index}`}>
+          <input
+            id={`dart-slot-${index}`}
+            type="radio"
+            name="slotAt"
+            value={slot.slotAtIso}
+            data-slot-label={slot.slotLabel}
+            required
+          />
+          <span>{slot.slotLabel}</span>
+        </label>
+      ))}
+    </fieldset>
+
+    <label>
+      Hinweise (optional)
+      <textarea
+        name="notes"
+        maxlength="1000"
+        rows="3"
+        placeholder="z. B. Rueckfrage an die Orga"
+      />
+    </label>
+
+    <div class="dart-signup__honeypot" aria-hidden="true">
+      <label for="dart-website">Website</label>
+      <input id="dart-website" name="website" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class="dart-signup__captcha">
+      {
+        captchaBypassInDev ? (
+          <p>Lokaler DEV-Modus: Captcha-Bypass aktiv.</p>
+        ) : hCaptchaSiteKey ? (
+          <div class="h-captcha" data-sitekey={hCaptchaSiteKey} />
+        ) : (
+          <p>
+            Sicherheitspruefung ist aktuell nicht verfuegbar. Bitte spaeter
+            erneut versuchen.
+          </p>
+        )
+      }
+    </div>
+
+    <label class="dart-signup__privacy">
+      <input name="privacyAccepted" type="checkbox" required />
+      <span>
+        Ich habe die <a href="/datenschutz" target="_blank" rel="noopener noreferrer">Datenschutzerklaerung</a> gelesen und stimme der Verarbeitung meiner Daten zur Veranstaltungsabwicklung zu.
+      </span>
+    </label>
+
+    <button type="submit" disabled={!canSubmit}>Jetzt kostenlos anmelden</button>
+    <p class="dart-signup__message" data-dart-message></p>
+  </form>
+
+  <div class="dart-signup__success" data-dart-success hidden>
+    <h3>Anmeldung gespeichert</h3>
+    <p data-dart-success-intro></p>
+    <p>
+      Nummer:
+      <strong data-dart-success-id></strong>
+    </p>
+  </div>
+</section>
+
+{captchaWidgetReady && <script src="https://js.hcaptcha.com/1/api.js" async defer></script>}
+
+<script define:vars={{ clientConfig }}>
+  const form = document.querySelector("[data-dart-form]");
+  const message = document.querySelector("[data-dart-message]");
+  const successBox = document.querySelector("[data-dart-success]");
+  const successIntro = document.querySelector("[data-dart-success-intro]");
+  const successId = document.querySelector("[data-dart-success-id]");
+
+  if (
+    form instanceof HTMLFormElement &&
+    message instanceof HTMLElement &&
+    successBox instanceof HTMLElement &&
+    successIntro instanceof HTMLElement &&
+    successId instanceof HTMLElement
+  ) {
+    const readHCaptchaToken = () => window.hcaptcha?.getResponse?.()?.trim?.() ?? "";
+    const resetHCaptcha = () => window.hcaptcha?.reset?.();
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const submitButton = form.querySelector("button[type='submit']");
+      if (!(submitButton instanceof HTMLButtonElement)) return;
+
+      const formData = new FormData(form);
+      const selectedSlot = form.querySelector("input[name='slotAt']:checked");
+      const slotLabel = selectedSlot?.dataset?.slotLabel ?? "";
+      const payload = {
+        eventId: clientConfig.eventId,
+        name: formData.get("name"),
+        email: formData.get("email"),
+        partySize: "1",
+        notes: formData.get("notes"),
+        website: formData.get("website"),
+        privacyAccepted: formData.get("privacyAccepted") === "on",
+        slotAt: formData.get("slotAt"),
+        slotLabel,
+        items: {},
+        hcaptchaToken: "",
+      };
+
+      if (!clientConfig.canSubmit) {
+        message.textContent =
+          "Anmeldung momentan nicht moeglich: Sicherheitspruefung ist nicht konfiguriert.";
+        return;
+      }
+
+      if (clientConfig.captchaEnforced) {
+        const token = readHCaptchaToken();
+        if (!token) {
+          message.textContent =
+            "Bitte bestaetigen Sie zuerst die Sicherheitspruefung (Captcha).";
+          return;
+        }
+        payload.hcaptchaToken = token;
+      }
+
+      message.textContent = "";
+      submitButton.disabled = true;
+      submitButton.textContent = "Wird gespeichert ...";
+
+      try {
+        const response = await fetch("/api/event-signups", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) {
+          throw new Error(result.message || "Die Anmeldung konnte nicht gespeichert werden.");
+        }
+
+        successIntro.textContent = `${String(payload.name ?? "").trim()}, Sie sind fuer ${slotLabel} angemeldet.`;
+        successId.textContent = result.id || "-";
+        form.hidden = true;
+        successBox.hidden = false;
+        resetHCaptcha();
+      } catch (error) {
+        message.textContent =
+          error instanceof Error ? error.message : "Die Anmeldung konnte nicht gespeichert werden.";
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Jetzt kostenlos anmelden";
+      }
+    });
+  }
+</script>
+
+<style>
+  .dart-signup {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    border: 1px solid #d6d3d1;
+    border-radius: 0.5rem;
+    background: #fff;
+  }
+  .dart-signup__form {
+    display: grid;
+    gap: 1rem;
+  }
+  .dart-signup label {
+    display: grid;
+    gap: 0.45rem;
+    font-weight: 700;
+    color: #292524;
+  }
+  .dart-signup input,
+  .dart-signup textarea {
+    width: 100%;
+    min-height: 2.7rem;
+    border: 1px solid #a8a29e;
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    font: inherit;
+  }
+  .dart-signup textarea {
+    min-height: 5rem;
+  }
+  .dart-signup__slots {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .dart-signup__slot {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem;
+    border: 1px solid #e7e5e4;
+    border-radius: 0.45rem;
+    font-weight: 600;
+  }
+  .dart-signup__slot input {
+    width: 1.05rem;
+    min-height: 1.05rem;
+    height: 1.05rem;
+    margin: 0;
+  }
+  .dart-signup__honeypot {
+    position: absolute;
+    left: -9999px;
+  }
+  .dart-signup__privacy {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 0.6rem;
+    font-weight: 500 !important;
+    line-height: 1.35;
+  }
+  .dart-signup__privacy input[type="checkbox"] {
+    width: 1.1rem;
+    min-height: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.1rem;
+  }
+  .dart-signup__privacy a {
+    color: #991b1b;
+  }
+  .dart-signup button {
+    min-height: 2.75rem;
+    border: 0;
+    border-radius: 0.375rem;
+    background: #b91c1c;
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .dart-signup button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .dart-signup__message {
+    min-height: 1.4rem;
+    color: #b91c1c;
+    font-weight: 700;
+  }
+  .dart-signup__success {
+    display: grid;
+    gap: 0.5rem;
+    border: 1px solid #bbf7d0;
+    border-radius: 0.5rem;
+    background: #f0fdf4;
+    padding: 1rem;
+  }
+</style>

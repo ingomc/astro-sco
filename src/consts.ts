@@ -3,6 +3,7 @@
 
 export const SITE_TITLE = "SCO-OGV Oberfüllbach 1963 e.V.";
 export const SITE_DESCRIPTION = "Der SCO-OGV Oberfüllbach 1963 e.V. ist ein offener und familiärer Verein, bei dem neben dem sportlichen Betätigung auch das gesellschaftliche Leben eine wichtige Rolle spielt.";
+export const BRAND_THEME_COLOR = "#dc2626";
 
 // ===========================================
 // LOGO KONFIGURATION
@@ -21,3 +22,6 @@ export const LOGO_WINTER = "/logos/logo_sco_winter.avif";
 // Setze auf true für das Winterbild
 // Setze auf false für das Sommerbild
 export const USE_WINTER_STAGE = false;
+
+// Zentrales Theme-Flag fuer die oeffentliche Website.
+export const SITE_THEME = USE_WINTER_LOGO || USE_WINTER_STAGE ? "winter" : "summer";

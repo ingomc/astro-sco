@@ -10,6 +10,26 @@ Dies ist eine Astro-basierte Website für den **SCO-OGV Oberfüllbach 1963 e.V.*
 - **Deployment**: Vercel (primär) / Netlify (alternativ)
 - **Sprache**: Deutsch (de-DE)
 
+## Design-System Guardrails (Public Site)
+
+### Zentrale Referenzen
+- `docs/design-system/DESIGN-TOKENS.md`
+- `docs/design-system/DESIGN-SYSTEM.md`
+- `docs/design-system/COMPONENT-PATTERNS.md`
+- `docs/design-system/CONTRIBUTING-UI.md`
+
+### Verbindliche Regeln fuer neue Public-UI-Aenderungen
+1. Tokens first: Designwerte kommen aus `src/styles/tokens.css` und `src/styles/themes.css`.
+2. Keine neuen Hardcoded Hex-Werte im Public UI, wenn ein passender Token existiert.
+3. Bestehende Pattern wiederverwenden (Cards, Buttons, Badges, Formulare), bevor neue Muster gebaut werden.
+4. Theme-Layer beachten: Sommer/Winter laufen ueber identische Token-Namen.
+5. Scope: Diese Regeln gelten fuer Public UI; Admin UI ist nur bei expliziter Anforderung im Scope.
+
+### Pflicht-Checks vor Abschluss von UI-Aenderungen
+- `npm run build`
+- `npm run test:a11y`
+- `npm run test:visual`
+
 ## Kritische Entwicklungsrichtlinien
 
 ### Accessibility (a11y) Standards

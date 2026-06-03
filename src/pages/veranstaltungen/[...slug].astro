@@ -1,44 +1,58 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
-import EventPost from '../../layouts/EventPost.astro';
+import { type CollectionEntry, getCollection } from "astro:content";
+import EventPost from "../../layouts/EventPost.astro";
+import EventSignupForm from "../../components/EventSignupForm.astro";
 
 export async function getStaticPaths() {
-	const allVeranstaltungen = (await getCollection('veranstaltungen')).filter((ev) => ev.data.pubDate <= new Date());
-	const allBerichte = await getCollection('berichte');
+  const allVeranstaltungen = (await getCollection("veranstaltungen")).filter(
+    (ev) => ev.data.pubDate <= new Date(),
+  );
+  const allBerichte = await getCollection("berichte");
 
-	return allVeranstaltungen.map((event) => {
-		const tags = event.data.tags ?? [];
-		const related = tags.length > 0
-			? [
-				...allVeranstaltungen.filter(
-					(ev) => ev.slug !== event.slug && (ev.data.tags ?? []).some((t) => tags.includes(t))
-				),
-				...allBerichte.filter(
-					(b) => (b.data.tags ?? []).some((t) => tags.includes(t))
-				),
-			].sort((a, b) => b.data.eventDate.getTime() - a.data.eventDate.getTime())
-			: [];
-		return {
-			params: { slug: event.slug },
-			props: { event, relatedItems: related },
-		};
-	});
+  return allVeranstaltungen.map((event) => {
+    const tags = event.data.tags ?? [];
+    const related =
+      tags.length > 0
+        ? [
+            ...allVeranstaltungen.filter(
+              (ev) =>
+                ev.slug !== event.slug &&
+                (ev.data.tags ?? []).some((t) => tags.includes(t)),
+            ),
+            ...allBerichte.filter((b) =>
+              (b.data.tags ?? []).some((t) => tags.includes(t)),
+            ),
+          ].sort(
+            (a, b) => b.data.eventDate.getTime() - a.data.eventDate.getTime(),
+          )
+        : [];
+    return {
+      params: { slug: event.slug },
+      props: { event, relatedItems: related },
+    };
+  });
 }
 
-type Props = { event: CollectionEntry<'veranstaltungen'>; relatedItems: (CollectionEntry<'veranstaltungen'> | CollectionEntry<'berichte'>)[] };
+type Props = {
+  event: CollectionEntry<"veranstaltungen">;
+  relatedItems: (
+    | CollectionEntry<"veranstaltungen">
+    | CollectionEntry<"berichte">
+  )[];
+};
 
 const { event, relatedItems } = Astro.props;
 const { Content, headings } = await event.render();
-
-
+const signup = event.data.signup?.enabled ? event.data.signup : undefined;
 ---
 
 <EventPost {...event.data} relatedItems={relatedItems}>
-	<!-- <h1>{post.data.title}</h1>
+  <!-- <h1>{post.data.title}</h1>
 	<ol>
 		{headings.map(heading => 
 			heading.depth == 2 && (<li><a href={`#${heading.slug}`} title={heading.text}>{heading.text}</a></li>)
 		)}
-	</ol> -->		
-	<Content />
+  </ol> -->
+  <Content />
+  {signup && <EventSignupForm eventTitle={event.data.title} signup={signup} />}
 </EventPost>
