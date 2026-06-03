@@ -32,6 +32,14 @@ const optimizedBackgroundSmSrc = `url('${ optimizedBackgroundSm.src}')`;
 const optimizedBackgroundMdSrc = `url('${ optimizedBackgroundMd.src}')`;
 const optimizedBackgroundLgSrc = `url('${ optimizedBackgroundLg.src}')`;
 ---
+{/* Preload the LCP hero image with fetchpriority="high" for faster rendering */}
+<link
+    rel="preload"
+    as="image"
+    fetchpriority="high"
+    imagesrcset={`${optimizedBackgroundXs.src} 425w, ${optimizedBackgroundSm.src} 1024w, ${optimizedBackgroundMd.src} 1440w, ${optimizedBackgroundLg.src} 2000w`}
+    imagesizes="100vw"
+/>
 <div class="stage-wrapper">
     <div class="stage">
         <div class="content">
