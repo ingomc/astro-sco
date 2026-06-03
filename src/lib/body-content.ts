@@ -52,7 +52,16 @@ function rewriteDirectusAssetLinks(html: string): string {
       return fullMatch;
     }
 
-    return `src=${quote}${toAvifDirectusAssetUrl(rawUrl)}${quote}`;
+    const avifUrl = toAvifDirectusAssetUrl(rawUrl);
+    try {
+      const parsed = new URL(avifUrl);
+      if (!parsed.searchParams.has("width")) {
+        parsed.searchParams.set("width", "800");
+      }
+      return `src=${quote}${parsed.toString()}${quote}`;
+    } catch {
+      return `src=${quote}${avifUrl}${quote}`;
+    }
   });
 
   const withRewrittenLinks = withRewrittenSources.replace(/\bhref=(["'])([^"']+)\1/gi, (fullMatch, quote, rawUrl) => {

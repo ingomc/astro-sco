@@ -41,27 +41,19 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
                 {resolvedHero.kind !== "none" && (
                   <div class="overflow-hidden h-36 bg-slate-100">
                     {
-                      resolvedHero.kind === "local" ? (
+                      resolvedHero.kind !== "none" ? (
                         <Image
+                          src={resolvedHero.kind === "local" ? resolvedHero.loader() : resolvedHero.src}
                           width={400}
                           height={200}
                           format="avif"
                           alt={item.data.title}
-                          src={resolvedHero.loader()}
                           widths={[200, 300, 400]}
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           class="object-cover object-top w-full h-full"
                           loading="lazy"
                         />
-                      ) : (
-                        <img
-                          src={resolvedHero.src}
-                          alt={item.data.title}
-                          class="object-cover object-top w-full h-full"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      )
+                      ) : null
                     }
                   </div>
                 )}

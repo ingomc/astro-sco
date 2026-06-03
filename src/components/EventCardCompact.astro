@@ -55,25 +55,17 @@ const isBerichtList = path === "berichte";
                   {
                     (() => {
                       const resolvedHero = resolveHeroImage(event.data.heroImage, images);
-                      return resolvedHero.kind === "local" ? (
+                      return resolvedHero.kind !== "none" ? (
                         <Image
+                          src={resolvedHero.kind === "local" ? resolvedHero.loader() : resolvedHero.src}
                           width={320}
                           height={200}
                           format="avif"
                           alt={event.data.title}
-                          src={resolvedHero.loader()}
                           widths={[100, 150, 200, 320]}
                           sizes="(max-width: 768px) 128px, 224px"
                           class="object-contain object-top w-full h-auto"
                           loading="eager"
-                        />
-                      ) : resolvedHero.kind === "remote" ? (
-                        <img
-                          src={resolvedHero.src}
-                          alt={event.data.title}
-                          class="object-contain object-top w-full h-auto"
-                          loading="eager"
-                          decoding="async"
                         />
                       ) : null;
                     })()

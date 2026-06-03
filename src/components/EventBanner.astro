@@ -23,29 +23,17 @@ const resolvedHero = resolveHeroImage(event.data.heroImage, images);
       {
         resolvedHero.kind !== "none" && (
           <div class="lg:w-1/3 overflow-hidden">
-            {
-              resolvedHero.kind === "local" ? (
-                <Image
-                  src={resolvedHero.loader()}
-                  alt={event.data.title}
-                  width="400"
-                  height="300"
-                  format="avif"
-                  class="w-full h-40 lg:h-full object-contain object-top"
-                  widths={[200, 400]}
-                  sizes="(max-width: 1024px) 100vw, 400px"
-                  loading="eager"
-                />
-              ) : (
-                <img
-                  src={resolvedHero.src}
-                  alt={event.data.title}
-                  class="w-full h-40 lg:h-full object-contain object-top"
-                  loading="eager"
-                  decoding="async"
-                />
-              )
-            }
+            <Image
+              src={resolvedHero.kind === "local" ? resolvedHero.loader() : resolvedHero.src}
+              alt={event.data.title}
+              width="400"
+              height="300"
+              format="avif"
+              class="w-full h-40 lg:h-full object-contain object-top"
+              widths={[200, 400]}
+              sizes="(max-width: 1024px) 100vw, 400px"
+              loading="eager"
+            />
           </div>
         )
       }

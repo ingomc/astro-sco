@@ -38,24 +38,17 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
                   {
                     (() => {
                       const resolvedHero = resolveHeroImage(event.data.heroImage, images);
-                      return resolvedHero.kind === "local" ? (
+                      return resolvedHero.kind !== "none" ? (
                         <Image
+                          src={resolvedHero.kind === "local" ? resolvedHero.loader() : resolvedHero.src}
                           width={600}
                           height={400}
                           format="avif"
                           alt={event.data.title}
-                          src={resolvedHero.loader()}
                           widths={[300, 400, 600]}
                           sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 256px, 288px"
                           class="object-contain object-top w-full h-auto"
-                        />
-                      ) : resolvedHero.kind === "remote" ? (
-                        <img
-                          src={resolvedHero.src}
-                          alt={event.data.title}
-                          class="object-contain object-top w-full h-auto"
                           loading="lazy"
-                          decoding="async"
                         />
                       ) : null;
                     })()
