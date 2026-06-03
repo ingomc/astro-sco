@@ -1,4 +1,4 @@
-import { getCollection } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import { toAbsoluteDirectusAssetUrl } from "./hero-image";
 
 type SourceMode = "astro" | "directus" | "auto";
@@ -735,5 +735,275 @@ export async function getContentCollection<K extends SupportedCollection>(collec
   } catch (error) {
     warnOnce(`Directus unavailable for '${collection}', falling back to astro: ${error instanceof Error ? error.message : String(error)}`);
     return loadCollectionFromAstro(collection);
+  }
+}
+
+export type SiteSettings = {
+  site_title: string;
+  site_description?: string;
+  default_og_image?: string;
+  posts: {
+    front_limit: number;
+    author: string;
+    thumb: string;
+  };
+  phone?: string;
+  email?: string;
+  address_street?: string;
+  address_city?: string;
+  payment_methods?: string[];
+  opening_hours?: string[];
+  regular_events?: { time: string; label: string }[];
+  use_winter_mode: boolean;
+  use_winter_stage: boolean;
+  logo_normal?: string;
+  logo_winter?: string;
+};
+
+async function loadSettingsFromAstro(): Promise<SiteSettings> {
+  const entry = await getEntry("settings", "settings");
+  if (!entry) {
+    throw new Error("Local settings entry not found in content/settings/settings.json");
+  }
+  return {
+    site_title: entry.data.site_title,
+    site_description: entry.data.site_description,
+    default_og_image: entry.data.default_og_image,
+    posts: {
+      front_limit: entry.data.posts.front_limit,
+      author: entry.data.posts.author,
+      thumb: entry.data.posts.thumb,
+    },
+    phone: entry.data.phone,
+    email: entry.data.email,
+    address_street: entry.data.address_street,
+    address_city: entry.data.address_city,
+    payment_methods: entry.data.payment_methods,
+    opening_hours: entry.data.opening_hours,
+    regular_events: entry.data.regular_events,
+    use_winter_mode: entry.data.use_winter_mode ?? false,
+    use_winter_stage: entry.data.use_winter_stage ?? false,
+    logo_normal: entry.data.logo_normal,
+    logo_winter: entry.data.logo_winter,
+  };
+}
+
+function resolveFileValue(value: unknown): string | undefined {
+  if (value && typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    const id = extractDirectusFileId(obj.id);
+    if (id) {
+      return `/assets/${id}`;
+    }
+  }
+
+  const id = extractDirectusFileId(value);
+  if (id) {
+    return `/assets/${id}`;
+  }
+
+  return undefined;
+}
+
+function toRegularEvents(value: unknown): SiteSettings["regular_events"] {
+  const parsed = toJsonValue(value);
+  if (!Array.isArray(parsed)) {
+    return undefined;
+  }
+
+  const events: NonNullable<SiteSettings["regular_events"]> = [];
+  for (const item of parsed) {
+    if (!item || typeof item !== "object") {
+      continue;
+    }
+
+    const valueObj = item as Record<string, unknown>;
+    const time = toStringOrUndefined(valueObj.time);
+    const label = toStringOrUndefined(valueObj.label);
+
+    if (time && label) {
+      events.push({ time, label });
+    }
+  }
+
+  return events.length > 0 ? events : undefined;
+}
+
+function toPaymentMethodsArray(value: unknown): string[] {
+  const parsed = toJsonValue(value);
+  if (!Array.isArray(parsed)) {
+    return [];
+  }
+  return parsed
+    .map((item) => {
+      if (item && typeof item === "object") {
+        return toStringOrUndefined((item as Record<string, unknown>).name);
+      }
+      return toStringOrUndefined(item);
+    })
+    .filter((item): item is string => item !== undefined);
+}
+
+function toOpeningHoursArray(value: unknown): string[] {
+  const parsed = toJsonValue(value);
+  if (!Array.isArray(parsed)) {
+    return [];
+  }
+  return parsed
+    .map((item) => {
+      if (item && typeof item === "object") {
+        return toStringOrUndefined((item as Record<string, unknown>).hour);
+      }
+      return toStringOrUndefined(item);
+    })
+    .filter((item): item is string => item !== undefined);
+}
+
+async function loadSettingsFromDirectus(): Promise<SiteSettings> {
+  const config = getDirectusConfig();
+  if (!config) {
+    throw new Error("Directus env missing");
+  }
+
+  const raw = await directusGet("/items/settings", {
+    fields: ["*"],
+  }, config);
+
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    throw new Error("Invalid response format for Directus settings");
+  }
+
+  const item = raw as Record<string, unknown>;
+
+  return {
+    site_title: toRequiredString(item.site_title, "site_title", "settings" as any, "settings"),
+    site_description: toStringOrUndefined(item.site_description),
+    default_og_image: resolveFileValue(item.default_og_image),
+    posts: {
+      front_limit: toRequiredNumber(item.posts_front_limit, "posts_front_limit", "settings" as any, "settings"),
+      author: toRequiredString(item.posts_author, "posts_author", "settings" as any, "settings"),
+      thumb: toRequiredString(item.posts_thumb, "posts_thumb", "settings" as any, "settings"),
+    },
+    phone: toStringOrUndefined(item.phone),
+    email: toStringOrUndefined(item.email),
+    address_street: toStringOrUndefined(item.address_street),
+    address_city: toStringOrUndefined(item.address_city),
+    payment_methods: toPaymentMethodsArray(item.payment_methods),
+    opening_hours: toOpeningHoursArray(item.opening_hours),
+    regular_events: toRegularEvents(item.regular_events),
+    use_winter_mode: toBoolean(item.use_winter_mode, false),
+    use_winter_stage: toBoolean(item.use_winter_stage, false),
+    logo_normal: resolveFileValue(item.logo_normal),
+    logo_winter: resolveFileValue(item.logo_winter),
+  };
+}
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  const sourceMode = getSourceMode();
+
+  if (sourceMode === "astro") {
+    return loadSettingsFromAstro();
+  }
+
+  if (sourceMode === "directus") {
+    return loadSettingsFromDirectus();
+  }
+
+  try {
+    return await loadSettingsFromDirectus();
+  } catch (error) {
+    warnOnce(`Directus settings unavailable, falling back to astro: ${error instanceof Error ? error.message : String(error)}`);
+    return loadSettingsFromAstro();
+  }
+}
+
+export type DrinkPrice = {
+  size: string;
+  unit: string;
+  price: string;
+};
+
+export type DrinkItem = {
+  name: string;
+  prices: DrinkPrice[];
+};
+
+export type DrinkCategory = {
+  name: string;
+  icon?: string;
+  drinks: DrinkItem[];
+};
+
+async function loadDrinksFromAstro(): Promise<DrinkCategory[]> {
+  const entry = await getEntry("getraenkekarte", "getraenkekarte");
+  if (!entry) {
+    throw new Error("Local drinks menu not found in content/getraenkekarte/getraenkekarte.json");
+  }
+  return entry.data as DrinkCategory[];
+}
+
+async function loadDrinksFromDirectus(): Promise<DrinkCategory[]> {
+  const config = getDirectusConfig();
+  if (!config) {
+    throw new Error("Directus env missing");
+  }
+
+  const rawCategories = await directusGet("/items/drink_categories", {
+    fields: ["*", "drinks.*"],
+    sort: ["sort"],
+    deep: {
+      drinks: {
+        _sort: ["sort"],
+      },
+    },
+  }, config);
+
+  if (!Array.isArray(rawCategories)) {
+    throw new Error("Invalid response format for Directus drink categories");
+  }
+
+  return rawCategories.map((cat: any) => {
+    const rawDrinks = Array.isArray(cat.drinks) ? cat.drinks : [];
+    
+    const drinks: DrinkItem[] = rawDrinks.map((drink: any) => {
+      const rawPrices = toJsonValue(drink.prices);
+      const prices: DrinkPrice[] = (Array.isArray(rawPrices) ? rawPrices : [])
+        .map((p: any) => ({
+          size: toStringOrUndefined(p?.size) || "",
+          unit: toStringOrUndefined(p?.unit) || "",
+          price: toStringOrUndefined(p?.price) || "",
+        }))
+        .filter((p) => p.size && p.unit && p.price);
+
+      return {
+        name: toStringOrUndefined(drink.name) || "",
+        prices,
+      };
+    }).filter((d: any) => d.name);
+
+    return {
+      name: toStringOrUndefined(cat.name) || "",
+      icon: toStringOrUndefined(cat.icon),
+      drinks,
+    };
+  }).filter((c: any) => c.name);
+}
+
+export async function getDrinksMenu(): Promise<DrinkCategory[]> {
+  const sourceMode = getSourceMode();
+
+  if (sourceMode === "astro") {
+    return loadDrinksFromAstro();
+  }
+
+  if (sourceMode === "directus") {
+    return loadDrinksFromDirectus();
+  }
+
+  try {
+    return await loadDrinksFromDirectus();
+  } catch (error) {
+    warnOnce(`Directus drinks menu unavailable, falling back to astro: ${error instanceof Error ? error.message : String(error)}`);
+    return loadDrinksFromAstro();
   }
 }

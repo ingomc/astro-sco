@@ -1,5 +1,22 @@
 ---
+import { toAbsoluteDirectusAssetUrl } from "../lib/hero-image";
+
+const { settings } = Astro.props;
+
 const today = new Date();
+
+const siteTitle = settings?.site_title || "SCO-OGV Oberfüllbach 1963 e.V.";
+const street = settings?.address_street || "Lützelbucher Str. 7";
+const city = settings?.address_city || "96237 Ebersdorf-Oberfüllbach";
+const phone = settings?.phone || "09560 / 8609";
+const email = settings?.email || "info@sc-oberfuellbach.de";
+const paymentMethods = settings?.payment_methods || ["Bargeld", "Kartenzahlung"];
+
+const telLink = phone ? `tel:${phone.replace(/[^0-9+]/g, "")}` : "#";
+
+const logoSrc = settings?.logo_normal 
+  ? toAbsoluteDirectusAssetUrl(settings.logo_normal) 
+  : "/assets/logo_sco_min.png";
 ---
 
 <footer id="footer" role="contentinfo">
@@ -23,9 +40,9 @@ const today = new Date();
           <div class="flex flex-col gap-1">
             <h3 class="font-bold text-sm">Adresse</h3>
             <address class="not-italic text-neutral-600">
-              SCO-OGV Oberfüllbach 1963 e.V. Sportheim<br />
-               Lützelbucher Str. 7<br />
-               96237 Ebersdorf-Oberfüllbach
+              {siteTitle} Sportheim<br />
+              {street}<br />
+              {city}
             </address>
           </div>
         </section>
@@ -48,18 +65,18 @@ const today = new Date();
             <h3 class="font-bold text-sm">Kontakt</h3>
             <div class="text-neutral-600">
               <a 
-                href="tel:+495605608609" 
+                href={telLink} 
                 class="hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-1 rounded"
-                aria-label="Telefonnummer 09560 8609 anrufen"
+                aria-label={`Telefonnummer ${phone} anrufen`}
               >
-                09560 / 8609
+                {phone}
               </a><br />
               <a 
-                href="mailto:info@sc-oberfuellbach.de"
+                href={`mailto:${email}`}
                 class="hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-1 rounded"
-                aria-label="E-Mail an info@sc-oberfuellbach.de senden"
+                aria-label={`E-Mail an ${email} senden`}
               >
-                info@sc-oberfuellbach.de
+                {email}
               </a>
             </div>
           </div>
@@ -133,8 +150,9 @@ const today = new Date();
           <div class="flex flex-col gap-1">
             <h3 class="font-bold text-sm">Zahlungsarten</h3>
             <ul class="text-neutral-600 space-y-1" aria-label="Akzeptierte Zahlungsarten">
-              <li>Bargeld</li>
-              <li>Kartenzahlung</li>
+              {paymentMethods.map((method) => (
+                <li>{method}</li>
+              ))}
             </ul>
           </div>
         </section>
@@ -144,8 +162,8 @@ const today = new Date();
         <img
           width="68"
           height="56"
-          src="/assets/logo_sco_min.png"
-          alt="SCO-OGV Oberfüllbach 1963 e.V. Logo"
+          src={logoSrc}
+          alt={`${siteTitle} Logo`}
           loading="lazy"
         />
       </div>
@@ -155,7 +173,7 @@ const today = new Date();
       <hr class="my-4 border-gray-300" />
       <div class="text-center mx-auto">
         <small class="text-neutral-600">
-          &copy; {today.getFullYear()} SCO-OGV Oberfüllbach 1963 e.V. Alle Rechte vorbehalten.
+          &copy; {today.getFullYear()} {siteTitle}. Alle Rechte vorbehalten.
         </small>
       </div>
     </div>

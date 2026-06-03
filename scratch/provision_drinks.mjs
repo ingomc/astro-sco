@@ -1,19 +1,15 @@
-import { directusRequest, getDirectusBaseUrl } from "./client.mjs";
-import { TARGET_RELATIONS, TARGET_SCHEMA } from "./schema.mjs";
+import { directusRequest, getDirectusBaseUrl } from "../scripts/directus/client.mjs";
+import { TARGET_RELATIONS, TARGET_SCHEMA } from "../scripts/directus/schema.mjs";
 
-const args = new Set(process.argv.slice(2));
-const syncExisting = args.has("--sync");
+const syncExisting = true;
 
 function fieldPayload(field) {
-  const payload = {
+  return {
     field: field.name,
     type: field.type,
     meta: field.meta,
+    schema: field.schema,
   };
-  if (field.schema !== null && field.schema !== undefined) {
-    payload.schema = field.schema;
-  }
-  return payload;
 }
 
 async function ensureCollection(definition, counters) {
@@ -74,24 +70,19 @@ async function ensureField(collectionName, field, counters) {
     return;
   }
 
-  const patchBody = {
-    type: field.type,
-    meta: {
-      ...existing.meta,
-      ...field.meta,
-    },
-  };
-
-  if (field.schema !== null && field.schema !== undefined && existing.schema !== null && existing.schema !== undefined) {
-    patchBody.schema = {
-      ...existing.schema,
-      ...field.schema,
-    };
-  }
-
   await directusRequest(`/fields/${collectionName}/${field.name}`, {
     method: "PATCH",
-    body: patchBody,
+    body: {
+      type: field.type,
+      meta: {
+        ...existing.meta,
+        ...field.meta,
+      },
+      schema: {
+        ...existing.schema,
+        ...field.schema,
+      },
+    },
   });
   counters.fieldsUpdated += 1;
 }
@@ -156,22 +147,16 @@ async function main() {
     relationsUpdated: 0,
   };
 
-  console.log(`Provisioning Directus schema at ${getDirectusBaseUrl()}`);
-  console.log(`Mode: ${syncExisting ? "sync existing" : "create missing only"}`);
+  const selectedCollections = TARGET_SCHEMA.filter(
+    (c) => c.name === "drink_categories" || c.name === "drinks"
+  );
+  const selectedRelations = TARGET_RELATIONS.filter(
+    (r) => r.collection === "drink_categories" || r.collection === "drinks"
+  );
 
-  const limitCols = process.env.LIMIT_COLLECTIONS 
-    ? process.env.LIMIT_COLLECTIONS.split(",").map(c => c.trim()) 
-    : null;
+  console.log(`Provisioning selected Directus schema at ${getDirectusBaseUrl()}`);
 
-  const collectionsToProvision = limitCols 
-    ? TARGET_SCHEMA.filter(c => limitCols.includes(c.name)) 
-    : TARGET_SCHEMA;
-
-  const relationsToProvision = limitCols 
-    ? TARGET_RELATIONS.filter(r => limitCols.includes(r.collection)) 
-    : TARGET_RELATIONS;
-
-  for (const collection of collectionsToProvision) {
+  for (const collection of selectedCollections) {
     console.log(`\nCollection: ${collection.name}`);
     await ensureCollection(collection, counters);
 
@@ -180,9 +165,9 @@ async function main() {
     }
   }
 
-  if (relationsToProvision.length > 0) {
+  if (selectedRelations.length > 0) {
     console.log("\nRelations:");
-    for (const relation of relationsToProvision) {
+    for (const relation of selectedRelations) {
       await ensureRelation(relation, counters);
     }
   }
@@ -191,10 +176,4 @@ async function main() {
   console.log(JSON.stringify(counters, null, 2));
 }
 
-try {
-  await main();
-} catch (error) {
-  console.error("Schema provisioning failed.");
-  console.error(error instanceof Error ? error.message : error);
-  process.exit(1);
-}
+main().catch(console.error);

@@ -26,6 +26,9 @@ const deployadapter = () => {
 // https://astro.build/config
 export default defineConfig({
   site: "https://www.sc-oberfuellbach.de/",
+  server: {
+    port: 4328,
+  },
   integrations: [
     mdx(),
     sitemap({
