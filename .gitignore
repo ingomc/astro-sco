@@ -25,3 +25,6 @@ playwright-report/
 
 # macOS-specific files
 .DS_Store
+
+# Unlighthouse
+.unlighthouse
