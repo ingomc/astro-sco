@@ -18,6 +18,12 @@ const {
   image = "/logo_sco.png",
   robots = "index,follow",
 } = Astro.props;
+
+const siteHost =
+  import.meta.env.SITE_HOST ||
+  process.env.SITE_HOST ||
+  (Astro.site ? Astro.site.host.replace(/^www\./, "") : "sc-oberfuellbach.de");
+const siteOrigin = `https://${siteHost}`;
 ---
 
 <!-- Global Metadata -->
@@ -77,14 +83,13 @@ const {
 <link rel="manifest" href="/site.webmanifest" />
 
 <!-- Structured Data for Local Business -->
-<script type="application/ld+json">
-  {
+<script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "SportsClub",
     "name": "SCO-OGV Oberfüllbach 1963 e.V.",
     "description": "Sportverein in Oberfüllbach mit Vereinsheim, Veranstaltungen und Gemeinschaftsaktivitäten",
-    "url": "https://sc-oberfuellbach.de",
-    "logo": "https://sc-oberfuellbach.de/assets/logo_sco.png",
+    "url": siteOrigin,
+    "logo": `${siteOrigin}/assets/logo_sco.png`,
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Lützelbucher Str. 7",
@@ -97,4 +102,4 @@ const {
     "foundingDate": "1963",
     "sameAs": []
   }
-</script>
+)}></script>

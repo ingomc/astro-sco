@@ -13,6 +13,14 @@ import SpeedInsights from "@vercel/speed-insights/astro";
 const settings = await getSiteSettings();
 
 const { title, description, image, robots } = Astro.props;
+
+const isStaging =
+  import.meta.env.STAGING === "1" || process.env.STAGING === "1";
+const stagingRobots = isStaging ? "noindex,nofollow" : robots;
+const siteHost =
+  import.meta.env.SITE_HOST ||
+  process.env.SITE_HOST ||
+  (Astro.site ? Astro.site.host.replace(/^www\./, "") : "sc-oberfuellbach.de");
 ---
 
 <!doctype html>
@@ -22,12 +30,14 @@ const { title, description, image, robots } = Astro.props;
       title={title || settings.site_title}
       description={description || settings.site_description || ""}
       image={image || settings.default_og_image}
-      robots={robots}
+      robots={stagingRobots}
     />
-    <script
-      defer
-      src="https://analytics.ingomc.de/script.js"
-      data-website-id="b5b06bd0-d6eb-4a4f-b029-99672e39471d"></script>
+    {!isStaging && (
+      <script
+        defer
+        src="https://analytics.ingomc.de/script.js"
+        data-website-id="b5b06bd0-d6eb-4a4f-b029-99672e39471d"></script>
+    )}
   </head>
   <body data-sco-version={version}>
     <SkipLinks />
@@ -42,7 +52,10 @@ const { title, description, image, robots } = Astro.props;
       </main>
       <Footer settings={settings} />
     </div>
-    <SpeedInsights />
+    {!isStaging && <SpeedInsights />}
+    {isStaging && (
+      <div class="sco-staging-banner">Staging – {siteHost}</div>
+    )}
   </body>
 </html>
 
@@ -89,5 +102,20 @@ const { title, description, image, robots } = Astro.props;
   :focus-visible {
     outline: 2px solid #dc2626;
     outline-offset: 2px;
+  }
+
+  .sco-staging-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    padding: 0.4rem 1rem;
+    background: #fef3c7;
+    color: #78350f;
+    border-top: 2px solid #f59e0b;
+    font-size: 0.85rem;
+    text-align: center;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 </style>

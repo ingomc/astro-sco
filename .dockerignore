@@ -1,0 +1,49 @@
+# Files and directories not needed inside the Docker build context.
+# Keep this aligned with .gitignore plus a few Docker-specific exclusions.
+
+# VCS
+.git
+.gitignore
+.gitattributes
+.github
+
+# Local config / secrets
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store
+
+# Astro / Vercel build artifacts
+dist
+.vercel
+.astro
+.cache
+
+# Tests
+test-results
+playwright-report
+tests/visual/*-snapshots
+
+# Tooling caches
+.eslintcache
+.prettiercache
+.unlighthouse
+.vscode
+.idea
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+docker
+
+# OS junk
+.DS_Store
+Thumbs.db
