@@ -6,13 +6,28 @@
       "headers": {
         "Authorization": "Bearer ${input:directus-token}"
       }
-    }
+    },
+    "dokploy-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@dokploy/mcp"],
+      "env": {
+        "DOKPLOY_URL": "https://dok.ingomc.de",
+        "DOKPLOY_API_KEY": "${input:dokploy-api-key}"
+      }
+  }
   },
   "inputs": [
     {
       "id": "directus-token",
       "type": "promptString",
       "description": "Directus Access Token",
+      "password": true
+    },
+    {
+      "id": "dokploy-api-key",
+      "type": "promptString",
+      "description": "Dokploy API Key",
       "password": true
     }
   ]

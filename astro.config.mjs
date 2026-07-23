@@ -24,13 +24,19 @@ const deployadapter = () => {
 };
 
 // https://astro.build/config
+const siteUrl = process.env.SITE_URL || "https://www.sc-oberfuellbach.de/";
+const extraImageDomains = (process.env.EXTRA_IMAGE_DOMAINS || "")
+  .split(",")
+  .map((d) => d.trim())
+  .filter(Boolean);
+
 export default defineConfig({
-  site: "https://www.sc-oberfuellbach.de/",
+  site: siteUrl,
   server: {
     port: 4328,
   },
   image: {
-    domains: ["cms.dart.ingomc.de"],
+    domains: ["cms.dart.ingomc.de", ...extraImageDomains],
   },
   integrations: [
     mdx(),
