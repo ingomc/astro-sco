@@ -1,9 +1,9 @@
 ---
 title: "Familientag zur Kirchweih 2026"
-pubDate: 2026-01-08T10:00:00.000Z
+pubDate: 2026-09-05T00:00:00.000+02:00
 eventDate: 2026-09-19T14:30:00.000Z
 location: "Sportplatz Oberfüllbach"
-heroImage: /assets/social/2026-kirchweih-instagram-story-tag2.png
+heroImage: /assets/2026-kirchweih-familientag-hero.png
 cta: "Kommt zum Familientag!"
 featured: true
 hidden: false
