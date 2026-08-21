@@ -1,15 +1,17 @@
 ---
-title: "Familienfest: Alles rund um den Apfel"
+title: "Familientag zur Kirchweih 2026"
 pubDate: 2026-01-08T10:00:00.000Z
 eventDate: 2026-09-19T14:30:00.000Z
 location: "Sportplatz Oberfüllbach"
-heroImage: /assets/2025-09-kerwa-familientag.jpeg
-cta: "Kommt zum Apfelfest!"
+heroImage: /assets/social/2026-kirchweih-instagram-story-tag2.png
+cta: "Kommt zum Familientag!"
 featured: true
-hidden: true
-description: "Unser großes Familienfest steht ganz im Zeichen des Apfels! Äpfelpressen, Blindverkostungen und vieles mehr für Groß und Klein."
-tags: [familienfest]
+hidden: false
+description: "Familientag zur Oberfüllbacher Kirchweih am 19. September 2026: Spiel, Spaß, Apfelaktionen sowie Kaffee und Kuchen für Groß und Klein."
+tags: [familienfest, kerwa]
 ---
+
+<!-- Bisheriger Entwurf – bewusst auskommentiert:
 
 Herzliche Einladung zu unserem **Familienfest** am **19. September 2026**!
 
@@ -40,5 +42,34 @@ Ein buntes **Kinderfest** mit vielen Aktionen rund um den Apfel:
 - **„Heißer Apfel“**: Für die Erwachsenen heizen wir die Sauna ein – genießt einen entspannenden Aufguss mit Apfelaroma.
 
 Ein lehrreicher, lustiger und leckerer Tag für die ganze Familie – wir freuen uns auf euer Kommen!
+
+**Euer SCO-OGV Oberfüllbach**
+
+
+mobile dartscheibe
+
+Ende des bisherigen Entwurfs. -->
+
+Herzliche Einladung zu unserem **Familientag zur Oberfüllbacher Kirchweih** am **Samstag, 19. September 2026**!
+
+Ab **14:30 Uhr** wartet am **Sportplatz Oberfüllbach** ein abwechslungsreicher Nachmittag auf euch. Ob groß oder klein, sportlich oder kreativ: Alle sind willkommen, gemeinsam mit uns Kerwa zu feiern und einen schönen Tag zu verbringen.
+
+## Alle Infos auf einen Blick
+
+- **Datum:** Samstag, 19. September 2026
+- **Beginn:** 14:30 Uhr
+- **Ort:** Sportplatz Oberfüllbach
+
+## Das erwartet euch
+
+- **Apfelmus kochen**
+- **Apfelschäl-Wettbewerb**
+- **Kaffee und Kuchen**
+- **Torwandschießen**
+- **viele Spielstationen**
+
+Beim Apfelmuskochen und beim Apfelschäl-Wettbewerb dreht sich vieles um den Apfel. Wer lieber in Bewegung ist, kann sein Können beim Torwandschießen und an den verschiedenen Spielstationen zeigen. Für eine gemütliche Pause ist mit Kaffee und Kuchen natürlich ebenfalls gesorgt.
+
+Bringt eure Familie und Freunde mit und verbringt mit uns einen fröhlichen Kerwa-Nachmittag in Oberfüllbach. Wir freuen uns auf euch!
 
 **Euer SCO-OGV Oberfüllbach**
