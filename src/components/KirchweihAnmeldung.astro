@@ -1,0 +1,141 @@
+---
+// KirchweihAnmeldung.astro - Registration component for Kirchweih 2025
+// This component will embed a Google Form for the registration process
+---
+
+<section class="bg-white rounded-lg border border-gray-300 p-6 mb-8" aria-labelledby="anmeldung-heading">
+  <h2 id="anmeldung-heading" class="text-2xl font-bold mb-6 text-center text-gray-800">
+    📝 Anmeldung für Kirchweih-Essen
+  </h2>
+  
+  <!-- Time Slot Information -->
+  <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+    <h3 class="text-lg font-semibold mb-3 text-gray-800">🕐 Verfügbare Essenszeiten</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 text-sm">
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">18:00</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">18:15</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">18:30</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">18:45</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">19:00</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">19:15</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">19:30</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">19:45</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">20:00</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">20:15</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">20:30</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">20:45</span>
+      <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-center font-medium">21:00</span>
+    </div>
+    <p class="text-sm text-gray-600 mt-2">
+      <strong>Hinweis:</strong> Maximal 15 Essen pro Zeitslot. 
+      Ausgebuchte Zeiten werden automatisch deaktiviert.
+    </p>
+  </div>
+
+  <!-- Menu Information -->
+  <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+    <h3 class="text-lg font-semibold mb-3 text-gray-800">🍽️ Menüauswahl</h3>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="flex items-center justify-between p-3 bg-amber-50 rounded border border-amber-200">
+        <div>
+          <div class="font-semibold text-amber-800">Merch mit Klös</div>
+          <div class="text-sm text-amber-700">Bratwurst, Klöße, Sauerkraut</div>
+        </div>
+        <div class="text-xl font-bold text-amber-800">12,50 €</div>
+      </div>
+      <div class="flex items-center justify-between p-3 bg-green-50 rounded border border-green-200">
+        <div>
+          <div class="font-semibold text-green-800">Vegetarische Alternative</div>
+          <div class="text-sm text-green-700">Gemüsebratlinge, Klöße, Rotkraut</div>
+        </div>
+        <div class="text-xl font-bold text-green-800">11,50 €</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Form Integration -->
+  <div class="border border-gray-200 rounded-lg p-6 bg-gray-50">
+    <h3 class="text-lg font-semibold mb-4 text-center text-gray-800">Anmeldeformular</h3>
+    
+    <!-- Instructions for setting up Google Form -->
+    <div class="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+      <h4 class="text-sm font-semibold text-blue-800 mb-2">📋 Google Form Setup - Anleitung</h4>
+      <p class="text-sm text-blue-700 mb-3">
+        So richten Sie das Google Formular ein:
+      </p>
+      <ol class="text-sm text-blue-700 list-decimal list-inside space-y-1">
+        <li>Google Form mit Titel "Kirchweih 2025 - Essensbestellung SCO Oberfüllbach" erstellen</li>
+        <li>Folgende Felder hinzufügen:
+          <ul class="ml-4 list-disc list-inside mt-1 space-y-1">
+            <li><strong>Name</strong> (Kurze Antwort, Pflichtfeld)</li>
+            <li><strong>E-Mail-Adresse</strong> (Kurze Antwort, Pflichtfeld, E-Mail-Validierung)</li>
+            <li><strong>Telefonnummer</strong> (Kurze Antwort, Pflichtfeld)</li>
+            <li><strong>Gewünschte Essenszeit</strong> (Multiple Choice, Pflichtfeld):<br>
+              Optionen: 18:00, 18:15, 18:30, 18:45, 19:00, 19:15, 19:30, 19:45, 20:00, 20:15, 20:30, 20:45, 21:00</li>
+            <li><strong>Anzahl "Merch mit Klös" (12,50 €)</strong> (Dropdown, 0-10)</li>
+            <li><strong>Anzahl "Vegetarische Alternative" (11,50 €)</strong> (Dropdown, 0-10)</li>
+          </ul>
+        </li>
+        <li>Formulareinstellungen konfigurieren:
+          <ul class="ml-4 list-disc list-inside mt-1">
+            <li>✅ E-Mail-Adressen sammeln</li>
+            <li>✅ Antwortbestätigung senden</li>
+            <li>✅ Bearbeitung nach dem Senden erlauben</li>
+            <li>✅ Nur eine Antwort pro Person</li>
+          </ul>
+        </li>
+        <li>Form als iframe einbetten: Den Einbettungscode unter "Senden" → "Einbetten" kopieren</li>
+        <li>Google Apps Script für E-Mail-Automatisierung einrichten</li>
+      </ol>
+    </div>
+
+    <!-- Google Form Embed Placeholder -->
+    <div class="bg-white rounded-lg border border-gray-300 p-6">
+      <div class="text-center p-8">
+        <div class="text-gray-500 mb-4">
+          <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h4 class="text-lg font-medium text-gray-900 mb-3">Google Formular wird hier eingebettet</h4>
+        <p class="text-sm text-gray-600 mb-6">
+          Ersetzen Sie diesen Bereich durch den iframe-Code Ihres Google Formulars.
+        </p>
+        
+        <!-- Sample iframe code structure -->
+        <div class="bg-gray-50 p-4 rounded border text-left">
+          <code class="text-xs text-gray-700">
+            &lt;iframe src="https://docs.google.com/forms/d/e/[FORM_ID]/viewform?embedded=true"<br>
+            &nbsp;&nbsp;width="100%" height="800" frameborder="0" marginheight="0" marginwidth="0"<br>
+            &nbsp;&nbsp;title="Kirchweih 2025 Anmeldung"&gt;<br>
+            &nbsp;&nbsp;Wird geladen…<br>
+            &lt;/iframe&gt;
+          </code>
+        </div>
+        
+        <p class="text-xs text-gray-500 mt-4">
+          <strong>Hinweis:</strong> Nach dem Einbetten funktionieren automatische E-Mail-Bestätigung<br>
+          und Admin-Benachrichtigungen über Google Apps Script.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Information -->
+  <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+    <h3 class="text-sm font-semibold text-blue-800 mb-2">💬 Brauchen Sie Hilfe?</h3>
+    <p class="text-sm text-blue-700">
+      Bei technischen Problemen oder Fragen zur Anmeldung kontaktieren Sie uns gerne:
+      <strong>info@sco-oberfuellbach.de</strong>
+    </p>
+  </div>
+</section>
+
+<style>
+  /* Ensure responsive design and accessibility */
+  @media (max-width: 640px) {
+    .grid-cols-6 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>
