@@ -38,15 +38,7 @@ export default defineConfig({
   image: {
     domains: ["cms.dart.ingomc.de", ...extraImageDomains],
   },
-  integrations: [
-    mdx(),
-    sitemap({
-      filter: (page) =>
-        !page.includes("/admin") &&
-        !page.includes("/public/admin"),
-    }),
-    tailwind(),
-  ],
+  integrations: [mdx(), sitemap(), tailwind()],
   output: "static",
   adapter: deployadapter(),
 });

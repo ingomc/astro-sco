@@ -3,7 +3,12 @@ import { toAbsoluteDirectusAssetUrl } from "./hero-image";
 
 type SourceMode = "astro" | "directus" | "auto";
 
-export type SupportedCollection = "veranstaltungen" | "berichte" | "mitglieder" | "start" | "sportheim";
+export type SupportedCollection =
+  | "veranstaltungen"
+  | "berichte"
+  | "mitglieder"
+  | "start"
+  | "sportheim";
 
 type VeranstaltungData = {
   title: string;
@@ -27,7 +32,14 @@ type BerichtData = {
   heroImage?: string;
   hidden: boolean;
   tags: string[];
-  mapLocations?: { name: string; lat: number; lon: number; type?: string; osmUrl?: string; description?: string }[];
+  mapLocations?: {
+    name: string;
+    lat: number;
+    lon: number;
+    type?: string;
+    osmUrl?: string;
+    description?: string;
+  }[];
   mapZoom?: number;
   mapHeight?: string;
   galleryImages?: { src: string; alt: string }[];
@@ -62,15 +74,16 @@ type EntryDataByCollection = {
   sportheim: SportheimData;
 };
 
-export type ContentEntry<K extends SupportedCollection = SupportedCollection> = {
-  slug: string;
-  collection: K;
-  data: EntryDataByCollection[K];
-  source: "astro" | "directus";
-  body?: string;
-  contentFormat?: string;
-  sourcePath?: string;
-};
+export type ContentEntry<K extends SupportedCollection = SupportedCollection> =
+  {
+    slug: string;
+    collection: K;
+    data: EntryDataByCollection[K];
+    source: "astro" | "directus";
+    body?: string;
+    contentFormat?: string;
+    sourcePath?: string;
+  };
 
 type DirectusConfig = {
   apiBaseUrls: string[];
@@ -88,7 +101,11 @@ function warnOnce(message: string) {
 }
 
 function getSourceMode(): SourceMode {
-  const rawMode = (import.meta.env.CONTENT_SOURCE || process.env.CONTENT_SOURCE || "directus").toLowerCase();
+  const rawMode = (
+    import.meta.env.CONTENT_SOURCE ||
+    process.env.CONTENT_SOURCE ||
+    "directus"
+  ).toLowerCase();
   if (rawMode === "astro" || rawMode === "directus" || rawMode === "auto") {
     return rawMode;
   }
@@ -122,7 +139,10 @@ function isLikelyHttpUrl(value: unknown): value is string {
   }
 }
 
-function resolveApiBaseUrls(rawBaseUrl: string, explicitApiUrl?: string): string[] {
+function resolveApiBaseUrls(
+  rawBaseUrl: string,
+  explicitApiUrl?: string,
+): string[] {
   if (explicitApiUrl) {
     return [ensureTrailingSlash(explicitApiUrl)];
   }
@@ -135,15 +155,18 @@ function resolveApiBaseUrls(rawBaseUrl: string, explicitApiUrl?: string): string
     const withDirectusPrefix = new URL(withoutMcp.toString());
     withDirectusPrefix.pathname = `${withDirectusPrefix.pathname}directus/`;
 
-    return unique([
-      withDirectusPrefix.toString(),
-      withoutMcp.toString(),
-    ]);
+    return unique([withDirectusPrefix.toString(), withoutMcp.toString()]);
   }
 
-  if (parsed.pathname.endsWith("/directus") || parsed.pathname.endsWith("/directus/")) {
+  if (
+    parsed.pathname.endsWith("/directus") ||
+    parsed.pathname.endsWith("/directus/")
+  ) {
     const withoutDirectus = new URL(parsed.toString());
-    withoutDirectus.pathname = withoutDirectus.pathname.replace(/\/directus\/?$/, "/");
+    withoutDirectus.pathname = withoutDirectus.pathname.replace(
+      /\/directus\/?$/,
+      "/",
+    );
 
     return unique([
       ensureTrailingSlash(parsed.toString()),
@@ -159,24 +182,27 @@ function getDirectusConfig(): DirectusConfig | null {
   const mcpUrl = isLikelyHttpUrl(mcpValue) ? mcpValue : undefined;
   const mcpToken = mcpValue && !mcpUrl ? mcpValue : undefined;
 
-  const rawBaseUrl = import.meta.env.DIRECTUS_URL
-    || import.meta.env.DIRECTUS_BASE_URL
-    || import.meta.env.DIRECTUS_PUBLIC_URL
-    || process.env.DIRECTUS_URL
-    || process.env.DIRECTUS_BASE_URL
-    || process.env.DIRECTUS_PUBLIC_URL
-    || mcpUrl;
+  const rawBaseUrl =
+    import.meta.env.DIRECTUS_URL ||
+    import.meta.env.DIRECTUS_BASE_URL ||
+    import.meta.env.DIRECTUS_PUBLIC_URL ||
+    process.env.DIRECTUS_URL ||
+    process.env.DIRECTUS_BASE_URL ||
+    process.env.DIRECTUS_PUBLIC_URL ||
+    mcpUrl;
 
-  const token = import.meta.env.DIRECTUS_TOKEN
-    || import.meta.env.DIRECTUS_ACCESS_TOKEN
-    || import.meta.env.MCP_TOKEN
-    || process.env.DIRECTUS_TOKEN
-    || process.env.DIRECTUS_ACCESS_TOKEN
-    || process.env.MCP_TOKEN
-    || mcpToken
-    || import.meta.env.ADMIN_EXPORT_TOKEN
-    || process.env.ADMIN_EXPORT_TOKEN;
-  const explicitApiUrl = import.meta.env.DIRECTUS_API_URL || process.env.DIRECTUS_API_URL;
+  const token =
+    import.meta.env.MCP_TOKEN ||
+    process.env.MCP_TOKEN ||
+    mcpToken ||
+    import.meta.env.DIRECTUS_TOKEN ||
+    import.meta.env.DIRECTUS_ACCESS_TOKEN ||
+    process.env.DIRECTUS_TOKEN ||
+    process.env.DIRECTUS_ACCESS_TOKEN ||
+    import.meta.env.ADMIN_EXPORT_TOKEN ||
+    process.env.ADMIN_EXPORT_TOKEN;
+  const explicitApiUrl =
+    import.meta.env.DIRECTUS_API_URL || process.env.DIRECTUS_API_URL;
 
   if (!rawBaseUrl || !token) {
     return null;
@@ -188,7 +214,11 @@ function getDirectusConfig(): DirectusConfig | null {
   };
 }
 
-function appendQueryParams(searchParams: URLSearchParams, key: string, value: unknown) {
+function appendQueryParams(
+  searchParams: URLSearchParams,
+  key: string,
+  value: unknown,
+) {
   if (value === undefined || value === null) {
     return;
   }
@@ -201,13 +231,19 @@ function appendQueryParams(searchParams: URLSearchParams, key: string, value: un
   }
 
   if (typeof value === "object") {
-    for (const [nestedKey, nestedValue] of Object.entries(value as Record<string, unknown>)) {
+    for (const [nestedKey, nestedValue] of Object.entries(
+      value as Record<string, unknown>,
+    )) {
       appendQueryParams(searchParams, `${key}[${nestedKey}]`, nestedValue);
     }
     return;
   }
 
-  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
     searchParams.append(key, String(value));
     return;
   }
@@ -215,11 +251,21 @@ function appendQueryParams(searchParams: URLSearchParams, key: string, value: un
   throw new TypeError(`Unsupported query param type for '${key}'`);
 }
 
-function shouldRetryWithFallback(response: Response, text: string, hasFallback: boolean): boolean {
-  return hasFallback && response.status === 404 && text.includes("ROUTE_NOT_FOUND");
+function shouldRetryWithFallback(
+  response: Response,
+  text: string,
+  hasFallback: boolean,
+): boolean {
+  return (
+    hasFallback && response.status === 404 && text.includes("ROUTE_NOT_FOUND")
+  );
 }
 
-async function directusGet(pathname: string, query: Record<string, unknown>, config: DirectusConfig): Promise<unknown> {
+async function directusGet(
+  pathname: string,
+  query: Record<string, unknown>,
+  config: DirectusConfig,
+): Promise<unknown> {
   for (let i = 0; i < config.apiBaseUrls.length; i += 1) {
     const baseUrl = config.apiBaseUrls[i];
     const normalizedPath = pathname.startsWith("/") ? pathname : `/${pathname}`;
@@ -243,14 +289,18 @@ async function directusGet(pathname: string, query: Record<string, unknown>, con
       if (shouldRetryWithFallback(response, text, hasFallback)) {
         continue;
       }
-      throw new Error(`Directus GET ${pathname} failed (${response.status}): ${text}`);
+      throw new Error(
+        `Directus GET ${pathname} failed (${response.status}): ${text}`,
+      );
     }
 
     const payload = await response.json();
     return payload?.data ?? payload;
   }
 
-  throw new Error(`Directus GET ${pathname} failed: no reachable API base URL.`);
+  throw new Error(
+    `Directus GET ${pathname} failed: no reachable API base URL.`,
+  );
 }
 
 function toStringOrUndefined(value: unknown): string | undefined {
@@ -270,7 +320,11 @@ function toStringOrUndefined(value: unknown): string | undefined {
 }
 
 function describeUnknownValue(value: unknown): string {
-  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
     return String(value);
   }
   if (value === null) {
@@ -282,18 +336,32 @@ function describeUnknownValue(value: unknown): string {
   return "[non-primitive]";
 }
 
-function toRequiredString(value: unknown, field: string, collection: SupportedCollection, slug: string): string {
+function toRequiredString(
+  value: unknown,
+  field: string,
+  collection: SupportedCollection,
+  slug: string,
+): string {
   const result = toStringOrUndefined(value);
   if (!result) {
-    throw new TypeError(`Missing required field '${field}' in ${collection}/${slug}`);
+    throw new TypeError(
+      `Missing required field '${field}' in ${collection}/${slug}`,
+    );
   }
   return result;
 }
 
-function toDate(value: unknown, field: string, collection: SupportedCollection, slug: string): Date {
+function toDate(
+  value: unknown,
+  field: string,
+  collection: SupportedCollection,
+  slug: string,
+): Date {
   const parsed = new Date(value as string | number | Date);
   if (Number.isNaN(parsed.getTime())) {
-    throw new TypeError(`Invalid date field '${field}' in ${collection}/${slug}: ${describeUnknownValue(value)}`);
+    throw new TypeError(
+      `Invalid date field '${field}' in ${collection}/${slug}: ${describeUnknownValue(value)}`,
+    );
   }
   return parsed;
 }
@@ -435,10 +503,17 @@ function toNumberOrUndefined(value: unknown): number | undefined {
   return undefined;
 }
 
-function toRequiredNumber(value: unknown, field: string, collection: SupportedCollection, slug: string): number {
+function toRequiredNumber(
+  value: unknown,
+  field: string,
+  collection: SupportedCollection,
+  slug: string,
+): number {
   const parsed = toNumberOrUndefined(value);
   if (parsed === undefined) {
-    throw new TypeError(`Missing required numeric field '${field}' in ${collection}/${slug}`);
+    throw new TypeError(
+      `Missing required numeric field '${field}' in ${collection}/${slug}`,
+    );
   }
   return parsed;
 }
@@ -449,21 +524,31 @@ function extractDirectusFileId(value: unknown): string | undefined {
     return undefined;
   }
 
-  const directIdMatch = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.exec(raw);
+  const directIdMatch =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.exec(
+      raw,
+    );
   if (directIdMatch) {
     return raw;
   }
 
   const pathMatch = /\/assets\/([^/?#]+)/i.exec(raw);
   const fromPath = pathMatch?.[1];
-  if (fromPath && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(fromPath)) {
+  if (
+    fromPath &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      fromPath,
+    )
+  ) {
     return fromPath;
   }
 
   return undefined;
 }
 
-function resolveHeroImageValue(item: Record<string, unknown>): string | undefined {
+function resolveHeroImageValue(
+  item: Record<string, unknown>,
+): string | undefined {
   const relationValue = item.hero_image_file;
 
   if (relationValue && typeof relationValue === "object") {
@@ -594,7 +679,9 @@ function mapDirectusItem<K extends SupportedCollection>(
   return mapped as ContentEntry<K>;
 }
 
-async function loadCollectionFromDirectus<K extends SupportedCollection>(collection: K): Promise<ContentEntry<K>[]> {
+async function loadCollectionFromDirectus<K extends SupportedCollection>(
+  collection: K,
+): Promise<ContentEntry<K>[]> {
   const config = getDirectusConfig();
   if (!config) {
     throw new Error(
@@ -602,10 +689,14 @@ async function loadCollectionFromDirectus<K extends SupportedCollection>(collect
     );
   }
 
-  const raw = await directusGet(`/items/${collection}`, {
-    fields: ["*"],
-    limit: -1,
-  }, config);
+  const raw = await directusGet(
+    `/items/${collection}`,
+    {
+      fields: ["*"],
+      limit: -1,
+    },
+    config,
+  );
 
   if (!Array.isArray(raw)) {
     return [];
@@ -618,7 +709,10 @@ async function loadCollectionFromDirectus<K extends SupportedCollection>(collect
     }
 
     try {
-      const normalized = mapDirectusItem(collection, item as Record<string, unknown>);
+      const normalized = mapDirectusItem(
+        collection,
+        item as Record<string, unknown>,
+      );
       if (normalized) {
         mapped.push(normalized);
       }
@@ -630,7 +724,9 @@ async function loadCollectionFromDirectus<K extends SupportedCollection>(collect
   return mapped;
 }
 
-async function loadCollectionFromAstro<K extends SupportedCollection>(collection: K): Promise<ContentEntry<K>[]> {
+async function loadCollectionFromAstro<K extends SupportedCollection>(
+  collection: K,
+): Promise<ContentEntry<K>[]> {
   if (collection === "veranstaltungen") {
     const entries = await getCollection("veranstaltungen");
     return entries.map((entry) => ({
@@ -696,9 +792,10 @@ async function loadCollectionFromAstro<K extends SupportedCollection>(collection
       contentFormat: "markdown",
       data: {
         title: entry.data.title,
-        order: entry.data.order === undefined || entry.data.order === null
-          ? undefined
-          : Number(entry.data.order),
+        order:
+          entry.data.order === undefined || entry.data.order === null
+            ? undefined
+            : Number(entry.data.order),
       },
     })) as ContentEntry<K>[];
   }
@@ -719,7 +816,9 @@ async function loadCollectionFromAstro<K extends SupportedCollection>(collection
   })) as ContentEntry<K>[];
 }
 
-export async function getContentCollection<K extends SupportedCollection>(collection: K): Promise<ContentEntry<K>[]> {
+export async function getContentCollection<K extends SupportedCollection>(
+  collection: K,
+): Promise<ContentEntry<K>[]> {
   const sourceMode = getSourceMode();
 
   if (sourceMode === "astro") {
@@ -733,7 +832,9 @@ export async function getContentCollection<K extends SupportedCollection>(collec
   try {
     return await loadCollectionFromDirectus(collection);
   } catch (error) {
-    warnOnce(`Directus unavailable for '${collection}', falling back to astro: ${error instanceof Error ? error.message : String(error)}`);
+    warnOnce(
+      `Directus unavailable for '${collection}', falling back to astro: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return loadCollectionFromAstro(collection);
   }
 }
@@ -763,7 +864,9 @@ export type SiteSettings = {
 async function loadSettingsFromAstro(): Promise<SiteSettings> {
   const entry = await getEntry("settings", "settings");
   if (!entry) {
-    throw new Error("Local settings entry not found in content/settings/settings.json");
+    throw new Error(
+      "Local settings entry not found in content/settings/settings.json",
+    );
   }
   return {
     site_title: entry.data.site_title,
@@ -865,9 +968,13 @@ async function loadSettingsFromDirectus(): Promise<SiteSettings> {
     throw new Error("Directus env missing");
   }
 
-  const raw = await directusGet("/items/settings", {
-    fields: ["*"],
-  }, config);
+  const raw = await directusGet(
+    "/items/settings",
+    {
+      fields: ["*"],
+    },
+    config,
+  );
 
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     throw new Error("Invalid response format for Directus settings");
@@ -876,13 +983,33 @@ async function loadSettingsFromDirectus(): Promise<SiteSettings> {
   const item = raw as Record<string, unknown>;
 
   return {
-    site_title: toRequiredString(item.site_title, "site_title", "settings" as any, "settings"),
+    site_title: toRequiredString(
+      item.site_title,
+      "site_title",
+      "settings" as any,
+      "settings",
+    ),
     site_description: toStringOrUndefined(item.site_description),
     default_og_image: resolveFileValue(item.default_og_image),
     posts: {
-      front_limit: toRequiredNumber(item.posts_front_limit, "posts_front_limit", "settings" as any, "settings"),
-      author: toRequiredString(item.posts_author, "posts_author", "settings" as any, "settings"),
-      thumb: toRequiredString(item.posts_thumb, "posts_thumb", "settings" as any, "settings"),
+      front_limit: toRequiredNumber(
+        item.posts_front_limit,
+        "posts_front_limit",
+        "settings" as any,
+        "settings",
+      ),
+      author: toRequiredString(
+        item.posts_author,
+        "posts_author",
+        "settings" as any,
+        "settings",
+      ),
+      thumb: toRequiredString(
+        item.posts_thumb,
+        "posts_thumb",
+        "settings" as any,
+        "settings",
+      ),
     },
     phone: toStringOrUndefined(item.phone),
     email: toStringOrUndefined(item.email),
@@ -912,7 +1039,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   try {
     return await loadSettingsFromDirectus();
   } catch (error) {
-    warnOnce(`Directus settings unavailable, falling back to astro: ${error instanceof Error ? error.message : String(error)}`);
+    warnOnce(
+      `Directus settings unavailable, falling back to astro: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return loadSettingsFromAstro();
   }
 }
@@ -937,7 +1066,9 @@ export type DrinkCategory = {
 async function loadDrinksFromAstro(): Promise<DrinkCategory[]> {
   const entry = await getEntry("getraenkekarte", "getraenkekarte");
   if (!entry) {
-    throw new Error("Local drinks menu not found in content/getraenkekarte/getraenkekarte.json");
+    throw new Error(
+      "Local drinks menu not found in content/getraenkekarte/getraenkekarte.json",
+    );
   }
   return entry.data as DrinkCategory[];
 }
@@ -948,45 +1079,55 @@ async function loadDrinksFromDirectus(): Promise<DrinkCategory[]> {
     throw new Error("Directus env missing");
   }
 
-  const rawCategories = await directusGet("/items/drink_categories", {
-    fields: ["*", "drinks.*"],
-    sort: ["sort"],
-    deep: {
-      drinks: {
-        _sort: ["sort"],
+  const rawCategories = await directusGet(
+    "/items/drink_categories",
+    {
+      fields: ["*", "drinks.*"],
+      sort: ["sort"],
+      deep: {
+        drinks: {
+          _sort: ["sort"],
+        },
       },
     },
-  }, config);
+    config,
+  );
 
   if (!Array.isArray(rawCategories)) {
     throw new Error("Invalid response format for Directus drink categories");
   }
 
-  return rawCategories.map((cat: any) => {
-    const rawDrinks = Array.isArray(cat.drinks) ? cat.drinks : [];
-    
-    const drinks: DrinkItem[] = rawDrinks.map((drink: any) => {
-      const rawPrices = toJsonValue(drink.prices);
-      const prices: DrinkPrice[] = (Array.isArray(rawPrices) ? rawPrices : [])
-        .map((p: any) => ({
-          size: toStringOrUndefined(p?.size) || "",
-          unit: toStringOrUndefined(p?.unit) || "",
-          price: toStringOrUndefined(p?.price) || "",
-        }))
-        .filter((p) => p.size && p.unit && p.price);
+  return rawCategories
+    .map((cat: any) => {
+      const rawDrinks = Array.isArray(cat.drinks) ? cat.drinks : [];
+
+      const drinks: DrinkItem[] = rawDrinks
+        .map((drink: any) => {
+          const rawPrices = toJsonValue(drink.prices);
+          const prices: DrinkPrice[] = (
+            Array.isArray(rawPrices) ? rawPrices : []
+          )
+            .map((p: any) => ({
+              size: toStringOrUndefined(p?.size) || "",
+              unit: toStringOrUndefined(p?.unit) || "",
+              price: toStringOrUndefined(p?.price) || "",
+            }))
+            .filter((p) => p.size && p.unit && p.price);
+
+          return {
+            name: toStringOrUndefined(drink.name) || "",
+            prices,
+          };
+        })
+        .filter((d: any) => d.name);
 
       return {
-        name: toStringOrUndefined(drink.name) || "",
-        prices,
+        name: toStringOrUndefined(cat.name) || "",
+        icon: toStringOrUndefined(cat.icon),
+        drinks,
       };
-    }).filter((d: any) => d.name);
-
-    return {
-      name: toStringOrUndefined(cat.name) || "",
-      icon: toStringOrUndefined(cat.icon),
-      drinks,
-    };
-  }).filter((c: any) => c.name);
+    })
+    .filter((c: any) => c.name);
 }
 
 export async function getDrinksMenu(): Promise<DrinkCategory[]> {
@@ -1003,7 +1144,9 @@ export async function getDrinksMenu(): Promise<DrinkCategory[]> {
   try {
     return await loadDrinksFromDirectus();
   } catch (error) {
-    warnOnce(`Directus drinks menu unavailable, falling back to astro: ${error instanceof Error ? error.message : String(error)}`);
+    warnOnce(
+      `Directus drinks menu unavailable, falling back to astro: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return loadDrinksFromAstro();
   }
 }

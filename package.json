@@ -14,7 +14,6 @@
     "build:netlify": "cross-env DEPLOY_TARGET=netlify astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "tailwind": "npx tailwindcss -i ./src/styles/global.css -o ./public/admin/admin.css",
     "test:a11y": "playwright test tests/a11y.test.js",
     "test:a11y:headed": "playwright test tests/a11y.test.js --headed",
     "test:a11y:ui": "playwright test tests/a11y.test.js --ui",

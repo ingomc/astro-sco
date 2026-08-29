@@ -4,20 +4,29 @@ const mcpValue = process.env.MCP;
 const mcpUrl = isLikelyHttpUrl(mcpValue) ? mcpValue : undefined;
 const mcpToken = mcpValue && !mcpUrl ? mcpValue : undefined;
 
-const rawBaseUrl = process.env.DIRECTUS_URL || process.env.DIRECTUS_BASE_URL || process.env.DIRECTUS_PUBLIC_URL || mcpUrl;
+const rawBaseUrl =
+  process.env.DIRECTUS_URL ||
+  process.env.DIRECTUS_BASE_URL ||
+  process.env.DIRECTUS_PUBLIC_URL ||
+  mcpUrl;
 const explicitApiUrl = process.env.DIRECTUS_API_URL;
-const token = process.env.DIRECTUS_TOKEN
-  || process.env.DIRECTUS_ACCESS_TOKEN
-  || process.env.MCP_TOKEN
-  || mcpToken
-  || process.env.ADMIN_EXPORT_TOKEN;
+const token =
+  process.env.MCP_TOKEN ||
+  mcpToken ||
+  process.env.DIRECTUS_TOKEN ||
+  process.env.DIRECTUS_ACCESS_TOKEN ||
+  process.env.ADMIN_EXPORT_TOKEN;
 
 if (!rawBaseUrl) {
-  throw new Error("Missing Directus URL in environment (DIRECTUS_URL, DIRECTUS_BASE_URL, DIRECTUS_PUBLIC_URL, or MCP URL).");
+  throw new Error(
+    "Missing Directus URL in environment (DIRECTUS_URL, DIRECTUS_BASE_URL, DIRECTUS_PUBLIC_URL, or MCP URL).",
+  );
 }
 
 if (!token) {
-  throw new Error("Missing Directus token in environment (DIRECTUS_TOKEN, DIRECTUS_ACCESS_TOKEN, ADMIN_EXPORT_TOKEN, or MCP_TOKEN).");
+  throw new Error(
+    "Missing Directus token in environment (DIRECTUS_TOKEN, DIRECTUS_ACCESS_TOKEN, ADMIN_EXPORT_TOKEN, or MCP_TOKEN).",
+  );
 }
 
 function isLikelyHttpUrl(value) {
@@ -80,15 +89,18 @@ function resolveApiBaseUrls() {
     const withDirectusPrefix = new URL(withoutMcp.toString());
     withDirectusPrefix.pathname = `${withDirectusPrefix.pathname}directus/`;
 
-    return [
-      withDirectusPrefix.toString(),
-      withoutMcp.toString(),
-    ];
+    return [withDirectusPrefix.toString(), withoutMcp.toString()];
   }
 
-  if (parsed.pathname.endsWith("/directus") || parsed.pathname.endsWith("/directus/")) {
+  if (
+    parsed.pathname.endsWith("/directus") ||
+    parsed.pathname.endsWith("/directus/")
+  ) {
     const withoutDirectus = new URL(parsed.toString());
-    withoutDirectus.pathname = withoutDirectus.pathname.replace(/\/directus\/?$/, "/");
+    withoutDirectus.pathname = withoutDirectus.pathname.replace(
+      /\/directus\/?$/,
+      "/",
+    );
 
     return unique([
       ensureTrailingSlash(parsed.toString()),
@@ -154,7 +166,9 @@ function buildRequestOptions(method, body, contentType, extraHeaders) {
 }
 
 function shouldRetryWithFallback(response, text, hasFallback) {
-  return hasFallback && response.status === 404 && text.includes("ROUTE_NOT_FOUND");
+  return (
+    hasFallback && response.status === 404 && text.includes("ROUTE_NOT_FOUND")
+  );
 }
 
 async function parseSuccessPayload(response) {
@@ -167,15 +181,12 @@ async function parseSuccessPayload(response) {
 }
 
 async function executeRequest(apiBaseUrl, pathname, options) {
-  const {
-    method,
-    query,
-    body,
-    contentType,
-    headers,
-  } = options;
+  const { method, query, body, contentType, headers } = options;
   const url = buildRequestUrl(apiBaseUrl, pathname, query);
-  const response = await fetch(url, buildRequestOptions(method, body, contentType, headers));
+  const response = await fetch(
+    url,
+    buildRequestOptions(method, body, contentType, headers),
+  );
   return response;
 }
 
@@ -211,7 +222,9 @@ export async function directusRequest(pathname, options = {}) {
         return null;
       }
 
-      throw new Error(`Directus ${method} ${pathname} failed (${response.status}): ${text}`);
+      throw new Error(
+        `Directus ${method} ${pathname} failed (${response.status}): ${text}`,
+      );
     }
 
     if (!response.ok) {
@@ -221,13 +234,17 @@ export async function directusRequest(pathname, options = {}) {
         continue;
       }
 
-      throw new Error(`Directus ${method} ${pathname} failed (${response.status}): ${text}`);
+      throw new Error(
+        `Directus ${method} ${pathname} failed (${response.status}): ${text}`,
+      );
     }
 
     return parseSuccessPayload(response);
   }
 
-  throw new Error(`Directus ${method} ${pathname} failed: no reachable API base URL.`);
+  throw new Error(
+    `Directus ${method} ${pathname} failed: no reachable API base URL.`,
+  );
 }
 
 export function getDirectusBaseUrl() {
