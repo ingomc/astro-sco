@@ -4,7 +4,6 @@ pubDate: 2025-09-10T10:00:00.000Z
 eventDate: 2025-09-20T14:30:00.000Z
 location: "Sportplatz Oberfüllbach"
 heroImage: /assets/2025-09-kerwa-familientag.jpeg
-cta: "Kommt alle vorbei!"
 featured: true
 description: "NEU: Unser erstes Familienfest zur Kerwa mit 5 Spielstationen! Spiel, Spaß und leckere Verpflegung für Groß und Klein – ein Tag voller gemeinsamer Erlebnisse!"
 tags: [familienfest, kerwa]
