@@ -1,4 +1,10 @@
-function textField(name, required = false, width = "full", interfaceType = "input", options = {}) {
+function textField(
+  name,
+  required = false,
+  width = "full",
+  interfaceType = "input",
+  options = {},
+) {
   const { note, hidden = false } = options;
 
   const meta = {
@@ -25,12 +31,20 @@ function textField(name, required = false, width = "full", interfaceType = "inpu
   };
 }
 
-function stringField(name, required = false, width = "half", maxLength = 255, options = {}) {
+function stringField(
+  name,
+  required = false,
+  width = "half",
+  maxLength = 255,
+  options = {},
+) {
   const {
     note,
     hidden = false,
     defaultValue,
     interfaceType = "input",
+    options: interfaceOptions,
+    isUnique = false,
   } = options;
 
   const meta = {
@@ -41,6 +55,10 @@ function stringField(name, required = false, width = "half", maxLength = 255, op
 
   if (note) {
     meta.note = note;
+  }
+
+  if (interfaceOptions) {
+    meta.options = interfaceOptions;
   }
 
   if (hidden) {
@@ -54,6 +72,10 @@ function stringField(name, required = false, width = "half", maxLength = 255, op
 
   if (defaultValue !== undefined) {
     schema.default_value = defaultValue;
+  }
+
+  if (isUnique) {
+    schema.is_unique = true;
   }
 
   return {
@@ -419,16 +441,16 @@ export const TARGET_SCHEMA = [
                   width: "full",
                   required: true,
                   options: {
-                    placeholder: "Bargeld"
-                  }
-                }
-              }
-            ]
-          }
+                    placeholder: "Bargeld",
+                  },
+                },
+              },
+            ],
+          },
         },
         schema: {
-          is_nullable: true
-        }
+          is_nullable: true,
+        },
       },
       {
         name: "opening_hours",
@@ -450,16 +472,16 @@ export const TARGET_SCHEMA = [
                   width: "full",
                   required: true,
                   options: {
-                    placeholder: "jeden Sonntag ab 18:30 Uhr"
-                  }
-                }
-              }
-            ]
-          }
+                    placeholder: "jeden Sonntag ab 18:30 Uhr",
+                  },
+                },
+              },
+            ],
+          },
         },
         schema: {
-          is_nullable: true
-        }
+          is_nullable: true,
+        },
       },
       {
         name: "regular_events",
@@ -481,9 +503,9 @@ export const TARGET_SCHEMA = [
                   width: "half",
                   required: true,
                   options: {
-                    placeholder: "So: ab 18:00 Uhr"
-                  }
-                }
+                    placeholder: "So: ab 18:00 Uhr",
+                  },
+                },
               },
               {
                 field: "label",
@@ -494,16 +516,16 @@ export const TARGET_SCHEMA = [
                   width: "half",
                   required: true,
                   options: {
-                    placeholder: "Steel-Darts"
-                  }
-                }
-              }
-            ]
-          }
+                    placeholder: "Steel-Darts",
+                  },
+                },
+              },
+            ],
+          },
         },
         schema: {
-          is_nullable: true
-        }
+          is_nullable: true,
+        },
       },
       boolField("use_winter_mode", false, false),
       boolField("use_winter_stage", false, false),
@@ -536,9 +558,9 @@ export const TARGET_SCHEMA = [
           choices: [
             { text: "Bier (beer)", value: "beer" },
             { text: "Flasche (bottle)", value: "bottle" },
-            { text: "Glas (glass)", value: "glass" }
-          ]
-        }
+            { text: "Glas (glass)", value: "glass" },
+          ],
+        },
       }),
       {
         name: "drinks",
@@ -548,12 +570,12 @@ export const TARGET_SCHEMA = [
           special: ["o2m"],
           display: "related-values",
           display_options: {
-            template: "{{name}}"
-          }
+            template: "{{name}}",
+          },
         },
-        schema: null
-      }
-    ]
+        schema: null,
+      },
+    ],
   },
   {
     name: "drinks",
@@ -582,12 +604,12 @@ export const TARGET_SCHEMA = [
           required: true,
           width: "half",
           options: {
-            template: "{{name}}"
+            template: "{{name}}",
           },
           display: "related-values",
           display_options: {
-            template: "{{name}}"
-          }
+            template: "{{name}}",
+          },
         },
         schema: {},
       },
@@ -610,9 +632,9 @@ export const TARGET_SCHEMA = [
                   width: "one-third",
                   required: true,
                   options: {
-                    placeholder: "0,5"
-                  }
-                }
+                    placeholder: "0,5",
+                  },
+                },
               },
               {
                 field: "unit",
@@ -626,10 +648,10 @@ export const TARGET_SCHEMA = [
                     choices: [
                       { text: "l", value: "l" },
                       { text: "cl", value: "cl" },
-                      { text: "ml", value: "ml" }
-                    ]
-                  }
-                }
+                      { text: "ml", value: "ml" },
+                    ],
+                  },
+                },
               },
               {
                 field: "price",
@@ -640,19 +662,243 @@ export const TARGET_SCHEMA = [
                   width: "one-third",
                   required: true,
                   options: {
-                    placeholder: "3,00"
-                  }
-                }
-              }
-            ]
-          }
+                    placeholder: "3,00",
+                  },
+                },
+              },
+            ],
+          },
         },
         schema: {
-          is_nullable: false
-        }
-      }
-    ]
-  }
+          is_nullable: false,
+        },
+      },
+    ],
+  },
+  {
+    name: "food_orderings",
+    meta: {
+      icon: "restaurant_menu",
+      note: "Eventbezogene Essensvorbestellungen. Die öffentliche Bestellung wird ausschließlich über die geschützte Food-Preorder-Erweiterung angenommen.",
+      display_template: "{{title}}",
+    },
+    fields: [
+      stringField("title", true, "full", 255, {
+        note: "Interne Bezeichnung, z. B. Kerwa 2026 – Essensvorbestellung.",
+      }),
+      {
+        name: "event",
+        type: "integer",
+        meta: {
+          interface: "select-dropdown-m2o",
+          special: ["m2o"],
+          required: true,
+          width: "half",
+          options: { template: "{{title}}" },
+          display: "related-values",
+          display_options: { template: "{{title}}" },
+        },
+        schema: { is_nullable: false, is_unique: true },
+      },
+      boolField("active", false, false),
+      dateTimeField("order_deadline", true),
+      textField("collection_note", false, "full", "input-multiline", {
+        note: "Optionaler Hinweis zur Abholung oder Bezahlung vor Ort.",
+      }),
+      {
+        name: "food_dishes",
+        type: "alias",
+        meta: {
+          interface: "list-o2m",
+          special: ["o2m"],
+          display: "related-values",
+          display_options: { template: "{{name}}" },
+        },
+        schema: null,
+      },
+      {
+        name: "reservations",
+        type: "alias",
+        meta: {
+          interface: "list-o2m",
+          special: ["o2m"],
+          display: "related-values",
+          display_options: {
+            template: "{{reservation_number}} – {{customer_name}}",
+          },
+        },
+        schema: null,
+      },
+    ],
+  },
+  {
+    name: "food_dishes",
+    meta: {
+      icon: "lunch_dining",
+      note: "Gerichte mit Kontingent für eine bestimmte Event-Vorbestellung.",
+      sort_field: "sort",
+      display_template: "{{name}}",
+    },
+    fields: [
+      {
+        name: "sort",
+        type: "integer",
+        meta: { interface: "input", hidden: true },
+        schema: {},
+      },
+      {
+        name: "ordering",
+        type: "integer",
+        meta: {
+          interface: "select-dropdown-m2o",
+          special: ["m2o"],
+          required: true,
+          width: "half",
+          options: { template: "{{title}}" },
+          display: "related-values",
+          display_options: { template: "{{title}}" },
+        },
+        schema: { is_nullable: false },
+      },
+      boolField("active", false, true),
+      stringField("name", true, "full", 255),
+      textField("description", false, "full", "input-multiline"),
+      textField("allergens", false, "full", "input-multiline", {
+        note: "Allergenhinweise, die vor der Reservierung angezeigt werden.",
+      }),
+      integerField("price_cents", true, "half", {
+        note: "Preis in Cent, z. B. 850 für 8,50 €.",
+      }),
+      integerField("capacity", true, "half", {
+        note: "Maximal bestätigbare Anzahl dieses Gerichts.",
+      }),
+    ],
+  },
+  {
+    name: "food_reservations",
+    meta: {
+      icon: "receipt_long",
+      note: "Personenbezogene Reservierungen. Niemals für die öffentliche Directus-API freigeben.",
+      display_template: "{{reservation_number}} – {{customer_name}}",
+    },
+    fields: [
+      {
+        name: "ordering",
+        type: "integer",
+        meta: {
+          interface: "select-dropdown-m2o",
+          special: ["m2o"],
+          required: true,
+          width: "half",
+          options: { template: "{{title}}" },
+          display: "related-values",
+          display_options: { template: "{{title}}" },
+        },
+        schema: { is_nullable: false },
+      },
+      stringField("reservation_number", true, "half", 32, {
+        interfaceType: "input",
+        isUnique: true,
+      }),
+      stringField("status", true, "half", 32, {
+        defaultValue: "pending_confirmation",
+        interfaceType: "select-dropdown",
+        options: {
+          choices: [
+            { text: "Bestätigung ausstehend", value: "pending_confirmation" },
+            { text: "Bestätigt", value: "confirmed" },
+            { text: "Storniert", value: "cancelled" },
+          ],
+        },
+      }),
+      stringField("customer_name", true, "half", 120),
+      stringField("customer_email", true, "half", 255),
+      stringField("confirmation_token_hash", false, "full", 128, {
+        hidden: true,
+      }),
+      stringField("management_token_hash", false, "full", 128, {
+        hidden: true,
+      }),
+      dateTimeField("date_created", true),
+      dateTimeField("date_updated", true),
+      dateTimeField("confirmed_at", false),
+      dateTimeField("cancelled_at", false),
+      dateTimeField("anonymized_at", false),
+      {
+        name: "reservation_lines",
+        type: "alias",
+        meta: {
+          interface: "list-o2m",
+          special: ["o2m"],
+          display: "related-values",
+          display_options: { template: "{{quantity}} × {{dish_name}}" },
+        },
+        schema: null,
+      },
+    ],
+  },
+  {
+    name: "food_reservation_lines",
+    meta: {
+      icon: "format_list_numbered",
+      note: "Flache Bestellpositionen für den CSV-Export. Nach der Veranstaltung werden Kundendaten anonymisiert.",
+      display_template: "{{reservation_number}} – {{quantity}} × {{dish_name}}",
+    },
+    fields: [
+      {
+        name: "reservation",
+        type: "integer",
+        meta: {
+          interface: "select-dropdown-m2o",
+          special: ["m2o"],
+          required: true,
+          width: "half",
+          options: { template: "{{reservation_number}} – {{customer_name}}" },
+          display: "related-values",
+          display_options: {
+            template: "{{reservation_number}} – {{customer_name}}",
+          },
+        },
+        schema: { is_nullable: false },
+      },
+      {
+        name: "ordering",
+        type: "integer",
+        meta: {
+          interface: "select-dropdown-m2o",
+          special: ["m2o"],
+          required: true,
+          width: "half",
+          options: { template: "{{title}}" },
+          display: "related-values",
+          display_options: { template: "{{title}}" },
+        },
+        schema: { is_nullable: false },
+      },
+      {
+        name: "dish",
+        type: "integer",
+        meta: {
+          interface: "select-dropdown-m2o",
+          special: ["m2o"],
+          required: false,
+          width: "half",
+          options: { template: "{{name}}" },
+          display: "related-values",
+          display_options: { template: "{{name}}" },
+        },
+        schema: { is_nullable: true },
+      },
+      stringField("reservation_number", true, "half", 32),
+      stringField("status", true, "half", 32),
+      stringField("customer_name", true, "half", 120),
+      stringField("customer_email", true, "half", 255),
+      stringField("dish_name", true, "half", 255),
+      integerField("unit_price_cents", true, "half"),
+      integerField("quantity", true, "half"),
+      dateTimeField("date_created", true),
+    ],
+  },
 ];
 
 function fileRelation(collection, field) {
@@ -699,5 +945,113 @@ export const TARGET_RELATIONS = [
       junction_field: null,
       sort_field: null,
     },
-  }
+  },
+  {
+    collection: "food_orderings",
+    field: "event",
+    related_collection: "veranstaltungen",
+    schema: {
+      on_delete: "CASCADE",
+      on_update: "NO ACTION",
+    },
+    meta: {
+      many_collection: "food_orderings",
+      many_field: "event",
+      one_collection: "veranstaltungen",
+      one_field: null,
+      one_deselect_action: "nullify",
+      junction_field: null,
+      sort_field: null,
+    },
+  },
+  {
+    collection: "food_dishes",
+    field: "ordering",
+    related_collection: "food_orderings",
+    schema: {
+      on_delete: "CASCADE",
+      on_update: "NO ACTION",
+    },
+    meta: {
+      many_collection: "food_dishes",
+      many_field: "ordering",
+      one_collection: "food_orderings",
+      one_field: "food_dishes",
+      one_deselect_action: "delete",
+      junction_field: null,
+      sort_field: "sort",
+    },
+  },
+  {
+    collection: "food_reservations",
+    field: "ordering",
+    related_collection: "food_orderings",
+    schema: {
+      on_delete: "CASCADE",
+      on_update: "NO ACTION",
+    },
+    meta: {
+      many_collection: "food_reservations",
+      many_field: "ordering",
+      one_collection: "food_orderings",
+      one_field: "reservations",
+      one_deselect_action: "delete",
+      junction_field: null,
+      sort_field: null,
+    },
+  },
+  {
+    collection: "food_reservation_lines",
+    field: "reservation",
+    related_collection: "food_reservations",
+    schema: {
+      on_delete: "CASCADE",
+      on_update: "NO ACTION",
+    },
+    meta: {
+      many_collection: "food_reservation_lines",
+      many_field: "reservation",
+      one_collection: "food_reservations",
+      one_field: "reservation_lines",
+      one_deselect_action: "delete",
+      junction_field: null,
+      sort_field: null,
+    },
+  },
+  {
+    collection: "food_reservation_lines",
+    field: "ordering",
+    related_collection: "food_orderings",
+    schema: {
+      on_delete: "CASCADE",
+      on_update: "NO ACTION",
+    },
+    meta: {
+      many_collection: "food_reservation_lines",
+      many_field: "ordering",
+      one_collection: "food_orderings",
+      one_field: null,
+      one_deselect_action: "delete",
+      junction_field: null,
+      sort_field: null,
+    },
+  },
+  {
+    collection: "food_reservation_lines",
+    field: "dish",
+    related_collection: "food_dishes",
+    schema: {
+      on_delete: "SET NULL",
+      on_update: "NO ACTION",
+    },
+    meta: {
+      many_collection: "food_reservation_lines",
+      many_field: "dish",
+      one_collection: "food_dishes",
+      one_field: null,
+      one_deselect_action: "nullify",
+      junction_field: null,
+      sort_field: null,
+    },
+  },
 ];

@@ -33,7 +33,7 @@ const extraImageDomains = (process.env.EXTRA_IMAGE_DOMAINS || "")
 export default defineConfig({
   site: siteUrl,
   server: {
-    port: 4328,
+    port: Number(process.env.PORT || 4328),
   },
   image: {
     domains: ["cms.dart.ingomc.de", ...extraImageDomains],

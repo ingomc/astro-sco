@@ -74,7 +74,9 @@ services:
       retries: 5
 
   directus:
-    image: directus/directus:11
+    build:
+      context: .
+      dockerfile: directus/Dockerfile
     restart: unless-stopped
     depends_on:
       postgres:
@@ -91,6 +93,16 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       WEBSOCKETS_ENABLED: "true"
+      # Essensvorbestellung: E-Mail-Versand bitte mit der vorhandenen
+      # Directus-Mailkonfiguration betreiben und die öffentliche Website
+      # als Rücksprungziel für Bestätigungslinks setzen.
+      ORDER_SITE_URL: https://staging.sc-oberfuellbach.de
+      # Staging nutzt wechselnde Preview-Hosts. In Produktion ausschließlich
+      # https://www.sc-oberfuellbach.de eintragen.
+      ORDER_ALLOWED_ORIGINS: "*"
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "true"
+      TZ: Europe/Berlin
     labels:
       - "traefik.http.routers.cms-staging.rule=Host(`cms-staging.dart.ingomc.de`)"
       - "traefik.http.routers.cms-staging.entrypoints=websecure"
@@ -105,7 +117,7 @@ Direkt nach dem ersten Start das Schema provisionieren und mit Testdaten
 befüllen (per SSH auf den Directus-Container oder via lokales `pnpm`):
 
 ```sh
-# Schema identisch zu Prod anlegen
+# Schema identisch zu Prod anlegen (inklusive Essensvorbestellung)
 DIRECTUS_URL=https://cms-staging.dart.ingomc.de \
 DIRECTUS_TOKEN=<admin-token> \
 pnpm run directus:provision:sync
@@ -136,14 +148,15 @@ Dokploy-Versionen ist "Dockerfile" als Build-Quelle am einfachsten.
 
 **Build args:**
 
-| Arg                   | Wert                                  |
-| --------------------- | ------------------------------------- |
-| `DIRECTUS_URL`        | `https://cms.dart.ingomc.de`          |
-| `DIRECTUS_TOKEN`      | (Static Read Token aus Prod-Directus) |
-| `SITE_URL`            | `https://www.sc-oberfuellbach.de/`    |
-| `SITE_HOST`           | `sc-oberfuellbach.de`                 |
-| `STAGING`             | `0`                                   |
-| `EXTRA_IMAGE_DOMAINS` | (leer)                                |
+| Arg                          | Wert                                        |
+| ---------------------------- | ------------------------------------------- |
+| `DIRECTUS_URL`               | `https://cms.dart.ingomc.de`                |
+| `DIRECTUS_TOKEN`             | (Static Read Token aus Prod-Directus)       |
+| `SITE_URL`                   | `https://www.sc-oberfuellbach.de/`          |
+| `SITE_HOST`                  | `sc-oberfuellbach.de`                       |
+| `STAGING`                    | `0`                                         |
+| `EXTRA_IMAGE_DOMAINS`        | (leer)                                      |
+| `PUBLIC_FOOD_ORDERS_API_URL` | `https://cms.dart.ingomc.de/food-preorders` |
 
 Auto-Deploy: an, Webhook auf `push` zu `main`.
 
@@ -162,6 +175,7 @@ Dokploy unterstützt "Preview Deployments" pro Branch (siehe Dokploy-Docs
   - `SITE_HOST={{branch}}.staging.sc-oberfuellbach.de`
   - `STAGING=1`
   - `EXTRA_IMAGE_DOMAINS=cms-staging.dart.ingomc.de`
+  - `PUBLIC_FOOD_ORDERS_API_URL=https://cms-staging.dart.ingomc.de/food-preorders`
 
 Dokploy ersetzt `{{branch}}` in Domain-Templates automatisch. Für die
 `SITE_URL`/`SITE_HOST`-Args musst du schauen, ob deine Dokploy-Version

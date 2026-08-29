@@ -22,6 +22,8 @@
     "test:visual:headed": "playwright test tests/visual/ --config=playwright.visual.config.ts --headed",
     "test:visual:ui": "playwright test tests/visual/ --config=playwright.visual.config.ts --ui",
     "test:visual:report": "playwright show-report",
+    "test:food-preorders": "node --test tests/food-preorders-api.test.mjs",
+    "test:food-preorders:e2e": "playwright test --config=playwright.food-preorder.config.js",
     "directus:provision": "node scripts/directus/provision-schema.mjs",
     "directus:provision:sync": "node scripts/directus/provision-schema.mjs --sync",
     "directus:import:dry": "node scripts/directus/import-content.mjs --dry-run",

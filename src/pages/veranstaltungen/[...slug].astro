@@ -1,49 +1,80 @@
 ---
-import { getContentCollection, type ContentEntry } from '../../lib/content-source';
-import { renderDirectusBodyToHtml } from '../../lib/body-content';
-import EventPost from '../../layouts/EventPost.astro';
+import {
+  getContentCollection,
+  type ContentEntry,
+} from "../../lib/content-source";
+import { renderDirectusBodyToHtml } from "../../lib/body-content";
+import EventPost from "../../layouts/EventPost.astro";
 
 export async function getStaticPaths() {
-	const allVeranstaltungen = (await getContentCollection('veranstaltungen')).filter(
-		(ev) => ev.data.pubDate <= new Date() && !ev.data.hidden
-	);
-	const allBerichte = await getContentCollection('berichte');
+  const allVeranstaltungen = (
+    await getContentCollection("veranstaltungen")
+  ).filter((ev) => ev.data.pubDate <= new Date() && !ev.data.hidden);
+  if (process.env.FOOD_PREORDER_TEST_PAGE === "1") {
+    allVeranstaltungen.push({
+      slug: "test-essensvorbestellung",
+      collection: "veranstaltungen",
+      source: "astro",
+      data: {
+        title: "Test: Essensvorbestellung",
+        description: "Automatisches Testevent.",
+        pubDate: new Date("2026-01-01T00:00:00.000Z"),
+        eventDate: new Date("2026-09-01T12:00:00.000Z"),
+        featured: false,
+        hidden: false,
+        tags: [],
+      },
+    } as ContentEntry<"veranstaltungen">);
+  }
+  const allBerichte = await getContentCollection("berichte");
 
-	return allVeranstaltungen.map((event) => {
-		const tags = event.data.tags ?? [];
-		const related = tags.length > 0
-			? [
-				...allVeranstaltungen.filter(
-					(ev) => ev.slug !== event.slug && (ev.data.tags ?? []).some((t) => tags.includes(t))
-				),
-				...allBerichte.filter(
-					(b) => (b.data.tags ?? []).some((t) => tags.includes(t))
-				),
-			].sort((a, b) => b.data.eventDate.getTime() - a.data.eventDate.getTime())
-			: [];
-		return {
-			params: { slug: event.slug },
-			props: { event, relatedItems: related },
-		};
-	});
+  return allVeranstaltungen.map((event) => {
+    const tags = event.data.tags ?? [];
+    const related =
+      tags.length > 0
+        ? [
+            ...allVeranstaltungen.filter(
+              (ev) =>
+                ev.slug !== event.slug &&
+                (ev.data.tags ?? []).some((t) => tags.includes(t)),
+            ),
+            ...allBerichte.filter((b) =>
+              (b.data.tags ?? []).some((t) => tags.includes(t)),
+            ),
+          ].sort(
+            (a, b) => b.data.eventDate.getTime() - a.data.eventDate.getTime(),
+          )
+        : [];
+    return {
+      params: { slug: event.slug },
+      props: { event, relatedItems: related },
+    };
+  });
 }
 
 type Props = {
-	event: ContentEntry<'veranstaltungen'>;
-	relatedItems: (ContentEntry<'veranstaltungen'> | ContentEntry<'berichte'>)[];
+  event: ContentEntry<"veranstaltungen">;
+  relatedItems: (ContentEntry<"veranstaltungen"> | ContentEntry<"berichte">)[];
 };
 
 const { event, relatedItems } = Astro.props;
 const renderedBodyHtml = await renderDirectusBodyToHtml(event);
-
+const foodPreorderApiUrl =
+  import.meta.env.PUBLIC_FOOD_ORDERS_API_URL ||
+  process.env.PUBLIC_FOOD_ORDERS_API_URL;
 ---
 
-<EventPost {...event.data} relatedItems={relatedItems}>
-	{
-		renderedBodyHtml ? (
-			<Fragment set:html={renderedBodyHtml} />
-		) : (
-			<p>{event.data.description}</p>
-		)
-	}
+<EventPost
+  {...event.data}
+  relatedItems={relatedItems}
+  eventSlug={event.slug}
+  foodPreorderApiUrl={foodPreorderApiUrl}
+>
+  {
+    renderedBodyHtml ? (
+      <Fragment set:html={renderedBodyHtml} />
+    ) : (
+      <p>{event.data.description}</p>
+    )
+  }
 </EventPost>
