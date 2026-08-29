@@ -4,7 +4,9 @@ import { renderDirectusBodyToHtml } from '../../lib/body-content';
 import EventPost from '../../layouts/EventPost.astro';
 
 export async function getStaticPaths() {
-	const allVeranstaltungen = (await getContentCollection('veranstaltungen')).filter((ev) => ev.data.pubDate <= new Date());
+	const allVeranstaltungen = (await getContentCollection('veranstaltungen')).filter(
+		(ev) => ev.data.pubDate <= new Date() && !ev.data.hidden
+	);
 	const allBerichte = await getContentCollection('berichte');
 
 	return allVeranstaltungen.map((event) => {
