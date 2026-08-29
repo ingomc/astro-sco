@@ -40,10 +40,10 @@ docker compose -f docker-compose.local.yml up --build
 
 Im DNS-Provider deiner `sc-oberfuellbach.de`-Domain:
 
-| Record | Wert | Zweck |
-| --- | --- | --- |
-| `A staging` | VPS-IP | Wildcard über Dokploy-Traefik |
-| `CNAME *.staging` | `staging.sc-oberfuellbach.de` | Subdomains pro Branch |
+| Record            | Wert                          | Zweck                         |
+| ----------------- | ----------------------------- | ----------------------------- |
+| `A staging`       | VPS-IP                        | Wildcard über Dokploy-Traefik |
+| `CNAME *.staging` | `staging.sc-oberfuellbach.de` | Subdomains pro Branch         |
 
 Traefik in Dokploy terminiert TLS automatisch (Let's Encrypt). Du brauchst
 für die Wildcard-Subdomain entweder einen DNS-01-Challenge oder ein
@@ -125,25 +125,25 @@ Dokploy-Versionen ist "Dockerfile" als Build-Quelle am einfachsten.
 
 ### 4.1 Production Build (`main` Branch)
 
-| Feld | Wert |
-| --- | --- |
-| Source | GitHub: `ingomc/astro-sco` |
-| Branch | `main` |
-| Build method | Dockerfile |
-| Dockerfile path | `Dockerfile` |
-| Domain | `www.sc-oberfuellbach.de` |
-| HTTPS | Let's Encrypt |
+| Feld            | Wert                       |
+| --------------- | -------------------------- |
+| Source          | GitHub: `ingomc/astro-sco` |
+| Branch          | `main`                     |
+| Build method    | Dockerfile                 |
+| Dockerfile path | `Dockerfile`               |
+| Domain          | `www.sc-oberfuellbach.de`  |
+| HTTPS           | Let's Encrypt              |
 
 **Build args:**
 
-| Arg | Wert |
-| --- | --- |
-| `DIRECTUS_URL` | `https://cms.dart.ingomc.de` |
-| `DIRECTUS_TOKEN` | (Static Read Token aus Prod-Directus) |
-| `SITE_URL` | `https://www.sc-oberfuellbach.de/` |
-| `SITE_HOST` | `sc-oberfuellbach.de` |
-| `STAGING` | `0` |
-| `EXTRA_IMAGE_DOMAINS` | (leer) |
+| Arg                   | Wert                                  |
+| --------------------- | ------------------------------------- |
+| `DIRECTUS_URL`        | `https://cms.dart.ingomc.de`          |
+| `DIRECTUS_TOKEN`      | (Static Read Token aus Prod-Directus) |
+| `SITE_URL`            | `https://www.sc-oberfuellbach.de/`    |
+| `SITE_HOST`           | `sc-oberfuellbach.de`                 |
+| `STAGING`             | `0`                                   |
+| `EXTRA_IMAGE_DOMAINS` | (leer)                                |
 
 Auto-Deploy: an, Webhook auf `push` zu `main`.
 
@@ -200,9 +200,6 @@ Login mit den `ADMIN_EMAIL`/`ADMIN_PASSWORD` aus dem Staging-Stack.
   `SITE_URL` zur Build-Zeit pro Preview injizieren (Dokploy-Preview-Args
   in neueren Versionen können das; sonst Workaround via eigenem
   Traefik-Middleware + Runtime-Header).
-- **`/admin/`** (Decap CMS) ist im Build enthalten. Decap schreibt in den
-  Branch `main` und ist nur für Prod gedacht. In Previews nicht benutzen
-  (oder `public/admin/` per `STAGING=1` ausschließen, falls gewünscht).
 - **Analytics & Speed-Insights** sind in `STAGING=1` deaktiviert. Eine
   kleine gelbe Banner-Leiste markiert die Staging-Umgebung.
 - **Build-Zeit-Abhängigkeit zu Directus**: Jeder Preview-Build macht

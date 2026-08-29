@@ -1,0 +1,972 @@
+---
+import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
+---
+
+<div id="dart-team-overview" class="min-h-[60vh] bg-slate-50">
+  <section class="relative overflow-hidden bg-slate-900 text-white">
+    <div
+      class="absolute -right-16 -top-20 h-72 w-72 rounded-full border-[36px] border-red-700/30"
+      aria-hidden="true"
+    >
+    </div>
+    <div
+      class="absolute -right-2 top-12 h-32 w-32 rounded-full border-[18px] border-white/10"
+      aria-hidden="true"
+    >
+    </div>
+    <div class="container relative mx-auto px-4 py-12 md:py-16">
+      <div class="max-w-3xl">
+        <div
+          class="mb-4 inline-flex items-center gap-2 rounded-full border border-red-400/40 bg-red-950/60 px-3 py-1 text-sm font-semibold text-red-100"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 256 256"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M244.49 55.51l-32-32a12 12 0 0 0-17 0L165 54v35l-37 37a12 12 0 1 0 17 17l37-37h35l30.49-30.49a12 12 0 0 0 0-17ZM207 82h-17V65l14-14l15 15ZM128 28a100 100 0 1 0 100 100a12 12 0 0 0-24 0a76 76 0 1 1-76-76a12 12 0 0 0 0-24Zm0 48a52 52 0 1 0 52 52a12 12 0 0 0-24 0a28 28 0 1 1-28-28a12 12 0 0 0 0-24Z"
+            ></path>
+          </svg>
+          Steel-Darts
+        </div>
+        <h1
+          class="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
+          data-dart-field="team-name"
+        >
+          SCO-Darts Team Fülltreffer
+        </h1>
+        <p class="mt-4 max-w-2xl text-base text-slate-300 sm:text-lg">
+          Mannschaft, Spielplan und Ergebnisse unserer Darter in der Freien
+          Dartliga Oberfranken.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-2 text-sm">
+          <span
+            class="rounded-full bg-white/10 px-3 py-1.5 font-semibold"
+            data-dart-field="league-name"
+          >
+            Liga B2
+          </span>
+          <span
+            class="rounded-full bg-white/10 px-3 py-1.5 font-semibold"
+            data-dart-field="season-name"
+          >
+            Saison 2026/27
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container mx-auto px-4 py-8 md:py-12">
+    <div
+      class="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-600 shadow-sm"
+      data-dart-state="loading"
+      role="status"
+    >
+      <svg
+        class="mx-auto mb-3 h-6 w-6 animate-spin"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      Aktuelle Mannschaftsdaten werden geladen …
+    </div>
+
+    <div
+      class="hidden rounded-xl border border-red-200 bg-red-50 p-6 text-red-950"
+      data-dart-state="error"
+      role="alert"
+    >
+      <h2 class="text-lg font-bold">Dart-Daten konnten nicht geladen werden</h2>
+      <p class="mt-2 text-sm text-red-900">
+        Bitte versuche es erneut oder rufe den aktuellen Spielplan direkt bei 2K
+        Darts auf.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <button
+          type="button"
+          class="rounded-full bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+          data-dart-retry
+        >
+          Erneut versuchen
+        </button>
+        <a
+          href={DART_SOURCE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="rounded-full border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-800 hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+        >
+          Spielplan bei 2K Darts
+        </a>
+      </div>
+    </div>
+
+    <div class="hidden" data-dart-state="content">
+      <div class="dart-dashboard">
+        <section class="dart-next-area" aria-label="Mannschaftsüberblick">
+          <article
+            class="overflow-hidden rounded-xl border-2 border-red-300 bg-red-50/50 shadow-md"
+            data-testid="next-dart-match"
+          >
+            <div
+              class="flex flex-wrap items-center justify-between gap-2 bg-red-800 px-5 py-4 text-white"
+            >
+              <h2 class="text-lg font-bold">Nächstes Ligaspiel</h2>
+              <span
+                class="rounded-full px-3 py-1 text-xs font-bold"
+                data-dart-next="badge"></span>
+            </div>
+            <div class="p-5 sm:p-6" data-dart-next="content">
+              <div
+                class="flex flex-wrap items-center gap-2 text-sm text-slate-600"
+              >
+                <span
+                  class="rounded-full bg-white px-3 py-1 font-semibold text-slate-800 shadow-sm"
+                  data-dart-next="round"></span>
+                <time data-dart-next="date"></time>
+                <span aria-hidden="true">·</span>
+                <span data-dart-next="time"></span>
+              </div>
+              <div
+                class="mt-5 grid items-center gap-2 text-center sm:grid-cols-[1fr_auto_1fr] sm:text-left"
+              >
+                <span
+                  class="text-lg font-bold text-slate-900"
+                  data-dart-next="home"></span>
+                <span class="text-sm font-semibold uppercase text-slate-600"
+                  >gegen</span
+                >
+                <span
+                  class="text-lg font-bold text-slate-900 sm:text-right"
+                  data-dart-next="guest"></span>
+              </div>
+            </div>
+            <p class="hidden p-6 text-sm text-slate-600" data-dart-next="empty">
+              Aktuell ist kein weiteres Ligaspiel angesetzt.
+            </p>
+          </article>
+        </section>
+
+        <div
+          class="dart-tabs grid grid-cols-2 gap-1 rounded-full bg-slate-200 p-1 lg:hidden"
+          role="tablist"
+          aria-label="Darts-Saisonansicht"
+        >
+          <button
+            id="darts-tab-schedule"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            aria-controls="darts-schedule-panel"
+            tabindex="0"
+            class="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-white px-2 py-2 text-xs font-bold text-slate-900 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 sm:gap-2 sm:px-3 sm:text-sm"
+            data-dart-tab="schedule"
+          >
+            <svg
+              class="h-4 w-4 shrink-0"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 256 256"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M208 28h-20v-4a12 12 0 0 0-24 0v4H92v-4a12 12 0 0 0-24 0v4H48a20 20 0 0 0-20 20v160a20 20 0 0 0 20 20h160a20 20 0 0 0 20-20V48a20 20 0 0 0-20-20ZM68 52a12 12 0 0 0 24 0h72a12 12 0 0 0 24 0h16v24H52V52ZM52 204V100h152v104Z"
+              ></path>
+            </svg>
+            <span class="whitespace-nowrap">Kommende Spiele</span>
+          </button>
+          <button
+            id="darts-tab-standings"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="darts-standings-panel"
+            tabindex="-1"
+            class="inline-flex w-full items-center justify-center gap-1.5 rounded-full px-2 py-2 text-xs font-bold text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 sm:gap-2 sm:px-3 sm:text-sm"
+            data-dart-tab="standings"
+          >
+            <svg
+              class="h-4 w-4 shrink-0"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 256 256"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M224 212h-8V72a12 12 0 0 0-12-12h-32a12 12 0 0 0-12 12v140h-16V112a12 12 0 0 0-12-12h-32a12 12 0 0 0-12 12v100H72v-60a12 12 0 0 0-12-12H28a12 12 0 0 0-12 12v60h-4a12 12 0 0 0 0 24h212a12 12 0 0 0 0-24ZM40 164h8v48h-8Zm72-40h8v88h-8Zm72-40h8v128h-8Z"
+              ></path>
+            </svg>
+            <span class="whitespace-nowrap">Rangliste</span>
+          </button>
+        </div>
+
+        <section
+          id="darts-schedule-panel"
+          class="dart-schedule-area min-w-0 lg:block"
+          role="tabpanel"
+          aria-labelledby="darts-tab-schedule"
+          tabindex="0"
+        >
+          <div class="mb-3 flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <p class="text-sm font-semibold text-red-700">Saison 2026/27</p>
+              <h2 class="text-2xl font-bold text-slate-900">Kommende Spiele</h2>
+            </div>
+            <span class="text-sm text-slate-500" data-dart-count="upcoming"
+            ></span>
+          </div>
+          <ol class="space-y-2" data-dart-list="upcoming"></ol>
+          <p
+            class="hidden rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-600"
+            data-dart-empty="upcoming"
+          >
+            Aktuell sind keine offenen Ligaspiele vorhanden.
+          </p>
+        </section>
+
+        <section
+          id="darts-standings-panel"
+          class="dart-standings-area hidden min-w-0 lg:block"
+          role="tabpanel"
+          aria-labelledby="darts-tab-standings"
+          tabindex="0"
+        >
+          <div class="mb-4 flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <p class="text-sm font-semibold text-red-700">Liga B2</p>
+              <h2 class="text-2xl font-bold text-slate-900">Rangliste</h2>
+            </div>
+          </div>
+
+          <div
+            class="rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-600 shadow-sm"
+            data-dart-standings-state="loading"
+            role="status"
+          >
+            Rangliste wird geladen …
+          </div>
+          <div
+            class="hidden overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm"
+            data-dart-standings-state="content"
+          >
+            <table class="w-full table-fixed border-collapse text-sm">
+              <caption class="sr-only">Rangliste der Liga B2</caption>
+              <thead class="bg-slate-900 text-xs text-white">
+                <tr>
+                  <th scope="col" class="w-10 px-2 py-3 text-center">Pl.</th>
+                  <th scope="col" class="px-2 py-3 text-left">Mannschaft</th>
+                  <th scope="col" class="w-10 px-1 py-3 text-center">
+                    <abbr title="Spiele" class="no-underline">Sp.</abbr>
+                  </th>
+                  <th scope="col" class="w-16 px-1 py-3 text-center">Sätze</th>
+                  <th scope="col" class="w-10 px-1 py-3 text-center">
+                    <abbr title="Punkte" class="no-underline">Pkt.</abbr>
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                class="divide-y divide-slate-200"
+                data-dart-list="standings"
+              >
+              </tbody>
+            </table>
+          </div>
+          <p
+            class="hidden rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-600"
+            data-dart-standings-state="empty"
+          >
+            Die Rangliste wird nach den ersten Ergebnissen angezeigt.
+          </p>
+          <div
+            class="hidden rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-950"
+            data-dart-standings-state="error"
+            role="alert"
+          >
+            <p class="font-semibold">
+              Die Rangliste ist gerade nicht verfügbar.
+            </p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                class="rounded-full bg-amber-800 px-4 py-2 font-semibold text-white hover:bg-amber-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-800 focus-visible:ring-offset-2"
+                data-dart-standings-retry
+              >
+                Erneut versuchen
+              </button>
+              <a
+                href={DART_TABLE_SOURCE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="rounded-full border border-amber-300 bg-white px-4 py-2 font-semibold text-amber-900 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-800 focus-visible:ring-offset-2"
+              >
+                Tabelle bei 2K Darts
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="dart-results-area"
+          aria-labelledby="darts-results-heading"
+        >
+          <div class="mb-4 flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <p class="text-sm font-semibold text-slate-500">
+                Gespielte Partien
+              </p>
+              <h2
+                id="darts-results-heading"
+                class="text-2xl font-bold text-slate-800"
+              >
+                Ergebnisse
+              </h2>
+            </div>
+            <span class="text-sm text-slate-500" data-dart-count="results"
+            ></span>
+          </div>
+          <ol class="space-y-2" data-dart-list="results"></ol>
+          <p
+            class="hidden rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-600"
+            data-dart-empty="results"
+          >
+            Zum Saisonstart liegen noch keine Ergebnisse vor.
+          </p>
+        </section>
+
+        <section class="dart-squad-area" aria-labelledby="darts-squad-heading">
+          <div class="mb-4 flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <p class="text-sm font-semibold text-red-700">Unser Team</p>
+              <h2
+                id="darts-squad-heading"
+                class="text-2xl font-bold text-slate-900"
+              >
+                Gemeldeter Kader
+              </h2>
+            </div>
+            <span class="text-sm text-slate-500" data-dart-count="members"
+            ></span>
+          </div>
+          <ul
+            class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
+            data-dart-list="members"
+          >
+          </ul>
+          <p
+            class="hidden rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-600"
+            data-dart-empty="members"
+          >
+            Der Mannschaftskader ist derzeit noch nicht veröffentlicht.
+          </p>
+        </section>
+
+        <article
+          class="dart-venue-area rounded-xl border border-slate-300 bg-white p-5 shadow-sm"
+          aria-labelledby="darts-venue-heading"
+        >
+          <div class="flex items-center gap-3">
+            <span
+              class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-800"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 256 256"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M128 12a84.09 84.09 0 0 0-84 84c0 72 73.18 140 76.3 142.86a12 12 0 0 0 15.4 0C138.82 236 212 168 212 96a84.09 84.09 0 0 0-84-84Zm0 201.4C110.7 195.51 68 146.76 68 96a60 60 0 0 1 120 0c0 50.76-42.7 99.51-60 117.4ZM164 96a36 36 0 1 1-36-36a36 36 0 0 1 36 36Zm-24 0a12 12 0 1 0-12 12a12 12 0 0 0 12-12Z"
+                ></path>
+              </svg>
+            </span>
+            <div>
+              <p
+                class="text-xs font-semibold uppercase tracking-wide text-slate-500"
+              >
+                Heimspielstätte
+              </p>
+              <h2
+                id="darts-venue-heading"
+                class="font-bold text-slate-900"
+                data-dart-venue="name"
+              >
+                Sportheim Oberfüllbach
+              </h2>
+            </div>
+          </div>
+          <address class="mt-4 not-italic text-sm leading-6 text-slate-600">
+            <span data-dart-venue="street"></span><br />
+            <span data-dart-venue="city"></span>
+          </address>
+          <p
+            class="mt-3 inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700"
+            data-dart-venue="boards"
+          >
+          </p>
+        </article>
+
+        <div
+          class="dart-source-area border-t border-slate-200 pt-6 text-center"
+        >
+          <a
+            href={DART_SOURCE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+          >
+            Offizielle Daten bei 2K Darts
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 256 256"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M228 104a12 12 0 0 1-24 0V69l-83.51 83.51a12 12 0 0 1-17-17L187 52h-35a12 12 0 0 1 0-24h64a12 12 0 0 1 12 12ZM172 124a12 12 0 0 0-12 12v68H52V96h68a12 12 0 0 0 0-24H48a20 20 0 0 0-20 20v116a20 20 0 0 0 20 20h116a20 20 0 0 0 20-20v-72a12 12 0 0 0-12-12Z"
+              ></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .dart-dashboard {
+    display: grid;
+    grid-template-areas:
+      "next"
+      "tabs"
+      "schedule"
+      "standings"
+      "results"
+      "squad"
+      "venue"
+      "source";
+    gap: 2.5rem;
+  }
+
+  .dart-next-area {
+    grid-area: next;
+  }
+  .dart-tabs {
+    grid-area: tabs;
+  }
+  .dart-schedule-area {
+    grid-area: schedule;
+  }
+  .dart-standings-area {
+    grid-area: standings;
+  }
+  .dart-results-area {
+    grid-area: results;
+  }
+  .dart-squad-area {
+    grid-area: squad;
+  }
+  .dart-venue-area {
+    grid-area: venue;
+  }
+  .dart-source-area {
+    grid-area: source;
+  }
+
+  @media (min-width: 1024px) {
+    .dart-dashboard {
+      grid-template-columns: minmax(0, 3fr) minmax(18rem, 2fr);
+      grid-template-areas:
+        "next venue"
+        "schedule standings"
+        "results results"
+        "squad squad"
+        "source source";
+      align-items: start;
+    }
+  }
+</style>
+
+<template id="dart-match-row-template">
+  <li
+    class="grid gap-2 rounded-xl border border-slate-300 bg-white p-3 shadow-sm sm:grid-cols-[6rem_minmax(0,1fr)_auto] sm:items-center"
+    data-testid="dart-match-row"
+  >
+    <div>
+      <span
+        class="block text-xs font-bold text-slate-900"
+        data-dart-match="round"></span>
+    </div>
+    <div>
+      <div class="flex flex-wrap items-center gap-1.5 text-xs text-slate-600">
+        <time class="font-semibold" data-dart-match="date"></time>
+        <span aria-hidden="true">·</span>
+        <span data-dart-match="time"></span>
+        <span
+          class="rounded-full px-2.5 py-0.5 text-xs font-bold"
+          data-dart-match="badge"></span>
+      </div>
+      <div
+        class="mt-1 flex min-w-0 flex-wrap items-center gap-1.5 text-sm leading-tight"
+      >
+        <span class="font-semibold text-slate-900" data-dart-match="home"
+        ></span>
+        <span class="text-slate-600" aria-hidden="true">gegen</span>
+        <span class="font-semibold text-slate-900" data-dart-match="guest"
+        ></span>
+      </div>
+    </div>
+    <strong
+      class="hidden min-w-16 rounded-lg bg-slate-900 px-3 py-2 text-center text-lg text-white"
+      data-dart-match="score"></strong>
+  </li>
+</template>
+
+<template id="dart-standing-row-template">
+  <tr data-testid="dart-standing-row">
+    <td
+      class="px-2 py-3 text-center font-bold text-slate-700"
+      data-dart-standing="position"></td>
+    <th
+      scope="row"
+      class="break-words px-2 py-3 text-left text-xs font-semibold leading-4 text-slate-900 sm:text-sm"
+      data-dart-standing="team"></th>
+    <td class="px-1 py-3 text-center text-slate-700" data-dart-standing="played"
+    ></td>
+    <td
+      class="px-1 py-3 text-center text-xs text-slate-700 sm:text-sm"
+      data-dart-standing="sets"></td>
+    <td
+      class="px-1 py-3 text-center font-bold text-slate-900"
+      data-dart-standing="points"></td>
+  </tr>
+</template>
+
+<template id="dart-member-template">
+  <li
+    class="flex items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white px-4 py-3 shadow-sm"
+    data-testid="dart-team-member"
+  >
+    <span class="font-semibold text-slate-900" data-dart-member="name"></span>
+    <span
+      class="hidden shrink-0 rounded-full bg-red-100 px-2.5 py-1 text-xs font-bold text-red-800"
+      data-dart-member="captain"></span>
+  </li>
+</template>
+
+<script>
+  import {
+    DART_TEAM_ID,
+    formatDartDate,
+    formatDartTime,
+    getDartStandings,
+    getDartTeamData,
+    type DartMatch,
+    type DartStanding,
+    type DartTeamData,
+  } from "../lib/darts";
+
+  const overview = document.querySelector<HTMLElement>("#dart-team-overview");
+
+  function setText(selector: string, text: string) {
+    const element = document.querySelector<HTMLElement>(selector);
+    if (element) element.textContent = text;
+  }
+
+  function setOverviewState(state: "loading" | "error" | "content") {
+    overview?.setAttribute("aria-busy", state === "loading" ? "true" : "false");
+    document
+      .querySelectorAll<HTMLElement>("[data-dart-state]")
+      .forEach((item) => {
+        item.classList.toggle("hidden", item.dataset.dartState !== state);
+      });
+  }
+
+  function setStandingsState(state: "loading" | "error" | "empty" | "content") {
+    document
+      .querySelectorAll<HTMLElement>("[data-dart-standings-state]")
+      .forEach((item) => {
+        item.classList.toggle(
+          "hidden",
+          item.dataset.dartStandingsState !== state,
+        );
+      });
+  }
+
+  function setBadge(element: HTMLElement | null, isHome: boolean) {
+    if (!element) return;
+    element.textContent = isHome ? "Heimspiel" : "Auswärts";
+    element.className = `rounded-full px-3 py-1 text-xs font-bold ${
+      isHome ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"
+    }`;
+  }
+
+  function renderNextMatch(data: DartTeamData) {
+    const match = data.nextMatch;
+    const content = document.querySelector<HTMLElement>(
+      '[data-dart-next="content"]',
+    );
+    const empty = document.querySelector<HTMLElement>(
+      '[data-dart-next="empty"]',
+    );
+
+    content?.classList.toggle("hidden", !match);
+    empty?.classList.toggle("hidden", Boolean(match));
+    if (!match) return;
+
+    setText('[data-dart-next="round"]', match.roundName);
+    setText(
+      '[data-dart-next="date"]',
+      formatDartDate(match.datePlanned, "long"),
+    );
+    setText(
+      '[data-dart-next="time"]',
+      `${formatDartTime(match.datePlanned)} Uhr`,
+    );
+    setText('[data-dart-next="home"]', match.homeTeam);
+    setText('[data-dart-next="guest"]', match.guestTeam);
+    const time = document.querySelector<HTMLTimeElement>(
+      '[data-dart-next="date"]',
+    );
+    if (time) time.dateTime = match.datePlanned;
+    setBadge(
+      document.querySelector<HTMLElement>('[data-dart-next="badge"]'),
+      match.isHome,
+    );
+  }
+
+  function renderMatches(
+    listName: "upcoming" | "results",
+    matches: DartMatch[],
+    nextMatchId?: number,
+  ) {
+    const list = document.querySelector<HTMLOListElement>(
+      `[data-dart-list="${listName}"]`,
+    );
+    const empty = document.querySelector<HTMLElement>(
+      `[data-dart-empty="${listName}"]`,
+    );
+    const template = document.querySelector<HTMLTemplateElement>(
+      "#dart-match-row-template",
+    );
+    if (!list || !template) return;
+
+    const fragment = document.createDocumentFragment();
+
+    matches.forEach((match) => {
+      const row = template.content.firstElementChild?.cloneNode(
+        true,
+      ) as HTMLElement | null;
+      if (!row) return;
+
+      const setRowText = (field: string, text: string) => {
+        const element = row.querySelector<HTMLElement>(
+          `[data-dart-match="${field}"]`,
+        );
+        if (element) element.textContent = text;
+      };
+
+      setRowText("round", match.roundName);
+      setRowText(
+        "date",
+        formatDartDate(
+          match.datePlanned,
+          listName === "upcoming" ? "short" : "long",
+        ),
+      );
+      setRowText("time", `${formatDartTime(match.datePlanned)} Uhr`);
+      setRowText("home", match.homeTeam);
+      setRowText("guest", match.guestTeam);
+
+      if (listName === "results") {
+        row.dataset.matchState = "finished";
+        row.className =
+          "grid gap-2 rounded-lg border border-slate-200 bg-slate-100 px-3 py-3 text-sm sm:grid-cols-[6.5rem_minmax(0,1fr)_auto] sm:items-center";
+      } else if (match.id === nextMatchId) {
+        row.dataset.highlighted = "true";
+        row.classList.remove("border-slate-300", "bg-white", "shadow-sm");
+        row.classList.add("border-red-300", "bg-red-50", "shadow-md");
+      }
+
+      const time = row.querySelector<HTMLTimeElement>(
+        '[data-dart-match="date"]',
+      );
+      if (time) time.dateTime = match.datePlanned;
+      const ownTeam = row.querySelector<HTMLElement>(
+        match.isHome ? '[data-dart-match="home"]' : '[data-dart-match="guest"]',
+      );
+      const badge = row.querySelector<HTMLElement>('[data-dart-match="badge"]');
+      if (listName === "results") {
+        if (badge) {
+          badge.textContent = match.isHome ? "Heimspiel" : "Auswärts";
+          badge.className =
+            "rounded-full bg-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-600";
+        }
+      } else {
+        ownTeam?.classList.add("text-red-700");
+        setBadge(badge, match.isHome);
+      }
+
+      if (
+        listName === "results" &&
+        match.scoreHome !== null &&
+        match.scoreGuest !== null
+      ) {
+        const score = row.querySelector<HTMLElement>(
+          '[data-dart-match="score"]',
+        );
+        if (score) {
+          score.textContent = `${match.scoreHome}:${match.scoreGuest}`;
+          score.className =
+            "min-w-14 rounded-md bg-slate-300 px-2.5 py-1.5 text-center text-base text-slate-800";
+        }
+      }
+
+      fragment.append(row);
+    });
+
+    list.replaceChildren(fragment);
+    list.classList.toggle("hidden", matches.length === 0);
+    empty?.classList.toggle("hidden", matches.length > 0);
+    setText(
+      `[data-dart-count="${listName}"]`,
+      `${matches.length} ${matches.length === 1 ? "Spiel" : "Spiele"}`,
+    );
+  }
+
+  function renderStandings(standings: DartStanding[]) {
+    const list = document.querySelector<HTMLTableSectionElement>(
+      '[data-dart-list="standings"]',
+    );
+    const template = document.querySelector<HTMLTemplateElement>(
+      "#dart-standing-row-template",
+    );
+    if (!list || !template) return;
+
+    const fragment = document.createDocumentFragment();
+
+    standings.forEach((standing) => {
+      const row = template.content.firstElementChild?.cloneNode(
+        true,
+      ) as HTMLElement | null;
+      if (!row) return;
+
+      const setStandingText = (field: string, text: string) => {
+        const element = row.querySelector<HTMLElement>(
+          `[data-dart-standing="${field}"]`,
+        );
+        if (element) element.textContent = text;
+      };
+
+      setStandingText("position", standing.position);
+      setStandingText("team", standing.teamName);
+      setStandingText("played", String(standing.played));
+      setStandingText("sets", `${standing.setsFor}:${standing.setsAgainst}`);
+      setStandingText("points", String(standing.points));
+
+      if (standing.teamId === DART_TEAM_ID) {
+        row.dataset.ownTeam = "true";
+        row.classList.add("bg-red-50");
+        const team = row.querySelector<HTMLElement>(
+          '[data-dart-standing="team"]',
+        );
+        team?.classList.add("text-red-800");
+        const marker = document.createElement("span");
+        marker.className = "sr-only";
+        marker.textContent = " (Unser Team)";
+        team?.append(marker);
+      }
+
+      fragment.append(row);
+    });
+
+    list.replaceChildren(fragment);
+  }
+
+  function renderMembers(data: DartTeamData) {
+    const list = document.querySelector<HTMLUListElement>(
+      '[data-dart-list="members"]',
+    );
+    const empty = document.querySelector<HTMLElement>(
+      '[data-dart-empty="members"]',
+    );
+    const template = document.querySelector<HTMLTemplateElement>(
+      "#dart-member-template",
+    );
+    if (!list || !template) return;
+
+    const fragment = document.createDocumentFragment();
+
+    data.members.forEach((member) => {
+      const row = template.content.firstElementChild?.cloneNode(
+        true,
+      ) as HTMLElement | null;
+      if (!row) return;
+      const name = row.querySelector<HTMLElement>('[data-dart-member="name"]');
+      const captain = row.querySelector<HTMLElement>(
+        '[data-dart-member="captain"]',
+      );
+      if (name) {
+        name.textContent = member.name;
+        if (member.teamCaptain) {
+          const crown = document.createElement("span");
+          crown.className = "ml-1";
+          crown.setAttribute("aria-hidden", "true");
+          crown.textContent = "👑";
+          name.append(crown);
+        }
+      }
+      if (captain && member.teamCaptain) {
+        captain.textContent = `TC ${member.teamCaptain}`;
+        captain.classList.remove("hidden");
+        captain.title = `Teamcaptain ${member.teamCaptain}`;
+      }
+      fragment.append(row);
+    });
+
+    list.replaceChildren(fragment);
+    list.classList.toggle("hidden", data.members.length === 0);
+    empty?.classList.toggle("hidden", data.members.length > 0);
+    setText(
+      '[data-dart-count="members"]',
+      `${data.members.length} ${data.members.length === 1 ? "Person" : "Personen"}`,
+    );
+  }
+
+  function renderTeam(data: DartTeamData) {
+    setText('[data-dart-field="team-name"]', data.teamName);
+    setText('[data-dart-field="league-name"]', data.leagueName);
+    setText('[data-dart-field="season-name"]', `Saison ${data.seasonName}`);
+
+    if (data.venue) {
+      setText('[data-dart-venue="name"]', data.venue.name);
+      setText('[data-dart-venue="street"]', data.venue.street);
+      setText(
+        '[data-dart-venue="city"]',
+        [data.venue.postalCode, data.venue.city].filter(Boolean).join(" "),
+      );
+      setText(
+        '[data-dart-venue="boards"]',
+        data.venue.boards
+          ? `${data.venue.boards} ${data.venue.boards === 1 ? "Board" : "Boards"}`
+          : "Steel-Darts",
+      );
+    } else {
+      setText('[data-dart-venue="name"]', "Noch nicht hinterlegt");
+      setText('[data-dart-venue="street"]', "");
+      setText('[data-dart-venue="city"]', "");
+      setText('[data-dart-venue="boards"]', "Steel-Darts");
+    }
+
+    renderNextMatch(data);
+    renderMatches("upcoming", data.upcomingMatches, data.nextMatch?.id);
+    renderMatches("results", data.results);
+    renderMembers(data);
+  }
+
+  async function loadStandings(force = false) {
+    setStandingsState("loading");
+
+    try {
+      const standings = await getDartStandings({ force });
+      renderStandings(standings);
+      setStandingsState(standings.length > 0 ? "content" : "empty");
+    } catch (error) {
+      console.error("Fehler beim Laden der Dart-Rangliste:", error);
+      setStandingsState("error");
+    }
+  }
+
+  async function loadOverview(force = false) {
+    setOverviewState("loading");
+
+    try {
+      const data = await getDartTeamData({ force });
+      renderTeam(data);
+      setOverviewState("content");
+    } catch (error) {
+      console.error("Fehler beim Laden der Dart-Mannschaftsseite:", error);
+      setOverviewState("error");
+    }
+  }
+
+  document
+    .querySelector<HTMLButtonElement>("[data-dart-retry]")
+    ?.addEventListener("click", () => loadOverview(true));
+
+  document
+    .querySelector<HTMLButtonElement>("[data-dart-standings-retry]")
+    ?.addEventListener("click", () => loadStandings(true));
+
+  const tabButtons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("[data-dart-tab]"),
+  );
+
+  function activateTab(tab: HTMLButtonElement, moveFocus = false) {
+    const selectedPanel = tab.dataset.dartTab;
+
+    tabButtons.forEach((button) => {
+      const selected = button === tab;
+      button.setAttribute("aria-selected", String(selected));
+      button.tabIndex = selected ? 0 : -1;
+      button.className = selected
+        ? "inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-white px-2 py-2 text-xs font-bold text-slate-900 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 sm:gap-2 sm:px-3 sm:text-sm"
+        : "inline-flex w-full items-center justify-center gap-1.5 rounded-full px-2 py-2 text-xs font-bold text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 sm:gap-2 sm:px-3 sm:text-sm";
+
+      const panelId = button.getAttribute("aria-controls");
+      const panel = panelId ? document.getElementById(panelId) : null;
+      panel?.classList.toggle(
+        "hidden",
+        button.dataset.dartTab !== selectedPanel,
+      );
+    });
+
+    if (moveFocus) tab.focus();
+  }
+
+  tabButtons.forEach((tab, index) => {
+    tab.addEventListener("click", () => activateTab(tab));
+    tab.addEventListener("keydown", (event) => {
+      let targetIndex = index;
+
+      if (event.key === "ArrowRight") {
+        targetIndex = (index + 1) % tabButtons.length;
+      } else if (event.key === "ArrowLeft") {
+        targetIndex = (index - 1 + tabButtons.length) % tabButtons.length;
+      } else if (event.key === "Home") {
+        targetIndex = 0;
+      } else if (event.key === "End") {
+        targetIndex = tabButtons.length - 1;
+      } else {
+        return;
+      }
+
+      event.preventDefault();
+      activateTab(tabButtons[targetIndex], true);
+    });
+  });
+
+  loadOverview();
+  loadStandings();
+</script>
