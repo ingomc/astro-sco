@@ -1,8 +1,11 @@
 ---
 // NextMatch.astro - Zeigt das nächste Ligaspiel dynamisch von der 2K API
 const { small = false } = Astro.props;
-const TEAM_ID = 308868; // SCO-Darts Team Fülltreffer
+const TEAM_ID = 633505; // SCO-Darts Team Fülltreffer, Saison 2026/27
 const TEAM_NAME = "SCO-Darts Team Fülltreffer";
+const EVENT_ID = 24970; // Liga B2, Saison 2026/27
+const PHASE_ID = 42062;
+const CACHE_KEY = "sco_next_match_2026_27";
 ---
 
 <div class={`next-match-container ${small ? 'block w-full' : 'bg-white rounded-lg px-4 py-3 border border-slate-300'}`} data-small={small}>
@@ -10,7 +13,7 @@ const TEAM_NAME = "SCO-Darts Team Fülltreffer";
     {!small && (
       <>
       <div class="flex gap-2 justify-between items-center mb-2">
-          <h2 class="font-bold">Nächstes Ligaspiel</h2>
+          <h2 id="next-match-heading" class="font-bold">Nächstes Ligaspiel</h2>
           <span class="home-away-badge text-xs py-1 px-2 rounded-full hidden"></span>
       </div>
       <hr class="mb-3" />
@@ -101,12 +104,9 @@ const TEAM_NAME = "SCO-Darts Team Fülltreffer";
       </div>
   </div>
   
-  <script define:vars={{ TEAM_ID, TEAM_NAME }}>
+  <script define:vars={{ TEAM_ID, TEAM_NAME, EVENT_ID, PHASE_ID, CACHE_KEY }}>
   (function() {
       const API_BASE = "https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend";
-      const EVENT_ID = 15995;
-      const PHASE_ID = 26752;
-      const CACHE_KEY = "sco_next_match_v1";
       const CACHE_DURATION = 1000 * 60 * 15; // 15 minutes
 
       async function initNextMatch(container) {
