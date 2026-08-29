@@ -1,6 +1,6 @@
 ---
 title: "Familientag zur Kirchweih 2026"
-pubDate: 2026-09-05T00:00:00.000+02:00
+pubDate: 2026-08-29T00:00:00.000+02:00
 eventDate: 2026-09-19T14:30:00.000Z
 location: "Sportplatz Oberfüllbach"
 heroImage: /assets/2026-kirchweih-familientag-hero.png
