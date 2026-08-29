@@ -9,6 +9,7 @@ import BadgeMini from "../components/BadgeMini.astro";
 import RelatedContent from "../components/RelatedContent.astro";
 import Map from "../components/Map.astro";
 import Gallery from "../components/Gallery.astro";
+import FoodPreorder from "../components/FoodPreorder.astro";
 
 // type Props = CollectionEntry<'blog'>['data'];
 
@@ -25,19 +26,20 @@ const {
   mapHeight,
   galleryImages,
   galleryColumns,
-} =
-  Astro.props;
+  eventSlug,
+  foodPreorderApiUrl,
+} = Astro.props;
 const robots = hidden ? "noindex, nofollow" : undefined;
 const images = import.meta.glob<{ default: ImageMetadata }>(
   "/public/assets/**/*.{jpeg,jpg,png,gif,avif}",
 );
 const resolvedHero = resolveHeroImage(heroImage, images);
-const metaImage = resolvedHero.kind === "remote"
-  ? resolvedHero.src
-  : toMetaImageUrl(heroImage);
+const metaImage =
+  resolvedHero.kind === "remote" ? resolvedHero.src : toMetaImageUrl(heroImage);
 
 const slotContent = await Astro.slots.render("default");
-const hasImpressionenHeading = /<h[1-6][^>]*>\s*Impressionen\s*<\/h[1-6]>/i.test(slotContent);
+const hasImpressionenHeading =
+  /<h[1-6][^>]*>\s*Impressionen\s*<\/h[1-6]>/i.test(slotContent);
 ---
 
 <App title={title} description={description} image={metaImage} robots={robots}>
@@ -53,7 +55,11 @@ const hasImpressionenHeading = /<h[1-6][^>]*>\s*Impressionen\s*<\/h[1-6]>/i.test
           resolvedHero.kind !== "none" && (
             <div class="hero-image not-prose rounded-xl overflow-hidden shadow-xl">
               <Image
-                src={resolvedHero.kind === "local" ? resolvedHero.loader() : resolvedHero.src}
+                src={
+                  resolvedHero.kind === "local"
+                    ? resolvedHero.loader()
+                    : resolvedHero.src
+                }
                 format="avif"
                 widths={[300, 500, 800, 1200]}
                 sizes={`(max-width: 640px) 100vw, 800px`}
@@ -90,6 +96,11 @@ const hasImpressionenHeading = /<h[1-6][^>]*>\s*Impressionen\s*<\/h[1-6]>/i.test
           <slot />
         </div>
         {
+          typeof eventSlug === "string" && (
+            <FoodPreorder eventSlug={eventSlug} apiUrl={foodPreorderApiUrl} />
+          )
+        }
+        {
           Array.isArray(mapLocations) && mapLocations.length > 0 && (
             <div>
               <h2>Standorte</h2>
@@ -107,16 +118,22 @@ const hasImpressionenHeading = /<h[1-6][^>]*>\s*Impressionen\s*<\/h[1-6]>/i.test
               {!hasImpressionenHeading && <h2>Impressionen</h2>}
               <Gallery
                 images={galleryImages}
-                columns={galleryColumns === 2 || galleryColumns === 4 ? galleryColumns : 3}
+                columns={
+                  galleryColumns === 2 || galleryColumns === 4
+                    ? galleryColumns
+                    : 3
+                }
               />
             </div>
           )
         }
       </div>
     </article>
-    {relatedItems && relatedItems.length > 0 && (
-      <RelatedContent items={relatedItems} />
-    )}
+    {
+      relatedItems && relatedItems.length > 0 && (
+        <RelatedContent items={relatedItems} />
+      )
+    }
   </main>
 </App>
 
