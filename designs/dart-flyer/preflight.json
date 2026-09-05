@@ -1,0 +1,639 @@
+{
+  "format_mm": [
+    148,
+    210
+  ],
+  "bleed_mm": 3,
+  "safe_area_mm": 5,
+  "qr_placeholder_mm": [
+    30,
+    30
+  ],
+  "minimum_info_font_pt": 10,
+  "colour_space": "DeviceRGB; no printer-specific PDF/X profile claimed",
+  "font": "Arial / Arial Bold; embedded in PDF, required locally for editable SVG",
+  "registration": "Placeholders only, no active link or QR code",
+  "artwork": {
+    "tool": "Built-in ImageGen",
+    "source_pixels": [
+      1024,
+      1536
+    ],
+    "sha256": "01c3e85d4f137f7bf3f69cab8e2c47292ef1899c65e09cef565440df56da42b9"
+  },
+  "official_logos": {
+    "public/sco-fuelltreffer.png": "b99fc3170fabcb295a1493dbb25a3fa93e1098064dd20bdea6889150681a6473",
+    "public/logos/sco-logo.svg": "e1d15285f782ddcdfb079589c1b53dac6aded21c0d3c0fe8a0fd2e8902b1523e",
+    "public/logos/sco-logo@4x.png": "8c76462660f8066ac2c73767faa25f400bfd95579e4d6ca19d5665b869048b2e"
+  },
+  "variants": [
+    {
+      "variant": "01-ausgewogen",
+      "text": [
+        {
+          "text": "SCO-Darts Team",
+          "font_pt": 10,
+          "bounds_mm": [
+            14,
+            11.731681315104169,
+            41.245537651909714,
+            15.042418077256945
+          ]
+        },
+        {
+          "text": "Fülltreffer",
+          "font_pt": 20,
+          "bounds_mm": [
+            13.6,
+            16.863362630208336,
+            46.52822265625,
+            23.48483615451389
+          ]
+        },
+        {
+          "text": "WIR SUCHEN",
+          "font_pt": 31,
+          "bounds_mm": [
+            39.122013075086805,
+            31.538212076822916,
+            108.87798692491319,
+            41.80149603949653
+          ]
+        },
+        {
+          "text": "DICH!",
+          "font_pt": 53,
+          "bounds_mm": [
+            48.195693359375,
+            45.88791097005208,
+            99.80430664062499,
+            63.4348158094618
+          ]
+        },
+        {
+          "text": "Werde Teil vom Team Fülltreffer.",
+          "font_pt": 12,
+          "bounds_mm": [
+            41.18443196614584,
+            67.118017578125,
+            106.81556803385416,
+            71.09090169270834
+          ]
+        },
+        {
+          "text": "Anfänger, Hobbyspieler oder Liga-Erfahrung?",
+          "font_pt": 10.5,
+          "bounds_mm": [
+            36.626441446940106,
+            134.50326538085938,
+            111.3735585530599,
+            137.9795389811198
+          ]
+        },
+        {
+          "text": "Bei uns bist du willkommen!",
+          "font_pt": 10.5,
+          "bounds_mm": [
+            48.99416198730469,
+            139.60326538085937,
+            99.0058380126953,
+            143.07953898111978
+          ]
+        },
+        {
+          "text": "STEELDARTS · OFFENES TRAINING",
+          "font_pt": 10,
+          "bounds_mm": [
+            41.64745361328125,
+            151.13168131510415,
+            106.35254638671876,
+            154.44241807725695
+          ]
+        },
+        {
+          "text": "Jeden Sonntag ab 18 Uhr",
+          "font_pt": 18,
+          "bounds_mm": [
+            35.89224853515625,
+            156.17702636718752,
+            112.10775146484374,
+            162.1363525390625
+          ]
+        },
+        {
+          "text": "QR-CODE",
+          "font_pt": 10,
+          "bounds_mm": [
+            17.170620388454864,
+            180.63168131510415,
+            33.829379611545136,
+            183.94241807725695
+          ]
+        },
+        {
+          "text": "FOLGT",
+          "font_pt": 10,
+          "bounds_mm": [
+            19.62008327907986,
+            185.43168131510416,
+            31.379916720920136,
+            188.74241807725696
+          ]
+        },
+        {
+          "text": "Vorher einfach",
+          "font_pt": 12,
+          "bounds_mm": [
+            49,
+            173.718017578125,
+            78.6416015625,
+            177.69090169270834
+          ]
+        },
+        {
+          "text": "online anmelden.",
+          "font_pt": 12,
+          "bounds_mm": [
+            49,
+            179.418017578125,
+            83.577734375,
+            183.39090169270833
+          ]
+        },
+        {
+          "text": "KURZLINK FOLGT",
+          "font_pt": 10.5,
+          "bounds_mm": [
+            49,
+            191.1032653808594,
+            81.50912679036458,
+            194.5795389811198
+          ]
+        },
+        {
+          "text": "SCO-OGV Oberfüllbach 1963 e.V.",
+          "font_pt": 10,
+          "bounds_mm": [
+            47.136867947048614,
+            201.53168131510415,
+            100.86313205295139,
+            204.84241807725695
+          ]
+        }
+      ],
+      "images": [
+        {
+          "source": "public/logos/sco-logo@4x.png",
+          "width_mm": 8,
+          "dpi_a5": 3032.125,
+          "dpi_a4": 2136.9261904761906
+        },
+        {
+          "source": "public/sco-fuelltreffer.png",
+          "width_mm": 18,
+          "dpi_a5": 723.9,
+          "dpi_a4": 510.1771428571429
+        },
+        {
+          "source": "designs/dart-flyer/assets/dartspieler.png",
+          "width_mm": 52,
+          "dpi_a5": 500.1846153846154,
+          "dpi_a4": 352.5110622710623
+        }
+      ],
+      "errors": []
+    },
+    {
+      "variant": "02-schriftbetont",
+      "text": [
+        {
+          "text": "SCO-Darts Team",
+          "font_pt": 10,
+          "bounds_mm": [
+            14,
+            11.731681315104169,
+            41.245537651909714,
+            15.042418077256945
+          ]
+        },
+        {
+          "text": "Fülltreffer",
+          "font_pt": 20,
+          "bounds_mm": [
+            13.6,
+            16.863362630208336,
+            46.52822265625,
+            23.48483615451389
+          ]
+        },
+        {
+          "text": "WIR",
+          "font_pt": 43,
+          "bounds_mm": [
+            9,
+            31.95622965494792,
+            38.32708902994791,
+            46.19239773220486
+          ]
+        },
+        {
+          "text": "SUCHEN",
+          "font_pt": 43,
+          "bounds_mm": [
+            9,
+            51.05622965494792,
+            72.6553493923611,
+            65.29239773220486
+          ]
+        },
+        {
+          "text": "DICH!",
+          "font_pt": 66,
+          "bounds_mm": [
+            11.2,
+            70.74909667968751,
+            75.5458203125,
+            92.59995930989584
+          ]
+        },
+        {
+          "text": "Werde Teil vom",
+          "font_pt": 13,
+          "bounds_mm": [
+            9,
+            97.66118570963542,
+            42.89422743055556,
+            101.96514350043402
+          ]
+        },
+        {
+          "text": "Team Fülltreffer.",
+          "font_pt": 13,
+          "bounds_mm": [
+            9,
+            103.36118570963542,
+            44.93200141059028,
+            107.66514350043403
+          ]
+        },
+        {
+          "text": "Anfänger, Hobbyspieler",
+          "font_pt": 10,
+          "bounds_mm": [
+            9,
+            118.43168131510417,
+            45.86768934461805,
+            121.74241807725694
+          ]
+        },
+        {
+          "text": "oder Liga-Erfahrung?",
+          "font_pt": 10,
+          "bounds_mm": [
+            9,
+            123.13168131510417,
+            42.33991156684027,
+            126.44241807725695
+          ]
+        },
+        {
+          "text": "Bei uns bist du",
+          "font_pt": 10,
+          "bounds_mm": [
+            9,
+            130.23168131510417,
+            34.28355577256944,
+            133.54241807725697
+          ]
+        },
+        {
+          "text": "willkommen!",
+          "font_pt": 10,
+          "bounds_mm": [
+            9,
+            134.93168131510416,
+            30.366482204861107,
+            138.24241807725696
+          ]
+        },
+        {
+          "text": "STEELDARTS · OFFENES TRAINING",
+          "font_pt": 10,
+          "bounds_mm": [
+            41.64745361328125,
+            151.13168131510415,
+            106.35254638671876,
+            154.44241807725695
+          ]
+        },
+        {
+          "text": "Jeden Sonntag ab 18 Uhr",
+          "font_pt": 18,
+          "bounds_mm": [
+            35.89224853515625,
+            156.17702636718752,
+            112.10775146484374,
+            162.1363525390625
+          ]
+        },
+        {
+          "text": "QR-CODE",
+          "font_pt": 10,
+          "bounds_mm": [
+            17.170620388454864,
+            180.63168131510415,
+            33.829379611545136,
+            183.94241807725695
+          ]
+        },
+        {
+          "text": "FOLGT",
+          "font_pt": 10,
+          "bounds_mm": [
+            19.62008327907986,
+            185.43168131510416,
+            31.379916720920136,
+            188.74241807725696
+          ]
+        },
+        {
+          "text": "Vorher einfach",
+          "font_pt": 12,
+          "bounds_mm": [
+            49,
+            173.718017578125,
+            78.6416015625,
+            177.69090169270834
+          ]
+        },
+        {
+          "text": "online anmelden.",
+          "font_pt": 12,
+          "bounds_mm": [
+            49,
+            179.418017578125,
+            83.577734375,
+            183.39090169270833
+          ]
+        },
+        {
+          "text": "KURZLINK FOLGT",
+          "font_pt": 10.5,
+          "bounds_mm": [
+            49,
+            191.1032653808594,
+            81.50912679036458,
+            194.5795389811198
+          ]
+        },
+        {
+          "text": "SCO-OGV Oberfüllbach 1963 e.V.",
+          "font_pt": 10,
+          "bounds_mm": [
+            47.136867947048614,
+            201.53168131510415,
+            100.86313205295139,
+            204.84241807725695
+          ]
+        }
+      ],
+      "images": [
+        {
+          "source": "public/logos/sco-logo@4x.png",
+          "width_mm": 8,
+          "dpi_a5": 3032.125,
+          "dpi_a4": 2136.9261904761906
+        },
+        {
+          "source": "public/sco-fuelltreffer.png",
+          "width_mm": 18,
+          "dpi_a5": 723.9,
+          "dpi_a4": 510.1771428571429
+        },
+        {
+          "source": "designs/dart-flyer/assets/dartspieler.png",
+          "width_mm": 49,
+          "dpi_a5": 530.8081632653061,
+          "dpi_a4": 374.09337220602526
+        }
+      ],
+      "errors": []
+    },
+    {
+      "variant": "03-motivbetont",
+      "text": [
+        {
+          "text": "SCO-Darts Team",
+          "font_pt": 10,
+          "bounds_mm": [
+            14,
+            11.731681315104169,
+            41.245537651909714,
+            15.042418077256945
+          ]
+        },
+        {
+          "text": "Fülltreffer",
+          "font_pt": 20,
+          "bounds_mm": [
+            13.6,
+            16.863362630208336,
+            46.52822265625,
+            23.48483615451389
+          ]
+        },
+        {
+          "text": "WIR",
+          "font_pt": 35,
+          "bounds_mm": [
+            9,
+            38.71088460286458,
+            32.84111897786458,
+            50.29846327039931
+          ]
+        },
+        {
+          "text": "SUCHEN",
+          "font_pt": 30,
+          "bounds_mm": [
+            9,
+            56.5950439453125,
+            53.28977864583333,
+            66.52725423177083
+          ]
+        },
+        {
+          "text": "DICH!",
+          "font_pt": 51,
+          "bounds_mm": [
+            11.2,
+            72.40157470703124,
+            60.84904296875,
+            89.28633219401041
+          ]
+        },
+        {
+          "text": "Werde Teil vom",
+          "font_pt": 12,
+          "bounds_mm": [
+            9,
+            97.918017578125,
+            40.28697916666667,
+            101.89090169270834
+          ]
+        },
+        {
+          "text": "Team Fülltreffer.",
+          "font_pt": 12,
+          "bounds_mm": [
+            9,
+            103.418017578125,
+            42.16800130208333,
+            107.39090169270834
+          ]
+        },
+        {
+          "text": "Anfänger, Hobbyspieler",
+          "font_pt": 10,
+          "bounds_mm": [
+            9,
+            118.43168131510417,
+            45.86768934461805,
+            121.74241807725694
+          ]
+        },
+        {
+          "text": "oder Liga-Erfahrung?",
+          "font_pt": 10,
+          "bounds_mm": [
+            9,
+            123.13168131510417,
+            42.33991156684027,
+            126.44241807725695
+          ]
+        },
+        {
+          "text": "Bei uns bist du",
+          "font_pt": 10,
+          "bounds_mm": [
+            9,
+            130.23168131510417,
+            34.28355577256944,
+            133.54241807725697
+          ]
+        },
+        {
+          "text": "willkommen!",
+          "font_pt": 10,
+          "bounds_mm": [
+            9,
+            134.93168131510416,
+            30.366482204861107,
+            138.24241807725696
+          ]
+        },
+        {
+          "text": "STEELDARTS · OFFENES TRAINING",
+          "font_pt": 10,
+          "bounds_mm": [
+            41.64745361328125,
+            151.13168131510415,
+            106.35254638671876,
+            154.44241807725695
+          ]
+        },
+        {
+          "text": "Jeden Sonntag ab 18 Uhr",
+          "font_pt": 18,
+          "bounds_mm": [
+            35.89224853515625,
+            156.17702636718752,
+            112.10775146484374,
+            162.1363525390625
+          ]
+        },
+        {
+          "text": "QR-CODE",
+          "font_pt": 10,
+          "bounds_mm": [
+            17.170620388454864,
+            180.63168131510415,
+            33.829379611545136,
+            183.94241807725695
+          ]
+        },
+        {
+          "text": "FOLGT",
+          "font_pt": 10,
+          "bounds_mm": [
+            19.62008327907986,
+            185.43168131510416,
+            31.379916720920136,
+            188.74241807725696
+          ]
+        },
+        {
+          "text": "Vorher einfach",
+          "font_pt": 12,
+          "bounds_mm": [
+            49,
+            173.718017578125,
+            78.6416015625,
+            177.69090169270834
+          ]
+        },
+        {
+          "text": "online anmelden.",
+          "font_pt": 12,
+          "bounds_mm": [
+            49,
+            179.418017578125,
+            83.577734375,
+            183.39090169270833
+          ]
+        },
+        {
+          "text": "KURZLINK FOLGT",
+          "font_pt": 10.5,
+          "bounds_mm": [
+            49,
+            191.1032653808594,
+            81.50912679036458,
+            194.5795389811198
+          ]
+        },
+        {
+          "text": "SCO-OGV Oberfüllbach 1963 e.V.",
+          "font_pt": 10,
+          "bounds_mm": [
+            47.136867947048614,
+            201.53168131510415,
+            100.86313205295139,
+            204.84241807725695
+          ]
+        }
+      ],
+      "images": [
+        {
+          "source": "public/logos/sco-logo@4x.png",
+          "width_mm": 8,
+          "dpi_a5": 3032.125,
+          "dpi_a4": 2136.9261904761906
+        },
+        {
+          "source": "public/sco-fuelltreffer.png",
+          "width_mm": 18,
+          "dpi_a5": 723.9,
+          "dpi_a4": 510.1771428571429
+        },
+        {
+          "source": "designs/dart-flyer/assets/dartspieler.png",
+          "width_mm": 61,
+          "dpi_a5": 426.3868852459016,
+          "dpi_a4": 300.5012334113973
+        }
+      ],
+      "errors": []
+    }
+  ]
+}
