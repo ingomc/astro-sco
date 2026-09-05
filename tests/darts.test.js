@@ -258,6 +258,11 @@ test.describe("Darts-Mannschaftsseite", () => {
         "Der Mannschaftskader ist derzeit noch nicht veröffentlicht.",
       ),
     ).toBeVisible();
+
+    if ((page.viewportSize()?.width ?? 1024) < 1024) {
+      await page.getByRole("tab", { name: "Rangliste" }).click();
+    }
+
     await expect(
       page.getByText(
         "Die Rangliste wird nach den ersten Ergebnissen angezeigt.",
@@ -331,6 +336,11 @@ test.describe("Darts-Mannschaftsseite", () => {
 
     await page.goto("/darts");
     await expect(page.locator('[data-dart-state="content"]')).toBeVisible();
+
+    if ((page.viewportSize()?.width ?? 1024) < 1024) {
+      await page.getByRole("tab", { name: "Rangliste" }).click();
+    }
+
     await expect(
       page.getByText("Die Rangliste ist gerade nicht verfügbar."),
     ).toBeVisible();

@@ -1,5 +1,8 @@
 ---
-import { getCollection } from "astro:content";
+import {
+  getContentCollection,
+  getSiteSettings,
+} from "../../lib/content-source";
 import App from "../../layouts/App.astro";
 import BadgeMini from "../../components/BadgeMini.astro";
 import HpCard from "../../components/HpCard.astro";
@@ -10,49 +13,64 @@ import FormattedDate from "../../components/FormattedDate.astro";
 import allshortevents from "../../data/shortevents.json";
 import NextMatch from "../../components/NextMatch.astro";
 
+type ShortEvent = {
+  title: string;
+  date: string;
+};
+
 const now = new Date().setHours(0, 0, 0, 0);
 const threeMonthsAgo = new Date();
 threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 threeMonthsAgo.setHours(0, 0, 0, 0);
 
-const dateInPast = (date: Date) =>
-  new Date(date).setHours(0, 0, 0, 0) >= now;
+const dateInPast = (date: Date) => new Date(date).setHours(0, 0, 0, 0) >= now;
 
 const isRecentPast = (date: Date) => {
   const d = new Date(date).setHours(0, 0, 0, 0);
   return d < now && d >= threeMonthsAgo.getTime();
 };
 
-const allEvents = (await getCollection("veranstaltungen")).filter((ev) => ev.data.pubDate <= new Date() && !ev.data.hidden);
-
-const futureEvents = allEvents.filter((ev) => dateInPast(ev.data.eventDate)).sort(
-  (a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf(),
+const allEvents = (await getContentCollection("veranstaltungen")).filter(
+  (ev) => ev.data.pubDate <= new Date() && !ev.data.hidden,
 );
 
-const recentPastEvents = allEvents.filter((ev) => isRecentPast(ev.data.eventDate)).sort(
-  (a, b) => b.data.eventDate.valueOf() - a.data.eventDate.valueOf(),
-);
+const futureEvents = allEvents
+  .filter((ev) => dateInPast(ev.data.eventDate))
+  .sort((a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf());
+
+const recentPastEvents = allEvents
+  .filter((ev) => isRecentPast(ev.data.eventDate))
+  .sort((a, b) => b.data.eventDate.valueOf() - a.data.eventDate.valueOf());
 
 const currentYear = new Date().getFullYear();
-const pastEvents = (await getCollection("berichte"))
+const pastEvents = (await getContentCollection("berichte"))
   .filter((ev) => {
     const eventYear = ev.data.eventDate.getFullYear();
     return eventYear === currentYear || eventYear === currentYear - 1;
   })
-  .sort(
-    (a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf(),
-  ).reverse();
+  .sort((a, b) => a.data.eventDate.valueOf() - b.data.eventDate.valueOf())
+  .reverse();
 
-const shortevents = allshortevents.geplant.filter((ev) => dateInPast(new Date(ev.date))).sort(
-	(a, b) => new Date(a.date).valueOf() -  new Date(b.date).valueOf()
-)
+const shortevents = (allshortevents.geplant as ShortEvent[])
+  .filter((ev) => dateInPast(new Date(ev.date)))
+  .sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf());
+const settings = await getSiteSettings();
+const regularEvents = settings.regular_events || [
+  { time: "So: ab 18:00 Uhr", label: "Steel-Darts" },
+  { time: "So: ab 18:30 Uhr", label: "Stammtisch" },
+];
+
 const title = "Veranstaltungen - SCO-OGV Oberfüllbach";
 const description =
   "Überblick über alle Veranstaltungen des SCO-OGV Oberfüllbach";
 ---
 
 <App title={title} description={description}>
-  <HpStage image="/src/media/buehne-events.jpg" blurred="data:image/webp;base64,UklGRgYBAABXRUJQVlA4IPoAAABwBACdASoZAAoAPm0qkkWkIqGYBABABsS0AF2ZQBLQjLSHSZqoLYG0lZBreAD+8SP5f+H37iScqNsfO7t3T3M6D7bJJ/095u0MlixbjdMRUUsgmJjBRF6d5fXpdLEoTLlgwIJjOMqaokWIF42tx1waF+xHjTghBwiwmea7lY5vD8mzZvBg4ReAZt6tZ4Ljj2WU7P/nI/1Hv+VKoEYnU007oq/+JjLbrPvexj2eC6/2N8mcLZsIMZ45XSUVCYZn+WnMzWcfZ/ZfXpU0f/3/sFnSgf3/Dpf/3x7T7jMD61Kz6RuT2CreK4JFBj/gdPE0vmwNNC7YEU+AAAAA" title="Veranstaltungen" />
+  <HpStage
+    image="/src/media/buehne-events.jpg"
+    blurred="data:image/webp;base64,UklGRgYBAABXRUJQVlA4IPoAAABwBACdASoZAAoAPm0qkkWkIqGYBABABsS0AF2ZQBLQjLSHSZqoLYG0lZBreAD+8SP5f+H37iScqNsfO7t3T3M6D7bJJ/095u0MlixbjdMRUUsgmJjBRF6d5fXpdLEoTLlgwIJjOMqaokWIF42tx1waF+xHjTghBwiwmea7lY5vD8mzZvBg4ReAZt6tZ4Ljj2WU7P/nI/1Hv+VKoEYnU007oq/+JjLbrPvexj2eC6/2N8mcLZsIMZ45XSUVCYZn+WnMzWcfZ/ZfXpU0f/3/sFnSgf3/Dpf/3x7T7jMD61Kz6RuT2CreK4JFBj/gdPE0vmwNNC7YEU+AAAAA"
+    title="Veranstaltungen"
+  />
   <div class="main container grid gap-4 mx-auto p-4 overflow-hidden">
     <section class="upcoming">
       <EventsSection data={futureEvents} />
@@ -68,32 +86,25 @@ const description =
           <h2 class="font-bold">Regeltermine</h2>
         </div>
         <table>
-          <tr>
-            <td>
-              <BadgeMini>
-                <span class="font-semibold">So: ab 18:00 Uhr</span>
-              </BadgeMini>
-            </td>
-            <td>Steel-Darts</td>
-          </tr>
-          <tr>
-            <td>
-              <BadgeMini>
-                <span class="font-semibold">So: ab 18:30 Uhr</span>
-              </BadgeMini>
-            </td>
-            <td>Stammtisch</td>
-          </tr>
+          {
+            regularEvents.map((event) => (
+              <tr>
+                <td>
+                  <BadgeMini>
+                    <span class="font-semibold">{event.time}</span>
+                  </BadgeMini>
+                </td>
+                <td>{event.label}</td>
+              </tr>
+            ))
+          }
         </table>
       </HpCard>
 
       {
         shortevents.length > 0 && (
           <HpCard>
-            <div
-              class="flex gap-2 justify-between items-center"
-              slot="title"
-            >
+            <div class="flex gap-2 justify-between items-center" slot="title">
               <h2 class="font-bold">Vorschau</h2>
             </div>
             <ul class="whitespace-nowrap">
@@ -155,7 +166,7 @@ const description =
 
 <style>
   td {
-    padding: .5em 0;
+    padding: 0.5em 0;
     padding-right: 1em;
   }
   .day {

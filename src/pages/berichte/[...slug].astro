@@ -1,10 +1,11 @@
 ---
-import { CollectionEntry, getCollection } from 'astro:content';
+import { getContentCollection, type ContentEntry } from '../../lib/content-source';
+import { renderDirectusBodyToHtml } from '../../lib/body-content';
 import EventPost from '../../layouts/EventPost.astro';
 
 export async function getStaticPaths() {
-	const allBerichte = await getCollection('berichte');
-	const allVeranstaltungen = (await getCollection('veranstaltungen')).filter((ev) => ev.data.pubDate <= new Date());
+	const allBerichte = await getContentCollection('berichte');
+	const allVeranstaltungen = (await getContentCollection('veranstaltungen')).filter((ev) => ev.data.pubDate <= new Date());
 
 	return allBerichte.map((event) => {
 		const tags = event.data.tags ?? [];
@@ -25,20 +26,22 @@ export async function getStaticPaths() {
 	});
 }
 
-type Props = { event: CollectionEntry<'berichte'>; relatedItems: (CollectionEntry<'berichte'> | CollectionEntry<'veranstaltungen'>)[] };
+type Props = {
+	event: ContentEntry<'berichte'>;
+	relatedItems: (ContentEntry<'berichte'> | ContentEntry<'veranstaltungen'>)[];
+};
 
 const { event, relatedItems } = Astro.props;
-const { Content, headings } = await event.render();
-
+const renderedBodyHtml = await renderDirectusBodyToHtml(event);
 
 ---
 
 <EventPost {...event.data} relatedItems={relatedItems}>
-	<!-- <h1>{post.data.title}</h1>
-	<ol>
-		{headings.map(heading => 
-			heading.depth == 2 && (<li><a href={`#${heading.slug}`} title={heading.text}>{heading.text}</a></li>)
-		)}
-	</ol> -->		
-	<Content />
+	{
+		renderedBodyHtml ? (
+			<Fragment set:html={renderedBodyHtml} />
+		) : (
+			<p>{event.data.description ?? ""}</p>
+		)
+	}
 </EventPost>

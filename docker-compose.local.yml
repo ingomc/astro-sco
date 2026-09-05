@@ -1,0 +1,33 @@
+# Local development compose for the Astro SCO build.
+#
+# This builds the production image and serves it on port 8080.
+# Dokploy will not use this file – it has its own compose template
+# (see docs/staging.md for the Dokploy app config).
+#
+# Usage:
+#   cp .env.example .env  (then fill in DIRECTUS_URL / DIRECTUS_TOKEN)
+#   docker compose -f docker-compose.local.yml up --build
+#   open http://localhost:8080
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DIRECTUS_URL: ${DIRECTUS_URL:-https://cms.dart.ingomc.de}
+        DIRECTUS_TOKEN: ${DIRECTUS_TOKEN:-}
+        SITE_URL: ${SITE_URL:-http://localhost:8080/}
+        SITE_HOST: ${SITE_HOST:-localhost}
+        STAGING: ${STAGING:-0}
+        EXTRA_IMAGE_DOMAINS: ${EXTRA_IMAGE_DOMAINS:-}
+    image: astro-sco:local
+    container_name: astro-sco-local
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
