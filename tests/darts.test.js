@@ -227,6 +227,11 @@ test.describe("Darts-Mannschaftsseite", () => {
     await expect(
       page.getByRole("link", { name: "Darts", exact: true }).first(),
     ).toHaveAttribute("aria-current", "page");
+    const sourceLink = page.getByRole("link", {
+      name: "Offizielle Daten bei 3K Darts",
+    });
+    await sourceLink.hover();
+    await expect(sourceLink).toHaveCSS("color", "rgb(255, 255, 255)");
     expect(getRequestCount()).toBe(1);
     expect(getTableRequestCount()).toBe(1);
   });
