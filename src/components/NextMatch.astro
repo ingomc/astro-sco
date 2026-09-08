@@ -1,5 +1,5 @@
 ---
-// NextMatch.astro - Zeigt das nächste Ligaspiel dynamisch von der 2K API
+// NextMatch.astro - Zeigt das nächste Ligaspiel dynamisch von der 3K API
 interface Props {
   small?: boolean;
   header?: boolean;
@@ -136,8 +136,17 @@ const { small = false, header = false } = Astro.props;
       {small ? "" : "Kein anstehendes Spiel gefunden"}
     </div>
 
-    <div class="error-state hidden py-4 text-center text-red-500">
-      {small ? "!" : "Fehler beim Laden der Daten"}
+    <div
+      class:list={[
+        "error-state hidden text-center text-red-500",
+        small ? "py-1.5 text-xs" : "py-4",
+      ]}
+    >
+      {
+        small
+          ? "Spielplan momentan nicht verfügbar"
+          : "Fehler beim Laden der Daten"
+      }
     </div>
   </div>
 
