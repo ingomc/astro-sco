@@ -1,16 +1,16 @@
 export const DART_TEAM_ID = 633505;
 export const DART_EVENT_ID = 24970;
 export const DART_API_URL =
-  "https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend/participant/633505";
+  "https://backend4.3k-darts.com/2k-backend4/api/v1/frontend/participant/633505";
 export const DART_TABLE_API_URL =
-  "https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend/event/24970/phase/0/round/0/table";
+  "https://backend4.3k-darts.com/2k-backend4/api/v1/frontend/event/24970/phase/0/round/0/table";
 export const DART_SOURCE_URL =
-  "https://www.2k-dart-software.com/frontend/events/5/event/24970/participants/633505";
+  "https://portal.3k-darts.com/frontend/events/5/event/24970/participants/633505";
 export const DART_TABLE_SOURCE_URL =
-  "https://www.2k-dart-software.com/frontend/events/5/event/24970/table";
+  "https://portal.3k-darts.com/frontend/events/5/event/24970/table";
 
-const DART_CACHE_KEY = "sco_dart_team_2026_27_v1";
-const DART_STANDINGS_CACHE_KEY = "sco_dart_standings_2026_27_v1";
+const DART_CACHE_KEY = "sco_dart_team_2026_27_v2";
+const DART_STANDINGS_CACHE_KEY = "sco_dart_standings_2026_27_v2";
 const DART_CACHE_DURATION = 1000 * 60 * 15;
 const DART_TIME_ZONE = "Europe/Berlin";
 

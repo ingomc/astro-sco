@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const DART_API_PATTERN = "**/frontend/participant/633505";
-const DART_TABLE_API_PATTERN = "**/frontend/event/24970/phase/0/round/0/table";
+const DART_API_PATTERN =
+  "https://backend4.3k-darts.com/2k-backend4/api/v1/frontend/participant/633505";
+const DART_TABLE_API_PATTERN =
+  "https://backend4.3k-darts.com/2k-backend4/api/v1/frontend/event/24970/phase/0/round/0/table";
 
 const dartApiResponse = {
   participant: {
@@ -273,9 +275,14 @@ test.describe("Darts-Mannschaftsseite", () => {
 
     await page.goto("/darts");
     await expect(page.locator('[data-dart-state="error"]')).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: "Spielplan bei 2K Darts" }),
-    ).toBeVisible();
+    const scheduleSourceLink = page.getByRole("link", {
+      name: "Spielplan bei 3K Darts",
+    });
+    await expect(scheduleSourceLink).toBeVisible();
+    await expect(scheduleSourceLink).toHaveAttribute(
+      "href",
+      "https://portal.3k-darts.com/frontend/events/5/event/24970/participants/633505",
+    );
     await expect(
       page.getByRole("button", { name: "Erneut versuchen" }),
     ).toBeVisible();
@@ -337,9 +344,14 @@ test.describe("Darts-Mannschaftsseite", () => {
     await expect(
       page.getByRole("heading", { name: "Gemeldeter Kader" }),
     ).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: "Tabelle bei 2K Darts" }),
-    ).toBeVisible();
+    const standingsSourceLink = page.getByRole("link", {
+      name: "Tabelle bei 3K Darts",
+    });
+    await expect(standingsSourceLink).toBeVisible();
+    await expect(standingsSourceLink).toHaveAttribute(
+      "href",
+      "https://portal.3k-darts.com/frontend/events/5/event/24970/table",
+    );
   });
 
   test("bleibt mit geladenen Daten barrierefrei", async ({ page }) => {
