@@ -286,12 +286,12 @@ test.describe("Darts-Mannschaftsseite", () => {
     await expect(
       page.getByRole("button", { name: "Erneut versuchen" }),
     ).toBeVisible();
-    await expect(page.locator('[data-header="true"] .error-state')).toHaveText(
-      "Spielplan momentan nicht verfügbar",
-    );
-    await expect(page.locator('[data-header="false"] .error-state')).toHaveText(
-      "Spielplan momentan nicht verfügbar",
-    );
+    await expect(
+      page.locator('[data-header="true"][data-small="true"]'),
+    ).toHaveClass(/hidden/);
+    await expect(
+      page.locator('[data-header="false"][data-small="true"]'),
+    ).toHaveClass(/hidden/);
   });
 
   test("schaltet mobil barrierefrei zwischen Spielplan und Rangliste", async ({

@@ -136,17 +136,8 @@ const { small = false, header = false } = Astro.props;
       {small ? "" : "Kein anstehendes Spiel gefunden"}
     </div>
 
-    <div
-      class:list={[
-        "error-state hidden text-center text-red-500",
-        small ? "py-1.5 text-xs" : "py-4",
-      ]}
-    >
-      {
-        small
-          ? "Spielplan momentan nicht verfügbar"
-          : "Fehler beim Laden der Daten"
-      }
+    <div class="error-state hidden py-4 text-center text-red-500">
+      Fehler beim Laden der Daten
     </div>
   </div>
 
@@ -248,6 +239,10 @@ const { small = false, header = false } = Astro.props;
       container.querySelector(".no-match-state")?.classList.remove("hidden");
     } catch (error) {
       console.error("Fehler beim Laden des nächsten Dartspiels:", error);
+      if (container.dataset.small === "true") {
+        container.classList.add("hidden");
+        return;
+      }
       container.querySelector(".loading-state")?.classList.add("hidden");
       container.querySelector(".error-state")?.classList.remove("hidden");
     }
