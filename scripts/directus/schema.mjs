@@ -772,10 +772,10 @@ export const TARGET_SCHEMA = [
         note: "Allergenhinweise, die vor der Reservierung angezeigt werden.",
       }),
       integerField("price_cents", true, "half", {
-        note: "Preis in Cent, z. B. 850 für 8,50 €.",
+        note: "Preis in Cent, z. B. 850 für 8,50 €. Mit 0 wird der Preis erst bei der Abholung bekannt gegeben.",
       }),
       integerField("capacity", true, "half", {
-        note: "Maximal bestätigbare Anzahl dieses Gerichts.",
+        note: "Maximal bestätigbare Anzahl dieses Gerichts. Mit 0 gibt es kein Online-Kontingent.",
       }),
     ],
   },

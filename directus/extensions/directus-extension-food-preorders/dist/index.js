@@ -106,7 +106,10 @@ function publicOrdering(order, dishes, confirmedQuantities) {
       description: dish.description || undefined,
       allergens: dish.allergens || undefined,
       priceCents: asNumber(dish.price_cents),
-      remainingQuantity: Math.max(0, asNumber(dish.capacity) - asNumber(confirmedQuantities.get(Number(dish.id)))),
+      remainingQuantity:
+        Number.isInteger(Number(dish.capacity)) && Number(dish.capacity) > 0
+          ? Math.max(0, Number(dish.capacity) - asNumber(confirmedQuantities.get(Number(dish.id))))
+          : null,
     })),
   };
 }

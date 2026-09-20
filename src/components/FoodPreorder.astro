@@ -99,8 +99,12 @@ const normalizedApiUrl = apiUrl?.replace(/\/$/, "");
     const dishRows = dishes
       .map((dish) => {
         const selected = selectedByDish.get(Number(dish.id)) || 0;
+        const hasPrice = Number(dish.priceCents) > 0;
         const unavailable =
-          Number(dish.remainingQuantity) <= 0 && selected === 0;
+          dish.remainingQuantity !== null &&
+          dish.remainingQuantity !== undefined &&
+          Number(dish.remainingQuantity) <= 0 &&
+          selected === 0;
         return `
         <li class="food-preorder-dish rounded-lg border border-slate-200 bg-white p-4">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -108,7 +112,7 @@ const normalizedApiUrl = apiUrl?.replace(/\/$/, "");
               <h3 class="m-0 text-lg font-bold text-slate-950">${escapeHtml(dish.name)}</h3>
               ${dish.description ? `<p class="mb-0 mt-1 text-sm text-slate-700">${escapeHtml(dish.description)}</p>` : ""}
               ${dish.allergens ? `<p class="mb-0 mt-2 text-sm text-slate-600"><strong>Allergene:</strong> ${escapeHtml(dish.allergens)}</p>` : ""}
-              <p class="mb-0 mt-2 font-semibold text-slate-900">${asCurrency(dish.priceCents)}</p>
+              <p class="mb-0 mt-2 font-semibold text-slate-900">${hasPrice ? asCurrency(dish.priceCents) : "Preis wird bei der Abholung bekannt gegeben."}</p>
               ${unavailable ? `<p class="mb-0 mt-1 text-sm font-semibold text-red-700">Ausverkauft</p>` : ""}
             </div>
             <label class="shrink-0 text-sm font-semibold text-slate-800" for="food-quantity-${dish.id}">
@@ -172,12 +176,22 @@ const normalizedApiUrl = apiUrl?.replace(/\/$/, "");
     const submitButton = form.querySelector('button[type="submit"]');
     const updateTotal = () => {
       const inputs = [...form.querySelectorAll("[data-dish-id]")];
+      let hasOpenPrice = false;
       const total = inputs.reduce((sum, input) => {
         const quantity = Math.max(0, Number(input.value) || 0);
-        return sum + quantity * Number(input.dataset.priceCents || 0);
+        const priceCents = Number(input.dataset.priceCents || 0);
+        if (quantity > 0 && priceCents <= 0) {
+          hasOpenPrice = true;
+          return sum;
+        }
+        return sum + quantity * priceCents;
       }, 0);
-      form.querySelector(".food-preorder-total").textContent =
-        `Gesamtbetrag bei Abholung: ${asCurrency(total)}`;
+      const totalElement = form.querySelector(".food-preorder-total");
+      totalElement.textContent = hasOpenPrice
+        ? total > 0
+          ? `Zwischensumme bei Abholung: ${asCurrency(total)}. Der Preis für einzelne Gerichte wird bei der Abholung bekannt gegeben.`
+          : "Der Preis wird bei der Abholung bekannt gegeben."
+        : `Gesamtbetrag bei Abholung: ${asCurrency(total)}`;
     };
     form
       .querySelectorAll("[data-dish-id]")
