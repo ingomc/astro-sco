@@ -50,3 +50,20 @@ an.
   Missbrauch.
 - Die Registrierung wird mit `party_size = 1`, Status `Neu` und einer
   zufälligen Anmeldenummer in `event_dart_registrations` gespeichert.
+
+## Produktionsabgleich vom 20.09.2026
+
+Die vorhandene Sammlung `event_dart_registrations` hatte zusätzlich das
+versteckte Feld `ip_fingerprint` als Pflichtspalte ohne Standardwert. Der
+Dart-Endpunkt schreibt dieses Feld nicht; deshalb beantwortete Directus eine
+ansonsten gültige Anmeldung mit `500` und der allgemeinen Fehlermeldung. Über
+die native MCP-Schnittstelle wurde für dieses Feld `schema.is_nullable` auf
+`true` gesetzt. Außerdem wurde `name` von 100 auf 120 Zeichen erweitert, passend
+zur Validierung der Erweiterung. Bestehende Anmeldungen blieben unverändert.
+
+Danach lieferte ein vollständiger Test-POST `201`; der synthetische Datensatz
+wurde anschließend wieder entfernt. Der produktive Endpunkt ist damit ohne
+erneuten Website- oder Directus-Build nutzbar. Die bestehende Status-Auswahlliste
+in Directus verwendet derzeit `new`, `confirmed` und `cancelled`, während die
+geladene Erweiterung für neue Anmeldungen `Neu` schreibt. Diese Statuswerte
+sollten beim nächsten Erweiterungs-Deploy vereinheitlicht werden.
