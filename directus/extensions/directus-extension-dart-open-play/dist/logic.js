@@ -31,7 +31,8 @@ function dateParts(date) {
     second: "2-digit",
     hourCycle: "h23",
   }).formatToParts(date);
-  const value = (type) => Number(parts.find((part) => part.type === type)?.value || 0);
+  const value = (type) =>
+    Number(parts.find((part) => part.type === type)?.value || 0);
   return {
     year: value("year"),
     month: value("month"),
@@ -137,9 +138,14 @@ export function validateRegistrationPayload(payload) {
   }
 
   const name = typeof payload.name === "string" ? payload.name.trim() : "";
-  const email = typeof payload.email === "string" ? payload.email.trim().toLowerCase() : "";
+  const email =
+    typeof payload.email === "string" ? payload.email.trim().toLowerCase() : "";
+  const phoneInput =
+    typeof payload.phone === "string" ? payload.phone.trim() : "";
+  const phone = phoneInput.replace(/[\s()./-]/g, "");
   const notes = typeof payload.notes === "string" ? payload.notes.trim() : "";
-  const website = typeof payload.website === "string" ? payload.website.trim() : "";
+  const website =
+    typeof payload.website === "string" ? payload.website.trim() : "";
 
   if (website) {
     throw new DartOpenPlayError(
@@ -148,17 +154,44 @@ export function validateRegistrationPayload(payload) {
     );
   }
   if (name.length < 2 || name.length > 120) {
-    throw new DartOpenPlayError("INVALID_NAME", "Bitte gib einen Namen mit 2 bis 120 Zeichen an.");
+    throw new DartOpenPlayError(
+      "INVALID_NAME",
+      "Bitte gib einen Namen mit 2 bis 120 Zeichen an.",
+    );
   }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 255) {
-    throw new DartOpenPlayError("INVALID_EMAIL", "Bitte gib eine gültige E-Mail-Adresse an.");
+  if (!email && !phone) {
+    throw new DartOpenPlayError(
+      "CONTACT_REQUIRED",
+      "Bitte gib eine Handynummer oder E-Mail-Adresse an.",
+    );
+  }
+  if (
+    email &&
+    (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 255)
+  ) {
+    throw new DartOpenPlayError(
+      "INVALID_EMAIL",
+      "Bitte gib eine gültige E-Mail-Adresse an.",
+    );
+  }
+  if (phoneInput && (phoneInput.length > 40 || !/^\+?\d{7,15}$/.test(phone))) {
+    throw new DartOpenPlayError(
+      "INVALID_PHONE",
+      "Bitte gib eine gültige Handynummer an.",
+    );
   }
   if (notes.length > 1000) {
-    throw new DartOpenPlayError("INVALID_NOTES", "Bitte kürze den Hinweis auf maximal 1000 Zeichen.");
+    throw new DartOpenPlayError(
+      "INVALID_NOTES",
+      "Bitte kürze den Hinweis auf maximal 1000 Zeichen.",
+    );
   }
   if (payload.privacyAccepted !== true) {
-    throw new DartOpenPlayError("PRIVACY_REQUIRED", "Bitte bestätige den Datenschutzhinweis.");
+    throw new DartOpenPlayError(
+      "PRIVACY_REQUIRED",
+      "Bitte bestätige den Datenschutzhinweis.",
+    );
   }
 
-  return { name, email, notes };
+  return { name, email: email || null, phone: phone || null, notes };
 }

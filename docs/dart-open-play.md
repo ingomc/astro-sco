@@ -8,8 +8,8 @@ an.
 
 Nach einem erfolgreichen POST öffnet die Website `/darts/danke/` mit Termin,
 Sportheim und Anmeldenummer. Die Bestätigung liegt nur im Session-Storage des
-aktuellen Browser-Tabs; weder Name noch E-Mail-Adresse stehen in der URL oder
-im Speicher. Ohne Bestätigung zeigt die Seite einen Link zurück zum Formular.
+aktuellen Browser-Tabs; weder Name noch Kontaktdaten stehen in der URL oder im
+Speicher. Ohne Bestätigung zeigt die Seite einen Link zurück zum Formular.
 
 ## Einmalige Einrichtung
 
@@ -49,11 +49,18 @@ im Speicher. Ohne Bestätigung zeigt die Seite einen Link zurück zum Formular.
 - Der Server berechnet immer den nächsten Sonntag in `Europe/Berlin`; nach
   Trainingsbeginn wechselt er auf die Folgewoche.
 - Die Serverzeit und nicht ein Browserwert bestimmt Termin, Titel und Ort.
-- Die Anmeldung erfordert Name, E-Mail-Adresse und Datenschutzzustimmung.
+- Die Anmeldung erfordert Name, Datenschutzzustimmung und mindestens eine
+  Kontaktangabe. Die Handynummer steht im Formular zuerst; eine E-Mail-Adresse
+  kann stattdessen oder zusätzlich angegeben werden. Die Angaben dienen nur
+  Rückfragen und Terminänderungen zu dieser Anmeldung, nicht Werbung oder
+  Newslettern.
+- Solange der produktive Endpunkt noch keine `contactMethods` mit `phone`
+  meldet, bleibt das bisherige E-Mail-Pflichtfeld sichtbar. Erst nach dem
+  Directus-Deploy wird die Handy-Anmeldung freigeschaltet.
 - Honeypot, Origin-Allowlist, fünf Schreibversuche pro IP in 15 Minuten und
-  eine Sperre gegen doppelte E-Mail-Anmeldungen für denselben Termin reduzieren
-  Missbrauch.
-- Die Registrierung wird mit `party_size = 1`, Status `Neu` und einer
+  eine Sperre gegen doppelte Handy- oder E-Mail-Anmeldungen für denselben Termin
+  reduzieren Missbrauch.
+- Die Registrierung wird mit `party_size = 1`, Status `new` und einer
   zufälligen Anmeldenummer in `event_dart_registrations` gespeichert.
 
 ## Produktionsabgleich vom 20.09.2026
@@ -67,8 +74,14 @@ die native MCP-Schnittstelle wurde für dieses Feld `schema.is_nullable` auf
 zur Validierung der Erweiterung. Bestehende Anmeldungen blieben unverändert.
 
 Danach lieferte ein vollständiger Test-POST `201`; der synthetische Datensatz
-wurde anschließend wieder entfernt. Der produktive Endpunkt ist damit ohne
-erneuten Website- oder Directus-Build nutzbar. Die bestehende Status-Auswahlliste
-in Directus verwendet derzeit `new`, `confirmed` und `cancelled`, während die
-geladene Erweiterung für neue Anmeldungen `Neu` schreibt. Diese Statuswerte
-sollten beim nächsten Erweiterungs-Deploy vereinheitlicht werden.
+wurde anschließend wieder entfernt. Die bestehende Status-Auswahlliste in
+Directus verwendet `new`, `confirmed` und `cancelled`. Die aktualisierte
+Erweiterung schreibt `new`.
+
+Für Handynummern muss in `event_dart_registrations` ein optionales Textfeld
+`phone` (maximal 40 Zeichen) angelegt und `email` auf optional gesetzt werden.
+Diese beiden Schemaänderungen wurden am 21.09.2026 im produktiven Directus per
+MCP durchgeführt und anschließend zurückgelesen.
+Danach die drei Dateien der aktualisierten Erweiterung im separaten
+Dokploy-Compose-Template laden und den Directus-Container neu erstellen. Ein
+Website-Deploy allein kann den Directus-Endpunkt nicht aktualisieren.

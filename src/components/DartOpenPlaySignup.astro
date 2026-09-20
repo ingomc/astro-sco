@@ -62,9 +62,27 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
       </label>
       <label
         class="grid gap-2 text-sm font-bold text-slate-900"
+        for="dart-open-play-phone"
+        data-dart-open-play-phone-field
+        hidden
+      >
+        Handynummer (bevorzugt)
+        <input
+          id="dart-open-play-phone"
+          class="rounded-lg border border-slate-300 px-3 py-2.5 font-normal text-slate-950 shadow-sm focus:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-200"
+          name="phone"
+          type="tel"
+          autocomplete="tel"
+          inputmode="tel"
+          maxlength="40"
+          placeholder="z. B. 0171 1234567"
+        />
+      </label>
+      <label
+        class="grid gap-2 text-sm font-bold text-slate-900"
         for="dart-open-play-email"
       >
-        E-Mail-Adresse
+        <span data-dart-open-play-email-label>E-Mail-Adresse</span>
         <input
           id="dart-open-play-email"
           class="rounded-lg border border-slate-300 px-3 py-2.5 font-normal text-slate-950 shadow-sm focus:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-200"
@@ -76,6 +94,11 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
         />
       </label>
     </div>
+    <p class="text-sm text-slate-700">
+      Wir speichern deine Kontaktdaten nur, um dich wegen dieser Anmeldung zu
+      kontaktieren, zum Beispiel bei Rückfragen oder Terminänderungen. Keine
+      Werbung und keine Newsletter.
+    </p>
 
     <label
       class="grid gap-2 text-sm font-bold text-slate-900"
@@ -187,6 +210,10 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
     const registrationId = root.querySelector(
       "[data-dart-open-play-registration-id]",
     );
+    const phoneField = root.querySelector("[data-dart-open-play-phone-field]");
+    const phoneInput = form?.querySelector('input[name="phone"]');
+    const emailInput = form?.querySelector('input[name="email"]');
+    const emailLabel = root.querySelector("[data-dart-open-play-email-label]");
 
     if (
       !(status instanceof HTMLElement) ||
@@ -195,7 +222,11 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
       !(message instanceof HTMLElement) ||
       !(success instanceof HTMLElement) ||
       !(successMessage instanceof HTMLElement) ||
-      !(registrationId instanceof HTMLElement)
+      !(registrationId instanceof HTMLElement) ||
+      !(phoneField instanceof HTMLElement) ||
+      !(phoneInput instanceof HTMLInputElement) ||
+      !(emailInput instanceof HTMLInputElement) ||
+      !(emailLabel instanceof HTMLElement)
     ) {
       return;
     }
@@ -206,6 +237,7 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
     }
 
     let nextSlotLabel = "";
+    let supportsPhone = false;
 
     try {
       const response = await fetch(apiUrl, {
@@ -228,6 +260,14 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
       status.textContent = "Die Online-Anmeldung ist geöffnet.";
       nextSlotLabel = result.slot.label;
       slot.textContent = `Nächster Termin: ${nextSlotLabel}`;
+      supportsPhone =
+        Array.isArray(result.contactMethods) &&
+        result.contactMethods.includes("phone");
+      if (supportsPhone) {
+        phoneField.hidden = false;
+        emailInput.required = false;
+        emailLabel.textContent = "E-Mail-Adresse (optional)";
+      }
       form.hidden = false;
     } catch (error) {
       status.textContent =
@@ -246,12 +286,24 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
       const payload = {
         name: data.get("name"),
         email: data.get("email"),
+        phone: supportsPhone ? data.get("phone") : "",
         notes: data.get("notes"),
         website: data.get("website"),
         privacyAccepted: data.get("privacy") === "on",
       };
 
       if (!form.reportValidity()) return;
+      if (
+        supportsPhone &&
+        !phoneInput.value.trim() &&
+        !emailInput.value.trim()
+      ) {
+        message.className = "text-sm font-semibold text-red-800";
+        message.textContent =
+          "Bitte gib eine Handynummer oder E-Mail-Adresse an.";
+        phoneInput.focus();
+        return;
+      }
       submitButton.disabled = true;
       message.className = "text-sm font-semibold text-slate-700";
       message.textContent = "Anmeldung wird gespeichert …";
@@ -323,6 +375,10 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
 </script>
 
 <style>
+  [data-dart-open-play-phone-field][hidden] {
+    display: none !important;
+  }
+
   .dart-open-play-honeypot {
     position: absolute;
     left: -10000px;

@@ -32,6 +32,7 @@ test("Gast sieht den nächsten Termin und kann sich zum Sonntagstraining anmelde
         contentType: "application/json",
         body: JSON.stringify({
           open: true,
+          contactMethods: ["phone", "email"],
           slot: {
             at: "2026-09-27T16:00:00.000Z",
             label: "Sonntag, 27.09.2026, 18:00 Uhr",
@@ -72,8 +73,13 @@ test("Gast sieht den nächsten Termin und kann sich zum Sonntagstraining anmelde
   ).toBeVisible();
 
   await page.locator("#dart-open-play-name").fill("Erika Muster");
-  await page.locator("#dart-open-play-email").fill("erika@example.de");
+  await expect(page.getByLabel("Handynummer (bevorzugt)")).toBeVisible();
   await page.getByLabel(/Datenschutzerklärung/).check();
+  await page.getByRole("button", { name: "Verbindlich anmelden" }).click();
+  await expect(
+    page.getByText("Bitte gib eine Handynummer oder E-Mail-Adresse an."),
+  ).toBeVisible();
+  await page.locator("#dart-open-play-phone").fill("0171 1234567");
   await page.getByRole("button", { name: "Verbindlich anmelden" }).click();
 
   await expect(page).toHaveURL(/\/darts\/danke\/$/);
@@ -87,9 +93,31 @@ test("Gast sieht den nächsten Termin und kann sich zum Sonntagstraining anmelde
   await expect(page.getByText("DTEST2026")).toBeVisible();
   expect(submittedBody).toMatchObject({
     name: "Erika Muster",
-    email: "erika@example.de",
+    email: "",
+    phone: "0171 1234567",
     privacyAccepted: true,
   });
+});
+
+test("alter Directus-Endpunkt verlangt weiterhin E-Mail und zeigt kein Handyfeld", async ({
+  page,
+}) => {
+  await page.route(dartOpenPlayRoute, async (route) => {
+    await route.fulfill({
+      headers: corsHeaders,
+      contentType: "application/json",
+      body: JSON.stringify({
+        open: true,
+        slot: { label: "Sonntag, 27.09.2026, 18:00 Uhr" },
+      }),
+    });
+  });
+  await page.goto("/darts/anmelden/", { waitUntil: "networkidle" });
+  await expect(page.getByLabel("Handynummer (bevorzugt)")).toBeHidden();
+  await expect(page.locator("#dart-open-play-email")).toHaveAttribute(
+    "required",
+    "",
+  );
 });
 
 test("direkt geöffnete Danke-Seite behauptet keine Anmeldung", async ({

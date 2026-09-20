@@ -920,7 +920,10 @@ export const TARGET_SCHEMA = [
       stringField("event_title", true, "full", 255),
       dateTimeField("created_at", true),
       stringField("name", true, "half", 120),
-      stringField("email", true, "half", 255),
+      stringField("email", false, "half", 255),
+      stringField("phone", false, "half", 40, {
+        note: "Bevorzugter Kontaktweg für Rückfragen oder Terminänderungen zu dieser Dart-Anmeldung. Keine Werbung oder Newsletter.",
+      }),
       textField("notes", false, "full", "input-multiline"),
       integerField("party_size", true, "half", {
         defaultValue: 1,
@@ -929,13 +932,13 @@ export const TARGET_SCHEMA = [
       stringField("slot_label", true, "full", 255),
       dateTimeField("privacy_accepted_at", true),
       stringField("status", true, "half", 32, {
-        defaultValue: "Neu",
+        defaultValue: "new",
         interfaceType: "select-dropdown",
         options: {
           choices: [
-            { text: "Neu", value: "Neu" },
-            { text: "Erledigt", value: "Erledigt" },
-            { text: "Abgesagt", value: "Abgesagt" },
+            { text: "Neu", value: "new" },
+            { text: "Bestätigt", value: "confirmed" },
+            { text: "Abgesagt", value: "cancelled" },
           ],
         },
       }),

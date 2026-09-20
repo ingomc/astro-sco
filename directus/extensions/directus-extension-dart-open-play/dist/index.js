@@ -28,7 +28,9 @@ function getClientIp(request) {
 function rateLimit(request) {
   const now = Date.now();
   const key = getClientIp(request);
-  const recent = (rateBuckets.get(key) || []).filter((timestamp) => now - timestamp < RATE_WINDOW_MS);
+  const recent = (rateBuckets.get(key) || []).filter(
+    (timestamp) => now - timestamp < RATE_WINDOW_MS,
+  );
   if (recent.length >= RATE_MAX_REQUESTS) {
     throw new DartOpenPlayError(
       "RATE_LIMITED",
@@ -63,14 +65,22 @@ function assertAllowedOrigin(request, env, requireOrigin = false) {
   const origin = request.headers.origin;
   if (!origin) {
     if (requireOrigin) {
-      throw new DartOpenPlayError("ORIGIN_NOT_ALLOWED", "Diese Anfrage ist nicht erlaubt.", 403);
+      throw new DartOpenPlayError(
+        "ORIGIN_NOT_ALLOWED",
+        "Diese Anfrage ist nicht erlaubt.",
+        403,
+      );
     }
     return;
   }
 
   const origins = allowedOrigins(env);
   if (!origins.includes("*") && !origins.includes(origin)) {
-    throw new DartOpenPlayError("ORIGIN_NOT_ALLOWED", "Diese Anfrage ist nicht erlaubt.", 403);
+    throw new DartOpenPlayError(
+      "ORIGIN_NOT_ALLOWED",
+      "Diese Anfrage ist nicht erlaubt.",
+      403,
+    );
   }
 }
 
@@ -109,6 +119,7 @@ function publicConfiguration(configuration) {
   return {
     open: configuration.enabled,
     message,
+    contactMethods: ["phone", "email"],
     event: {
       id: DART_OPEN_PLAY_EVENT_ID,
       title: DART_OPEN_PLAY_EVENT_TITLE,
@@ -120,20 +131,35 @@ function publicConfiguration(configuration) {
 
 function isRegistrationIdCollision(error) {
   const code = error && typeof error === "object" ? error.code : undefined;
-  return code === "23505" || String(error?.message || "").toLowerCase().includes("duplicate");
+  return (
+    code === "23505" ||
+    String(error?.message || "")
+      .toLowerCase()
+      .includes("duplicate")
+  );
 }
 
-async function createRegistration(database, input, configuration) {
+export async function createRegistration(database, input, configuration) {
   const slot = configuration.slot;
-  const existing = await database("event_dart_registrations")
-    .where({ event_id: DART_OPEN_PLAY_EVENT_ID, email: input.email, slot_at: slot.at })
-    .first();
-  if (existing) {
-    throw new DartOpenPlayError(
-      "ALREADY_REGISTERED",
-      "Für diesen Sonntag liegt mit dieser E-Mail-Adresse bereits eine Anmeldung vor.",
-      409,
-    );
+  for (const [field, value] of [
+    ["phone", input.phone],
+    ["email", input.email],
+  ]) {
+    if (!value) continue;
+    const existing = await database("event_dart_registrations")
+      .where({
+        event_id: DART_OPEN_PLAY_EVENT_ID,
+        [field]: value,
+        slot_at: slot.at,
+      })
+      .first();
+    if (existing) {
+      throw new DartOpenPlayError(
+        "ALREADY_REGISTERED",
+        "Für diesen Sonntag liegt mit diesen Kontaktdaten bereits eine Anmeldung vor.",
+        409,
+      );
+    }
   }
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -147,12 +173,13 @@ async function createRegistration(database, input, configuration) {
         created_at: now,
         name: input.name,
         email: input.email,
+        phone: input.phone,
         notes: input.notes || null,
         party_size: 1,
         slot_at: slot.at,
         slot_label: slot.label,
         privacy_accepted_at: now,
-        status: "Neu",
+        status: "new",
         notes_done: false,
       });
       return registrationId;
@@ -175,7 +202,8 @@ function route(handler, context, requireOrigin = false) {
       await handler(request, response);
     } catch (error) {
       const known = error instanceof DartOpenPlayError;
-      if (!known) context.logger.error({ err: error }, "Dart open play request failed");
+      if (!known)
+        context.logger.error({ err: error }, "Dart open play request failed");
       response.status(known ? error.status : 500).json({
         error: known ? error.code : "INTERNAL_ERROR",
         message: known
@@ -200,34 +228,51 @@ export default {
         const known = error instanceof DartOpenPlayError;
         response.status(known ? error.status : 500).json({
           error: known ? error.code : "INTERNAL_ERROR",
-          message: known ? error.message : "Die Anfrage konnte nicht verarbeitet werden.",
+          message: known
+            ? error.message
+            : "Die Anfrage konnte nicht verarbeitet werden.",
         });
       }
     });
 
-    router.get("/", route(async (_request, response) => {
-      const configuration = await openPlayConfiguration(database);
-      response.set("Cache-Control", "no-store");
-      response.json(publicConfiguration(configuration));
-    }, context));
+    router.get(
+      "/",
+      route(async (_request, response) => {
+        const configuration = await openPlayConfiguration(database);
+        response.set("Cache-Control", "no-store");
+        response.json(publicConfiguration(configuration));
+      }, context),
+    );
 
-    router.post("/registrations", route(async (request, response) => {
-      rateLimit(request);
-      const configuration = await openPlayConfiguration(database);
-      if (!configuration.enabled) {
-        throw new DartOpenPlayError(
-          "REGISTRATION_CLOSED",
-          "Die Online-Anmeldung ist für den nächsten Termin aktuell nicht geöffnet.",
-          410,
-        );
-      }
+    router.post(
+      "/registrations",
+      route(
+        async (request, response) => {
+          rateLimit(request);
+          const configuration = await openPlayConfiguration(database);
+          if (!configuration.enabled) {
+            throw new DartOpenPlayError(
+              "REGISTRATION_CLOSED",
+              "Die Online-Anmeldung ist für den nächsten Termin aktuell nicht geöffnet.",
+              410,
+            );
+          }
 
-      const input = validateRegistrationPayload(request.body);
-      const registrationId = await createRegistration(database, input, configuration);
-      response.status(201).json({
-        registrationId,
-        message: "Danke, deine Anmeldung für das nächste Sonntagstraining ist eingegangen.",
-      });
-    }, context, true));
+          const input = validateRegistrationPayload(request.body);
+          const registrationId = await createRegistration(
+            database,
+            input,
+            configuration,
+          );
+          response.status(201).json({
+            registrationId,
+            message:
+              "Danke, deine Anmeldung für das nächste Sonntagstraining ist eingegangen.",
+          });
+        },
+        context,
+        true,
+      ),
+    );
   },
 };
