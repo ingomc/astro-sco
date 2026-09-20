@@ -6,6 +6,11 @@ Directus-Zugangsdaten an den Browser. Sie spricht ausschließlich den
 Custom-Endpoint `GET /dart-open-play` und `POST /dart-open-play/registrations`
 an.
 
+Nach einem erfolgreichen POST öffnet die Website `/darts/danke/` mit Termin,
+Sportheim und Anmeldenummer. Die Bestätigung liegt nur im Session-Storage des
+aktuellen Browser-Tabs; weder Name noch E-Mail-Adresse stehen in der URL oder
+im Speicher. Ohne Bestätigung zeigt die Seite einen Link zurück zum Formular.
+
 ## Einmalige Einrichtung
 
 1. Das produktive Directus läuft in einem separaten Dokploy-Compose-Template.

@@ -76,15 +76,32 @@ test("Gast sieht den nächsten Termin und kann sich zum Sonntagstraining anmelde
   await page.getByLabel(/Datenschutzerklärung/).check();
   await page.getByRole("button", { name: "Verbindlich anmelden" }).click();
 
+  await expect(page).toHaveURL(/\/darts\/danke\/$/);
   await expect(
-    page.getByRole("heading", { name: "Anmeldung gespeichert" }),
+    page.getByRole("heading", { name: "Du bist dabei!" }),
   ).toBeVisible();
+  await expect(page.getByText("Sonntag, 27.09.2026, 18:00 Uhr")).toBeVisible();
+  await expect(page.getByText("Sportheim Oberfüllbach")).toBeVisible();
+  await expect(page.getByText("DTEST2026")).toBeVisible();
+  await page.reload();
   await expect(page.getByText("DTEST2026")).toBeVisible();
   expect(submittedBody).toMatchObject({
     name: "Erika Muster",
     email: "erika@example.de",
     privacyAccepted: true,
   });
+});
+
+test("direkt geöffnete Danke-Seite behauptet keine Anmeldung", async ({
+  page,
+}) => {
+  await page.goto("/darts/danke/");
+  await expect(
+    page.getByRole("heading", { name: "Keine Bestätigung gefunden" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Zum Anmeldeformular" }),
+  ).toHaveAttribute("href", "/darts/anmelden/");
 });
 
 test("Darts-Seite führt Gäste sichtbar zur Anmeldung", async ({ page }) => {

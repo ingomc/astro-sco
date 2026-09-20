@@ -205,6 +205,8 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
       return;
     }
 
+    let nextSlotLabel = "";
+
     try {
       const response = await fetch(apiUrl, {
         headers: { Accept: "application/json" },
@@ -224,7 +226,8 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
       }
 
       status.textContent = "Die Online-Anmeldung ist geöffnet.";
-      slot.textContent = `Nächster Termin: ${result.slot.label}`;
+      nextSlotLabel = result.slot.label;
+      slot.textContent = `Nächster Termin: ${nextSlotLabel}`;
       form.hidden = false;
     } catch (error) {
       status.textContent =
@@ -270,6 +273,25 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
               "Die Anmeldung konnte nicht gespeichert werden.",
             ),
           );
+        }
+
+        if (
+          typeof result.registrationId === "string" &&
+          result.registrationId
+        ) {
+          try {
+            sessionStorage.setItem(
+              "sco-dart-open-play-confirmation",
+              JSON.stringify({
+                registrationId: result.registrationId,
+                slotLabel: nextSlotLabel,
+              }),
+            );
+            window.location.assign("/darts/danke/");
+            return;
+          } catch {
+            // Keep the confirmation visible here if browser storage is unavailable.
+          }
         }
 
         successMessage.textContent = textFromError(
