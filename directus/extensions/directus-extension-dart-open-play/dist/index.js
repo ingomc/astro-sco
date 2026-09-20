@@ -6,6 +6,7 @@ import {
   DartOpenPlayError,
   getNextDartOpenPlaySlot,
   normalizeOpenPlayTime,
+  publishRegistrationNotification,
   validateRegistrationPayload,
 } from "./logic.js";
 
@@ -112,7 +113,7 @@ async function openPlayConfiguration(database) {
   };
 }
 
-function publicConfiguration(configuration) {
+function publicConfiguration(configuration, ntfyEnabled) {
   const message = configuration.enabled
     ? "Die Online-Anmeldung ist geöffnet."
     : "Die Online-Anmeldung ist für den nächsten Termin aktuell nicht geöffnet.";
@@ -120,6 +121,7 @@ function publicConfiguration(configuration) {
     open: configuration.enabled,
     message,
     contactMethods: ["phone", "email"],
+    notificationsEnabled: ntfyEnabled,
     event: {
       id: DART_OPEN_PLAY_EVENT_ID,
       title: DART_OPEN_PLAY_EVENT_TITLE,
@@ -240,7 +242,12 @@ export default {
       route(async (_request, response) => {
         const configuration = await openPlayConfiguration(database);
         response.set("Cache-Control", "no-store");
-        response.json(publicConfiguration(configuration));
+        response.json(
+          publicConfiguration(
+            configuration,
+            Boolean(String(context.env.DART_OPEN_PLAY_NTFY_URL || "").trim()),
+          ),
+        );
       }, context),
     );
 
@@ -264,6 +271,29 @@ export default {
             input,
             configuration,
           );
+          try {
+            const notified = await publishRegistrationNotification(
+              fetch,
+              context.env,
+              input,
+              configuration.slot,
+              registrationId,
+            );
+            if (!notified) {
+              context.logger.warn(
+                { registrationId },
+                "Dart registration saved without ntfy: no topic configured",
+              );
+            }
+          } catch (error) {
+            context.logger.warn(
+              {
+                registrationId,
+                errorType: error instanceof Error ? error.name : "unknown",
+              },
+              "Dart registration saved but ntfy notification failed",
+            );
+          }
           response.status(201).json({
             registrationId,
             message:

@@ -33,6 +33,7 @@ test("Gast sieht den nächsten Termin und kann sich zum Sonntagstraining anmelde
         body: JSON.stringify({
           open: true,
           contactMethods: ["phone", "email"],
+          notificationsEnabled: true,
           slot: {
             at: "2026-09-27T16:00:00.000Z",
             label: "Sonntag, 27.09.2026, 18:00 Uhr",
@@ -74,6 +75,9 @@ test("Gast sieht den nächsten Termin und kann sich zum Sonntagstraining anmelde
 
   await page.locator("#dart-open-play-name").fill("Erika Muster");
   await expect(page.getByLabel("Handynummer (bevorzugt)")).toBeVisible();
+  await expect(
+    page.locator("[data-dart-open-play-notification-note]"),
+  ).toBeVisible();
   await page.getByLabel(/Datenschutzerklärung/).check();
   await page.getByRole("button", { name: "Verbindlich anmelden" }).click();
   await expect(
@@ -114,6 +118,9 @@ test("alter Directus-Endpunkt verlangt weiterhin E-Mail und zeigt kein Handyfeld
   });
   await page.goto("/darts/anmelden/", { waitUntil: "networkidle" });
   await expect(page.getByLabel("Handynummer (bevorzugt)")).toBeHidden();
+  await expect(
+    page.locator("[data-dart-open-play-notification-note]"),
+  ).toBeHidden();
   await expect(page.locator("#dart-open-play-email")).toHaveAttribute(
     "required",
     "",

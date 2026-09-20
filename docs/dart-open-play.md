@@ -62,6 +62,26 @@ Speicher. Ohne Bestätigung zeigt die Seite einen Link zurück zum Formular.
 - Die Registrierung wird mit `party_size = 1`, Status `new` und einer
   zufälligen Anmeldenummer in `event_dart_registrations` gespeichert.
 
+## ntfy-Benachrichtigung
+
+Wenn `DART_OPEN_PLAY_NTFY_URL` konfiguriert ist, sendet der Directus-Endpunkt
+nach einer erfolgreich gespeicherten Anmeldung serverseitig eine Push-Nachricht
+an das ntfy-Topic. Die öffentliche Konfiguration meldet dann
+`notificationsEnabled: true`; nur dann zeigt das Formular den kurzen
+Benachrichtigungshinweis. Die Nachricht
+enthält Termin, Ort, Name, Anmeldenummer, vorhandene Handy- und E-Mail-Angaben
+sowie optional den Hinweis (auf 500 Zeichen gekürzt; vollständig in Directus).
+Weder Topic-Adresse noch Zugangstoken gelangen in den Browser.
+
+In der Directus-Compose-Umgebung `DART_OPEN_PLAY_NTFY_URL` auf die vollständige
+HTTPS-Topic-URL und bei geschütztem Topic `DART_OPEN_PLAY_NTFY_TOKEN` auf ein
+reines Schreibtoken setzen. Die Erweiterung sendet per POST mit optionalem
+Bearer-Token. Ein fehlendes Ziel deaktiviert die Benachrichtigung; bei einem
+Zustellfehler bleibt die bereits gespeicherte Anmeldung erfolgreich und Directus
+schreibt eine Warnung mit der Anmeldenummer, aber ohne Kontaktdaten oder
+Topic-Adresse, ins Log. Das Topic muss für personenbezogene Daten vor
+unbefugtem Lesen geschützt sein.
+
 ## Produktionsabgleich vom 20.09.2026
 
 Die vorhandene Sammlung `event_dart_registrations` hatte zusätzlich das

@@ -99,6 +99,13 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
       kontaktieren, zum Beispiel bei Rückfragen oder Terminänderungen. Keine
       Werbung und keine Newsletter.
     </p>
+    <p
+      class="text-sm text-slate-700"
+      data-dart-open-play-notification-note
+      hidden
+    >
+      Das Orga-Team erhält eine interne Benachrichtigung über neue Anmeldungen.
+    </p>
 
     <label
       class="grid gap-2 text-sm font-bold text-slate-900"
@@ -214,6 +221,9 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
     const phoneInput = form?.querySelector('input[name="phone"]');
     const emailInput = form?.querySelector('input[name="email"]');
     const emailLabel = root.querySelector("[data-dart-open-play-email-label]");
+    const notificationNote = root.querySelector(
+      "[data-dart-open-play-notification-note]",
+    );
 
     if (
       !(status instanceof HTMLElement) ||
@@ -226,7 +236,8 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
       !(phoneField instanceof HTMLElement) ||
       !(phoneInput instanceof HTMLInputElement) ||
       !(emailInput instanceof HTMLInputElement) ||
-      !(emailLabel instanceof HTMLElement)
+      !(emailLabel instanceof HTMLElement) ||
+      !(notificationNote instanceof HTMLElement)
     ) {
       return;
     }
@@ -268,6 +279,7 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
         emailInput.required = false;
         emailLabel.textContent = "E-Mail-Adresse (optional)";
       }
+      notificationNote.hidden = result.notificationsEnabled !== true;
       form.hidden = false;
     } catch (error) {
       status.textContent =

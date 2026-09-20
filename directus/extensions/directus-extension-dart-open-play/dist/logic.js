@@ -195,3 +195,61 @@ export function validateRegistrationPayload(payload) {
 
   return { name, email: email || null, phone: phone || null, notes };
 }
+
+export function formatRegistrationNotification(input, slot, registrationId) {
+  const lines = [
+    `Termin: ${slot.label}`,
+    `Ort: ${DART_OPEN_PLAY_LOCATION}`,
+    `Name: ${input.name.replace(/\s+/g, " ")}`,
+    input.phone ? `Handy: ${input.phone}` : null,
+    input.email ? `E-Mail: ${input.email}` : null,
+    `Anmeldenummer: ${registrationId}`,
+  ];
+
+  if (input.notes) {
+    const notes = input.notes.replace(/\s+/g, " ").trim();
+    const characters = Array.from(notes);
+    const shortened = characters.slice(0, 500).join("");
+    lines.push(
+      `Hinweis: ${shortened}${characters.length > 500 ? " … (vollständig in Directus)" : ""}`,
+    );
+  }
+
+  return lines.filter(Boolean).join("\n");
+}
+
+export async function publishRegistrationNotification(
+  fetchImpl,
+  env,
+  input,
+  slot,
+  registrationId,
+) {
+  const configuredUrl = String(env.DART_OPEN_PLAY_NTFY_URL || "").trim();
+  if (!configuredUrl) return false;
+
+  const url = new URL(configuredUrl);
+  if (url.protocol !== "https:" || url.username || url.password) {
+    throw new Error("Invalid ntfy URL configuration");
+  }
+
+  const token = String(env.DART_OPEN_PLAY_NTFY_TOKEN || "").trim();
+  const headers = {
+    "Content-Type": "text/plain; charset=utf-8",
+    Title: "Neue Dart-Anmeldung",
+    Priority: "high",
+    Tags: "dart",
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const response = await fetchImpl(url.toString(), {
+    method: "POST",
+    headers,
+    body: formatRegistrationNotification(input, slot, registrationId),
+    signal: AbortSignal.timeout(5000),
+  });
+  if (!response.ok) {
+    throw new Error(`ntfy HTTP ${response.status}`);
+  }
+  return true;
+}
