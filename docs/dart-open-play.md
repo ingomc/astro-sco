@@ -8,19 +8,23 @@ an.
 
 ## Einmalige Einrichtung
 
-1. Das Directus-Image aus diesem Repository bauen, damit
-   `directus-extension-dart-open-play` geladen wird.
-2. Das Schema synchronisieren:
-
-   ```sh
-   DIRECTUS_URL=https://cms.dart.ingomc.de \
-   DIRECTUS_TOKEN=<admin-token> \
-   pnpm run directus:provision:sync
-   ```
-
-3. In der Directus-Singleton-Sammlung **Settings** den Schalter
-   `dart_open_play_enabled` aktivieren und `dart_open_play_time` auf `18:00`
-   setzen.
+1. Das produktive Directus läuft in einem separaten Dokploy-Compose-Template.
+   Ein einmaliger Loader kopiert `package.json`, `dist/index.js` und
+   `dist/logic.js` der Erweiterung `directus-extension-dart-open-play` aus dem
+   veröffentlichten Repository in das gemeinsame Extensions-Volume. Directus
+   startet nach erfolgreichem Loader-Lauf mit diesem Volume. `Exited (0)` beim
+   Loader ist normal; Directus muss nach einer Änderung neu erstellt werden,
+   damit es die Erweiterung lädt. `GET /dart-open-play` muss danach `200`
+   liefern.
+2. Das Schema von `settings` und `event_dart_registrations` über die native
+   [Directus-MCP-Schnittstelle](directus-migration.md#produktives-directus-per-mcp)
+   prüfen. Nur fehlende Felder aus `scripts/directus/schema.mjs` anlegen. Ein
+   pauschaler Sync der produktiven Sammlung ist dafür nicht nötig.
+3. In der Directus-Singleton-Sammlung **Settings** `dart_open_play_enabled`
+   aktivieren und `dart_open_play_time` auf `18:00` setzen. Beides lässt sich
+   über das MCP-Werkzeug `items` aktualisieren. Die Werte wurden am 20.09.2026
+   gesetzt; der öffentliche Endpoint meldete danach `open: true` für Sonntag,
+   den 27.09.2026, 18:00 Uhr.
 4. In Directus nur die benötigten Website-Origins erlauben:
 
    ```text
