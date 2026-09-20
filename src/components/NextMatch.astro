@@ -1,5 +1,5 @@
 ---
-// NextMatch.astro - Zeigt das nächste Ligaspiel dynamisch von der 2K API
+// NextMatch.astro - Zeigt das nächste Ligaspiel dynamisch von der 3K API
 interface Props {
   small?: boolean;
   header?: boolean;
@@ -137,7 +137,7 @@ const { small = false, header = false } = Astro.props;
     </div>
 
     <div class="error-state hidden py-4 text-center text-red-500">
-      {small ? "!" : "Fehler beim Laden der Daten"}
+      Fehler beim Laden der Daten
     </div>
   </div>
 
@@ -239,6 +239,10 @@ const { small = false, header = false } = Astro.props;
       container.querySelector(".no-match-state")?.classList.remove("hidden");
     } catch (error) {
       console.error("Fehler beim Laden des nächsten Dartspiels:", error);
+      if (container.dataset.small === "true") {
+        container.classList.add("hidden");
+        return;
+      }
       container.querySelector(".loading-state")?.classList.add("hidden");
       container.querySelector(".error-state")?.classList.remove("hidden");
     }

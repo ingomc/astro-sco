@@ -1,0 +1,26 @@
+Create a completely finished, beautifully art-directed German darts-club recruitment FLYER as ONE unified image, including ALL typography, logos, illustration and layout. The supplied flyer is the content/club/character reference; the user wants a substantially more compelling professional design generated entirely by GPT Image.
+FORMAT: flat front-facing portrait A5 artwork, exact 148:210 aspect ratio (approximately 0.705 width/height). Fill the image with the flyer itself: no mockup, desk, frame, folded paper, perspective or surrounding background. Highest available resolution, ideally 1480x2100 or larger. Keep all text comfortably within 5 mm-equivalent outer safety margins.
+
+DIRECTION: serious contemporary sports-club campaign, confident premium agency graphic design, strongly rooted in the supplied website palette of deep slate navy #0F172A, club crimson #B01F29 and white. Professional and welcoming. Transform the stiff source into a tightly composed, energetic editorial poster with deliberate hierarchy, striking oversized condensed sans-serif typography, carefully balanced line spacing and strong alignment. Let the pointing hand/upper body interact naturally with the composition. Integrate the person into the artwork with refined lighting and composition rather than a small pasted-on stock-photo rectangle. An elegant subtle enlarged bullseye arc and restrained red graphic strokes may support the darts theme. Clean and controlled, no flames, sparks, grunge, cartoon, cheesy effects, random icons or excessive gradients.
+
+Use the same fictional friendly male darts player from the supplied reference: short dark hair, neat beard, red/black darts polo, directly pointing toward the viewer, steel darts in the other hand. Large hero on the right, strong headline to the left, with some editorial overlap only in unused space; NEVER obscure text or his face. Keep correct hand anatomy. Do not present him as a named real club member.
+
+LOGOS: faithfully preserve the two supplied SCO and Fülltreffer shield logos from the reference, their lettering, proportions and colours. Integrate them as a small tasteful co-branded lockup with a clean contrasting surface and clear space. Avoid the oversized rounded white logo card of the source. Do not invent or add sponsor logos.
+
+EXACT GERMAN COPY — render each item once, flawlessly spelled, keep umlauts and punctuation, line breaks may be art-directed:
+"SCO-Darts Team Fülltreffer"
+"WIR SUCHEN DICH!"
+"Werde Teil vom Team Fülltreffer."
+"Anfänger, Hobbyspieler oder Liga-Erfahrung?"
+"Bei uns bist du willkommen!"
+"STEELDARTS · OFFENES TRAINING"
+"Jeden Sonntag ab 18 Uhr"
+"Vorher einfach online anmelden."
+"QR-CODE FOLGT"
+"KURZLINK FOLGT"
+"SCO-OGV Oberfüllbach 1963 e.V."
+
+HIERARCHY: WIR SUCHEN DICH! is the arresting recruitment headline, with DICH! the strongest word. Sunday 18 Uhr is the next unmistakable information. The welcoming copy is brief, readable and neatly grouped. Integrate a polished registration area at the bottom with a white blank square approximately 30 mm equivalent labelled exactly "QR-CODE FOLGT", and "KURZLINK FOLGT" as a visible editable-later placeholder next to it under the signup instruction. The square must be obviously a placeholder, NEVER a fake black-and-white QR pattern. The signup area should feel like editorial print design, not a stack of web buttons/cards.
+No address, phone, email, extra advertising copy, invented URL, fees, age restrictions, English slogan or QR pattern. Keep the complete footer inside the artwork. All small copy must remain easily readable on an actual A5 flyer. Design one excellent final flyer, not a contact sheet or multiple variants.
+
+Generated with the built-in GPT Image tool. Complete flattened flyer including typography and logos, explicitly requested by the user. Reference: fuelltreffer-a5-03-motivbetont.png. This is a visual draft; typography and logos in this PNG are rasterized generated imagery, not editable original vectors. QR-code and short-link placeholders remain intentional.

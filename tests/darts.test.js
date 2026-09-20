@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const DART_API_PATTERN = "**/frontend/participant/633505";
-const DART_TABLE_API_PATTERN = "**/frontend/event/24970/phase/0/round/0/table";
+const DART_API_PATTERN =
+  "https://backend4.3k-darts.com/2k-backend4/api/v1/frontend/participant/633505";
+const DART_TABLE_API_PATTERN =
+  "https://backend4.3k-darts.com/2k-backend4/api/v1/frontend/event/24970/phase/0/round/0/table";
 
 const dartApiResponse = {
   participant: {
@@ -164,6 +166,10 @@ async function mockDartTableApi(page, response = dartTableResponse) {
 }
 
 test.describe("Darts-Mannschaftsseite", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.clock.setFixedTime(new Date("2026-09-01T10:00:00.000Z"));
+  });
+
   test("zeigt Mannschaft, Spielplan, Ergebnisse und Kader", async ({
     page,
   }) => {
@@ -225,6 +231,11 @@ test.describe("Darts-Mannschaftsseite", () => {
     await expect(
       page.getByRole("link", { name: "Darts", exact: true }).first(),
     ).toHaveAttribute("aria-current", "page");
+    const sourceLink = page.getByRole("link", {
+      name: "Offizielle Daten bei 3K Darts",
+    });
+    await sourceLink.hover();
+    await expect(sourceLink).toHaveCSS("color", "rgb(255, 255, 255)");
     expect(getRequestCount()).toBe(1);
     expect(getTableRequestCount()).toBe(1);
   });
@@ -278,12 +289,23 @@ test.describe("Darts-Mannschaftsseite", () => {
 
     await page.goto("/darts");
     await expect(page.locator('[data-dart-state="error"]')).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: "Spielplan bei 2K Darts" }),
-    ).toBeVisible();
+    const scheduleSourceLink = page.getByRole("link", {
+      name: "Spielplan bei 3K Darts",
+    });
+    await expect(scheduleSourceLink).toBeVisible();
+    await expect(scheduleSourceLink).toHaveAttribute(
+      "href",
+      "https://portal.3k-darts.com/frontend/events/5/event/24970/participants/633505",
+    );
     await expect(
       page.getByRole("button", { name: "Erneut versuchen" }),
     ).toBeVisible();
+    await expect(
+      page.locator('[data-header="true"][data-small="true"]'),
+    ).toHaveClass(/hidden/);
+    await expect(
+      page.locator('[data-header="false"][data-small="true"]'),
+    ).toHaveClass(/hidden/);
   });
 
   test("schaltet mobil barrierefrei zwischen Spielplan und Rangliste", async ({
@@ -347,9 +369,14 @@ test.describe("Darts-Mannschaftsseite", () => {
     await expect(
       page.getByRole("heading", { name: "Gemeldeter Kader" }),
     ).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: "Tabelle bei 2K Darts" }),
-    ).toBeVisible();
+    const standingsSourceLink = page.getByRole("link", {
+      name: "Tabelle bei 3K Darts",
+    });
+    await expect(standingsSourceLink).toBeVisible();
+    await expect(standingsSourceLink).toHaveAttribute(
+      "href",
+      "https://portal.3k-darts.com/frontend/events/5/event/24970/table",
+    );
   });
 
   test("bleibt mit geladenen Daten barrierefrei", async ({ page }) => {
