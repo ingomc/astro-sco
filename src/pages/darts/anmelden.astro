@@ -1,0 +1,16 @@
+---
+import DartOpenPlaySignup from "../../components/DartOpenPlaySignup.astro";
+import App from "../../layouts/App.astro";
+import { getDartOpenPlayApiUrl } from "../../lib/dart-open-play";
+
+const apiUrl = getDartOpenPlayApiUrl();
+---
+
+<App
+  title="Dart-Training anmelden - SCO-OGV Oberfüllbach"
+  description="Melde dich für das nächste offene Sonntagstraining der SCO-Darts im Sportheim Oberfüllbach an."
+>
+  <main class="container mx-auto max-w-3xl px-4 py-10 md:py-14">
+    <DartOpenPlaySignup apiUrl={apiUrl} />
+  </main>
+</App>

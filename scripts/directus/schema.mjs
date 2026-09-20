@@ -527,6 +527,11 @@ export const TARGET_SCHEMA = [
           is_nullable: true,
         },
       },
+      boolField("dart_open_play_enabled", false, false),
+      stringField("dart_open_play_time", false, "half", 5, {
+        defaultValue: "18:00",
+        note: "Startzeit des offenen Sonntagstrainings im Sportheim (Berlin-Zeit, HH:MM).",
+      }),
       boolField("use_winter_mode", false, false),
       boolField("use_winter_stage", false, false),
       fileImageField("logo_normal", false, "half"),
@@ -897,6 +902,44 @@ export const TARGET_SCHEMA = [
       integerField("unit_price_cents", true, "half"),
       integerField("quantity", true, "half"),
       dateTimeField("date_created", true),
+    ],
+  },
+  {
+    name: "event_dart_registrations",
+    meta: {
+      icon: "how_to_reg",
+      note: "Anmeldungen zum offenen Sonntagstraining. Persönliche Daten niemals über die öffentliche Directus-API freigeben; ausschließlich der geschützte Dart-Open-Play-Endpunkt schreibt hier hinein.",
+      display_template: "{{slot_label}} – {{name}}",
+    },
+    fields: [
+      stringField("registration_id", true, "half", 32, {
+        isUnique: true,
+        note: "Öffentliche Anmeldenummer ohne Personenbezug.",
+      }),
+      stringField("event_id", true, "half", 120),
+      stringField("event_title", true, "full", 255),
+      dateTimeField("created_at", true),
+      stringField("name", true, "half", 120),
+      stringField("email", true, "half", 255),
+      textField("notes", false, "full", "input-multiline"),
+      integerField("party_size", true, "half", {
+        defaultValue: 1,
+      }),
+      dateTimeField("slot_at", true),
+      stringField("slot_label", true, "full", 255),
+      dateTimeField("privacy_accepted_at", true),
+      stringField("status", true, "half", 32, {
+        defaultValue: "Neu",
+        interfaceType: "select-dropdown",
+        options: {
+          choices: [
+            { text: "Neu", value: "Neu" },
+            { text: "Erledigt", value: "Erledigt" },
+            { text: "Abgesagt", value: "Abgesagt" },
+          ],
+        },
+      }),
+      boolField("notes_done", false, false),
     ],
   },
 ];
