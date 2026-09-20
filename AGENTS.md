@@ -15,3 +15,8 @@
   Dart-Erweiterung wird im Dokploy-Compose-Template über ein gemeinsames
   Extensions-Volume geladen; [docs/dart-open-play.md](docs/dart-open-play.md)
   beschreibt den Ablauf.
+- Dokploy ist unter `https://dok.ingomc.de/` erreichbar; der API-Zugang liegt
+  lokal als `DOKPLOY_API_KEY` in `.env`. Beim Dart-Erweiterungs-Deploy muss nach
+  dem Compose-Deploy der weiterlaufende **Directus-Container** gezielt neu
+  gestartet werden. Details und Verifikation stehen in
+  [docs/dart-open-play.md](docs/dart-open-play.md#dokploy-rollout-der-dart-erweiterung).

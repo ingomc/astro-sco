@@ -16,11 +16,10 @@ Speicher. Ohne Bestätigung zeigt die Seite einen Link zurück zum Formular.
 1. Das produktive Directus läuft in einem separaten Dokploy-Compose-Template.
    Ein einmaliger Loader kopiert `package.json`, `dist/index.js` und
    `dist/logic.js` der Erweiterung `directus-extension-dart-open-play` aus dem
-   veröffentlichten Repository in das gemeinsame Extensions-Volume. Directus
-   startet nach erfolgreichem Loader-Lauf mit diesem Volume. `Exited (0)` beim
-   Loader ist normal; Directus muss nach einer Änderung neu erstellt werden,
-   damit es die Erweiterung lädt. `GET /dart-open-play` muss danach `200`
-   liefern.
+   veröffentlichten Repository in das gemeinsame Extensions-Volume. Exit-Code
+   0 beim Loader ist normal. Nach einer Änderung muss auch der laufende
+   Directus-Container neu gestartet werden, damit er die aktualisierte
+   Erweiterung lädt. `GET /dart-open-play` muss danach `200` liefern.
 2. Das Schema von `settings` und `event_dart_registrations` über die native
    [Directus-MCP-Schnittstelle](directus-migration.md#produktives-directus-per-mcp)
    prüfen. Nur fehlende Felder aus `scripts/directus/schema.mjs` anlegen. Ein
@@ -54,9 +53,9 @@ Speicher. Ohne Bestätigung zeigt die Seite einen Link zurück zum Formular.
   kann stattdessen oder zusätzlich angegeben werden. Die Angaben dienen nur
   Rückfragen und Terminänderungen zu dieser Anmeldung, nicht Werbung oder
   Newslettern.
-- Solange der produktive Endpunkt noch keine `contactMethods` mit `phone`
-  meldet, bleibt das bisherige E-Mail-Pflichtfeld sichtbar. Erst nach dem
-  Directus-Deploy wird die Handy-Anmeldung freigeschaltet.
+- Meldet ein älterer Endpunkt noch keine `contactMethods` mit `phone`, bleibt
+  das bisherige E-Mail-Pflichtfeld sichtbar. Nach dem Directus-Deploy wird die
+  Handy-Anmeldung automatisch freigeschaltet.
 - Honeypot, Origin-Allowlist, fünf Schreibversuche pro IP in 15 Minuten und
   eine Sperre gegen doppelte Handy- oder E-Mail-Anmeldungen für denselben Termin
   reduzieren Missbrauch.
@@ -78,10 +77,38 @@ wurde anschließend wieder entfernt. Die bestehende Status-Auswahlliste in
 Directus verwendet `new`, `confirmed` und `cancelled`. Die aktualisierte
 Erweiterung schreibt `new`.
 
-Für Handynummern muss in `event_dart_registrations` ein optionales Textfeld
-`phone` (maximal 40 Zeichen) angelegt und `email` auf optional gesetzt werden.
-Diese beiden Schemaänderungen wurden am 21.09.2026 im produktiven Directus per
-MCP durchgeführt und anschließend zurückgelesen.
-Danach die drei Dateien der aktualisierten Erweiterung im separaten
-Dokploy-Compose-Template laden und den Directus-Container neu erstellen. Ein
-Website-Deploy allein kann den Directus-Endpunkt nicht aktualisieren.
+Für Handynummern wurde am 21.09.2026 in `event_dart_registrations` ein
+optionales Textfeld `phone` (maximal 40 Zeichen) angelegt und `email` auf
+optional gesetzt. Beide Änderungen wurden im produktiven Directus per MCP
+zurückgelesen. Die aktualisierte Erweiterung wurde danach aus Commit
+`e3cb728f3b65b4621f03970820ff9b671a207666` geladen. `GET /dart-open-play`
+meldete `contactMethods: ["phone", "email"]`. Ein synthetischer POST nur mit
+Handynummer lieferte `201` und wurde mit `email: null` und Status `new` über MCP
+zurückgelesen; der Testdatensatz wurde direkt danach gelöscht.
+
+## Dokploy-Rollout der Dart-Erweiterung
+
+Das produktive Directus ist der eigene Raw-Compose-Dienst
+`dart-directus-ss0lpg` in Dokploy unter `https://dok.ingomc.de/`. Die API liegt
+unter `/api/` und verwendet den Header `x-api-key` mit dem lokalen,
+nicht versionierten `DOKPLOY_API_KEY` aus `.env`. Die Compose-ID war am
+21.09.2026 `U97AX6udPP_1TnoZti72r`; vor Änderungen per `compose.search` und
+`compose.one` gegenprüfen.
+
+1. Die drei `raw.githubusercontent.com/ingomc/astro-sco/<commit>/…`-URLs im
+   bestehenden `composeFile` auf **denselben geprüften Commit** setzen und nur
+   `composeFile` über `POST /api/compose.update` aktualisieren. Die drei Dateien
+   sind `package.json`, `dist/index.js` und `dist/logic.js`. Vorher und nachher
+   per `compose.one` prüfen, dass alle drei URLs stimmen und `env` unverändert
+   bleibt.
+2. `POST /api/compose.deploy` mit `freshVolumes: false` ausführen. Das erstellt
+   den einmalig laufenden `dart_extension_loader` neu; `Exited (0)` ist der
+   erwartete Erfolg. Im Deploy-Log prüfen, ob Directus selbst nur als `Running`
+   aufgeführt wird.
+3. Falls Directus nicht neu erstellt wurde, über
+   `docker.getContainersByAppNameMatch?appName=dart-directus-ss0lpg&appType=docker-compose`
+   die aktuelle ID von `dart-directus-ss0lpg-directus-1` ermitteln und nur
+   diesen Container per `POST /api/docker.restartContainer` neu starten. Die
+   Datenbank-, Cache- und Loader-Container nicht dafür neu starten.
+4. Den öffentlichen Endpoint zurücklesen und die neue Funktion prüfen. Ein
+   Website-Deploy allein aktualisiert den Directus-Prozess nicht.
