@@ -1,0 +1,89 @@
+[
+  {
+    "variant": "01-ausgewogen",
+    "page_count": 1,
+    "media_mm": [
+      0.0,
+      0.0,
+      154.0,
+      216.0
+    ],
+    "trim_mm": [
+      3.0,
+      3.0,
+      151.0,
+      213.0
+    ],
+    "fonts_embedded": {
+      "/F1+0": true,
+      "/F2+0": true
+    },
+    "exact_copy": true,
+    "svg_resources_embedded": true,
+    "png_pixels": [
+      1749,
+      2481
+    ],
+    "svg_browser_rendering": "passed (local Chromium; network disabled)",
+    "pdf_visual_review": "passed",
+    "selected_by_user": false
+  },
+  {
+    "variant": "02-schriftbetont",
+    "page_count": 1,
+    "media_mm": [
+      0.0,
+      0.0,
+      154.0,
+      216.0
+    ],
+    "trim_mm": [
+      3.0,
+      3.0,
+      151.0,
+      213.0
+    ],
+    "fonts_embedded": {
+      "/F1+0": true,
+      "/F2+0": true
+    },
+    "exact_copy": true,
+    "svg_resources_embedded": true,
+    "png_pixels": [
+      1749,
+      2481
+    ],
+    "svg_browser_rendering": "passed (local Chromium; network disabled)",
+    "pdf_visual_review": "passed",
+    "selected_by_user": false
+  },
+  {
+    "variant": "03-motivbetont",
+    "page_count": 1,
+    "media_mm": [
+      0.0,
+      0.0,
+      154.0,
+      216.0
+    ],
+    "trim_mm": [
+      3.0,
+      3.0,
+      151.0,
+      213.0
+    ],
+    "fonts_embedded": {
+      "/F1+0": true,
+      "/F2+0": true
+    },
+    "exact_copy": true,
+    "svg_resources_embedded": true,
+    "png_pixels": [
+      1749,
+      2481
+    ],
+    "svg_browser_rendering": "passed (local Chromium; network disabled)",
+    "pdf_visual_review": "passed",
+    "selected_by_user": true
+  }
+]
