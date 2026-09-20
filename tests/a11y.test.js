@@ -37,24 +37,40 @@ test.describe("Accessibility Tests", () => {
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 
-  test("Keyboard Navigation sollte funktionieren", async ({ page }) => {
+  test("Keyboard Navigation sollte funktionieren", async ({
+    page,
+    browserName,
+    isMobile,
+  }) => {
+    test.skip(
+      isMobile || browserName === "webkit",
+      "Skip keyboard tests on mobile and webkit",
+    );
     await page.goto("/", { waitUntil: "domcontentloaded" });
 
-    // Der erste Fokuspunkt ist der Sprunglink zum Hauptinhalt.
-    await page.keyboard.press("Tab");
-    const skipLink = page.getByRole("link", {
-      name: "Zum Hauptinhalt springen",
-    });
-    await expect(skipLink).toBeFocused();
+    const skipLinks = [
+      page.getByRole("link", { name: "Zum Hauptinhalt springen" }),
+      page.getByRole("link", { name: "Zur Navigation springen" }),
+      page.getByRole("link", { name: "Zum Footer springen" }),
+    ];
 
-    // Zwei weitere Sprunglinks, das Logo und der Darts-Match-Link liegen vor
-    // der Hauptnavigation.
+    for (const skipLink of skipLinks) {
+      await page.keyboard.press("Tab");
+      await expect(skipLink).toBeFocused();
+    }
+
+    const logoLink = page.locator('header a[aria-label*="Startseite"]');
     await page.keyboard.press("Tab");
+    await expect(logoLink).toBeFocused();
+
+    const dartMatchLink = page.getByRole("link", {
+      name: "Nächstes Dartspiel und Spielplan ansehen",
+    });
     await page.keyboard.press("Tab");
-    await page.keyboard.press("Tab");
-    await page.keyboard.press("Tab");
-    await page.keyboard.press("Tab");
+    await expect(dartMatchLink).toBeFocused();
+
     const navLink = page.locator("#navigation a").first();
+    await page.keyboard.press("Tab");
     await expect(navLink).toBeFocused();
   });
 

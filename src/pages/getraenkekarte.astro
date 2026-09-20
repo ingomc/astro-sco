@@ -2,15 +2,10 @@
 import App from "../layouts/App.astro";
 import HpCard from "../components/HpCard.astro";
 import HpStage from "../components/HpStage.astro";
+import { getDrinksMenu } from "../lib/content-source";
 
 const title = "Getränkekarte - SCO-OGV Oberfüllbach";
 const description = "Aktuelle Getränkekarte im Sportheim des SCO-OGV Oberfüllbach.";
-
-const sectionMeta = {
-  Bier: { icon: "beer" },
-  "Alkoholfreie Getränke": { icon: "bottle" },
-  "Wein und Spirituosen": { icon: "glass" }
-} as const;
 
 const slugify = (value: string) =>
   value
@@ -21,37 +16,7 @@ const slugify = (value: string) =>
     .replaceAll("ß", "ss")
     .replaceAll(" ", "-");
 
-const menuSections = [
-  {
-    name: "Bier",
-    rows: [
-      { drink: "Bier, Radler", volume: "1,0 l", price: "5,70 EUR" },
-      { drink: "Bier, Radler", volume: "0,5 l", price: "3,00 EUR" },
-      { drink: "Bier, Radler", volume: "0,25 l", price: "1,70 EUR" },
-      { drink: "Leichtbier", volume: "0,5 l", price: "3,00 EUR" },
-      { drink: "alkoholfr. Bier, alkoholfr. Weizen", volume: "0,5 l", price: "3,00 EUR" }
-    ]
-  },
-  {
-    name: "Alkoholfreie Getränke",
-    rows: [
-      { drink: "Limo, Spezi, Cola", volume: "0,5 l", price: "2,50 EUR" },
-      { drink: "Apfelsaftschorle", volume: "0,5 l", price: "2,50 EUR" },
-      { drink: "Iso Kirschschorle", volume: "0,5 l", price: "2,50 EUR" },
-      { drink: "Mineralwasser", volume: "0,5 l", price: "2,50 EUR" }
-    ]
-  },
-  {
-    name: "Wein und Spirituosen",
-    rows: [
-      { drink: "Frankenwein", volume: "0,2 l", price: "2,70 EUR" },
-      { drink: "Frankenwein", volume: "0,1 l", price: "1,40 EUR" },
-      { drink: "Weinschorle", volume: "0,5 l", price: "3,50 EUR" },
-      { drink: "Weinschorle", volume: "0,25 l", price: "1,80 EUR" },
-      { drink: "Schnaps", volume: "0,02 l", price: "1,50 EUR" }
-    ]
-  }
-] as const;
+const menuData = await getDrinksMenu();
 
 type PrintMenuRow =
   | { section: string }
@@ -61,31 +26,13 @@ type PrintMenuRow =
       prices: string[];
     };
 
-const groupPrintRows = (
-  rows: readonly { drink: string; volume: string; price: string }[]
-): Exclude<PrintMenuRow, { section: string }>[] => {
-  return rows.reduce<Exclude<PrintMenuRow, { section: string }>[]>((acc, row) => {
-    const last = acc.at(-1);
-
-    if (last && last.drink === row.drink) {
-      last.volumes.push(row.volume);
-      last.prices.push(row.price);
-      return acc;
-    }
-
-    acc.push({
-      drink: row.drink,
-      volumes: [row.volume],
-      prices: [row.price]
-    });
-
-    return acc;
-  }, []);
-};
-
-const printRows: PrintMenuRow[] = menuSections.flatMap((section) => [
+const printRows: PrintMenuRow[] = menuData.flatMap((section) => [
   { section: section.name },
-  ...groupPrintRows(section.rows)
+  ...section.drinks.map((drink) => ({
+    drink: drink.name,
+    volumes: drink.prices.map((p) => `${p.size} ${p.unit}`),
+    prices: drink.prices.map((p) => `${p.price.includes(",") ? p.price : p.price.replace(".", ",")} €`)
+  }))
 ]);
 
 const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "section" in row;
@@ -121,10 +68,9 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
 
       <div class="grid gap-4 md:gap-6" role="list" aria-label="Getränkekarte nach Kategorien">
         {
-          menuSections.map((section) => {
+          menuData.map((section) => {
             const id = `section-${slugify(section.name)}`;
-            const meta = sectionMeta[section.name];
-            const groupedRows = groupPrintRows(section.rows);
+            const icon = section.icon || "bottle";
 
             return (
             <section role="listitem" aria-labelledby={id} class="print-section">
@@ -133,7 +79,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
                   <h3 id={id} class="flex items-center gap-2 font-bold text-lg text-slate-900">
                     <span class="section-icon" aria-hidden="true">
                       {
-                        meta.icon === "beer" && (
+                        icon === "beer" && (
                           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M6 6h8v10a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3z"></path>
                             <path d="M14 9h2a2 2 0 0 1 0 4h-2"></path>
@@ -142,7 +88,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
                         )
                       }
                       {
-                        meta.icon === "bottle" && (
+                        icon === "bottle" && (
                           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M10 3h4"></path>
                             <path d="M11 3v3l-3 4v8a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-8l-3-4V3"></path>
@@ -150,7 +96,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
                         )
                       }
                       {
-                        meta.icon === "glass" && (
+                        icon === "glass" && (
                           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M7 4h10l-2 7a3 3 0 0 1-3 2 3 3 0 0 1-3-2z"></path>
                             <path d="M12 13v5"></path>
@@ -180,14 +126,14 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
                     </thead>
                     <tbody>
                       {
-                        groupedRows.map((row) => (
+                        section.drinks.map((drink) => (
                           <tr>
-                            <th scope="row">{row.drink}</th>
+                            <th scope="row">{drink.name}</th>
                             <td>
-                              {row.volumes.map((volume) => <div class="table-stacked">{volume}</div>)}
+                              {drink.prices.map((p) => <div class="table-stacked">{p.size} {p.unit}</div>)}
                             </td>
                             <td class="text-right whitespace-nowrap">
-                              {row.prices.map((price) => <div class="table-stacked">{price}</div>)}
+                              {drink.prices.map((p) => <div class="table-stacked">{p.price.includes(",") ? p.price : p.price.replace(".", ",")} €</div>)}
                             </td>
                           </tr>
                         ))
@@ -213,7 +159,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
       </p>
 
       <footer class="mt-6 md:mt-8 border-t border-slate-200 pt-4 text-sm text-slate-600 legal-notes" aria-label="Rechtliche Hinweise">
-        <p>Alle Preise in EUR inkl. gesetzlicher MwSt. Stand: 14. Mai 2026. Änderungen und Irrtümer vorbehalten.</p>
+        <p>Alle Preise in € inkl. gesetzlicher MwSt. Stand: 14. Mai 2026. Änderungen und Irrtümer vorbehalten.</p>
         <p>Die Angaben auf dieser Website sind unverbindlich; maßgeblich ist die vor Ort ausgehängte Getränkekarte.</p>
         <p>Informationen zu Allergenen und Zusatzstoffen erhalten Sie beim Personal.</p>
         <p>Kartenzahlung ist möglich.</p>
@@ -287,7 +233,7 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
       <footer class="print-legal" aria-label="Rechtliche Hinweise Druckansicht">
         <div class="print-legal-text">
           <p class="print-web-note">Mehr Infos, Termine &amp; Events: <span class="nowrap">www.sc-oberfuellbach.de</span></p>
-          <p>Alle Preise in EUR inkl. gesetzlicher MwSt. Stand: 14. Mai 2026. Änderungen und Irrtümer vorbehalten. Informationen zu Allergenen und Zusatzstoffen erhalten Sie beim Personal. Kartenzahlung ist möglich. Ausschank alkoholischer Getränke gemäß Jugendschutzgesetz.</p>
+          <p>Alle Preise in € inkl. gesetzlicher MwSt. Stand: 14. Mai 2026. Änderungen und Irrtümer vorbehalten. Informationen zu Allergenen und Zusatzstoffen erhalten Sie beim Personal. Kartenzahlung ist möglich. Ausschank alkoholischer Getränke gemäß Jugendschutzgesetz.</p>
         </div>
         <aside class="print-qr" aria-label="QR-Code zur Website">
           <img

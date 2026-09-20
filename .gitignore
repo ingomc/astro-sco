@@ -7,6 +7,7 @@ dist/
 
 # dependencies
 node_modules/
+.pnpm-store/
 
 # logs
 npm-debug.log*
@@ -25,3 +26,6 @@ playwright-report/
 
 # macOS-specific files
 .DS_Store
+
+# Unlighthouse
+.unlighthouse

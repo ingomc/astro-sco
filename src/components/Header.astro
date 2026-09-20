@@ -7,9 +7,30 @@ import {
   LOGO_NORMAL,
   LOGO_WINTER,
 } from "../consts";
+import { toAbsoluteDirectusAssetUrl } from "../lib/hero-image";
 
-// Logo basierend auf Konfiguration
-const logoSrc = USE_WINTER_LOGO ? LOGO_WINTER : LOGO_NORMAL;
+const { title, settings } = Astro.props;
+
+const headerTitle = title || settings?.site_title || SITE_TITLE;
+
+let logoSrc = LOGO_NORMAL;
+let useWinterLogoStyle = false;
+
+if (settings) {
+  const activeWinterMode = settings.use_winter_mode;
+  useWinterLogoStyle = activeWinterMode;
+  const chosenLogo = activeWinterMode
+    ? settings.logo_winter || settings.logo_normal
+    : settings.logo_normal;
+  if (chosenLogo) {
+    logoSrc = toAbsoluteDirectusAssetUrl(chosenLogo);
+  } else {
+    logoSrc = activeWinterMode ? LOGO_WINTER : LOGO_NORMAL;
+  }
+} else {
+  logoSrc = USE_WINTER_LOGO ? LOGO_WINTER : LOGO_NORMAL;
+  useWinterLogoStyle = USE_WINTER_LOGO;
+}
 
 // Icons from Icones.js.org, Phosphor, Bold
 export const menuItems = [
@@ -44,15 +65,15 @@ const isMaintenanceMode = false;
       <a
         class="block w-24 md:w-28 h-18 md:h-24 p-3 rounded-md shadow-sm hover:shadow-lg bg-white absolute top-0 left-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
         href="/"
-        aria-label={`${SITE_TITLE} - Zur Startseite`}
+        aria-label={`${headerTitle} - Zur Startseite`}
       >
         <img
           width="116"
           height="95"
           src={logoSrc}
-          alt="SCO-OGV Oberfüllbach 1963 e.V. Logo"
+          alt={`${headerTitle} Logo`}
           loading="eager"
-          style={USE_WINTER_LOGO
+          style={useWinterLogoStyle
             ? "padding: 0 8px; filter: drop-shadow(0px 0px 2px silver);"
             : undefined}
         />

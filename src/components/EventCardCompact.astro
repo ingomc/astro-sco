@@ -1,10 +1,23 @@
 ---
 import { Image } from "astro:assets";
+import { resolveHeroImage } from "../lib/hero-image";
 import FormattedDate from "./FormattedDate.astro";
 import BadgeMini from "./BadgeMini.astro";
 
 // Kompakte Event-Karte für Startseite und vergangene Veranstaltungen
 const { data, path, isPast = false } = Astro.props;
+type EventCardItem = {
+  slug: string;
+  data: {
+    title: string;
+    description?: string;
+    eventDate: Date;
+    location?: string;
+    heroImage?: string;
+    cta?: string;
+  };
+};
+const items = data as EventCardItem[];
 const images = import.meta.glob<{ default: ImageMetadata }>(
   "/public/assets/**/*.{jpeg,jpg,png,gif,avif}",
 );
@@ -14,7 +27,7 @@ const isBerichtList = path === "berichte";
 <div>
   <ul class="grid grid-cols-1 gap-4">
     {
-      data.map((event) => {
+      items.map((event) => {
         const Element = isPast ? "div" : "a";
         const href = isPast
           ? undefined
@@ -25,10 +38,10 @@ const isBerichtList = path === "berichte";
           <li>
             <Element
               class:list={[
-                "flex flex-row w-full bg-white rounded-lg border border-slate-300 transition-all duration-200 gap-3 md:gap-4 p-3 md:p-4",
+                "flex flex-row w-full rounded-lg border border-slate-300 transition-all duration-200 gap-3 md:gap-4 p-3 md:p-4",
                 !isPast &&
-                  "hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2",
-                isPast && "opacity-60 grayscale cursor-not-allowed",
+                  "bg-white hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2",
+                isPast && "bg-slate-50 grayscale cursor-not-allowed",
               ]}
               href={href}
               aria-label={
@@ -39,16 +52,24 @@ const isBerichtList = path === "berichte";
             >
               {event.data.heroImage && (
                 <div class="shrink-0 overflow-hidden rounded w-32 md:w-48">
-                  <Image
-                    width={320}
-                    height={200}
-                    alt={event.data.title}
-                    src={images[`/public${event.data.heroImage}`]()}
-                    widths={[100, 150, 200, 320]}
-                    sizes="(max-width: 768px) 128px, 224px"
-                    class="object-contain object-top w-full h-auto"
-                    loading="eager"
-                  />
+                  {
+                    (() => {
+                      const resolvedHero = resolveHeroImage(event.data.heroImage, images);
+                      return resolvedHero.kind !== "none" ? (
+                        <Image
+                          src={resolvedHero.kind === "local" ? resolvedHero.loader() : resolvedHero.src}
+                          width={320}
+                          height={200}
+                          format="avif"
+                          alt={event.data.title}
+                          widths={[100, 150, 200, 320]}
+                          sizes="(max-width: 768px) 128px, 224px"
+                          class="object-contain object-top w-full h-auto"
+                          loading="eager"
+                        />
+                      ) : null;
+                    })()
+                  }
                 </div>
               )}
               <div class="flex flex-col justify-between w-full min-w-0 gap-1 md:gap-2">
@@ -86,7 +107,7 @@ const isBerichtList = path === "berichte";
                   class:list={[
                     "self-end text-xs text-center font-semibold inline-flex gap-2 items-center py-1.5 px-3 md:py-2 md:px-4 justify-center rounded-full",
                     isPast
-                      ? "bg-slate-200 text-slate-500"
+                      ? "bg-slate-200 text-slate-700"
                       : event.data.cta
                         ? "bg-red-700 text-white hover:bg-red-800"
                         : "bg-slate-100 hover:bg-slate-300",
