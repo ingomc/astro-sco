@@ -5,24 +5,6 @@ import sitemap from "@astrojs/sitemap";
 
 import tailwind from "@astrojs/tailwind";
 
-const deployTarget = process.env.DEPLOY_TARGET;
-
-console.log("Deploy Target: " + deployTarget);
-
-const deployadapter = () => {
-  if (deployTarget === "netlify") {
-    return undefined;
-  }
-  return vercel({
-    webAnalytics: {
-      enabled: true,
-    },
-    speedInsights: {
-      enabled: true,
-    },
-  });
-};
-
 // https://astro.build/config
 const siteUrl = process.env.SITE_URL || "https://www.sc-oberfuellbach.de/";
 const extraImageDomains = (process.env.EXTRA_IMAGE_DOMAINS || "")
@@ -40,5 +22,8 @@ export default defineConfig({
   },
   integrations: [mdx(), sitemap(), tailwind()],
   output: "static",
-  adapter: deployadapter(),
+  adapter: vercel({
+    webAnalytics: { enabled: true },
+    speedInsights: { enabled: true },
+  }),
 });
