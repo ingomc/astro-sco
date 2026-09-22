@@ -24,6 +24,7 @@ playwright-report/
 
 # environment variables
 .env
+.env.local
 .env.production
 
 # macOS-specific files
