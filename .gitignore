@@ -1,5 +1,7 @@
 # build output
 dist/
+!directus/extensions/directus-extension-dart-open-play/dist/
+!directus/extensions/directus-extension-dart-open-play/dist/*.js
 .vercel/
 .idea/
 # generated types
@@ -22,6 +24,7 @@ playwright-report/
 
 # environment variables
 .env
+.env.local
 .env.production
 
 # macOS-specific files

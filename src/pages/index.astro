@@ -9,7 +9,9 @@ import FormattedDate from "../components/FormattedDate.astro";
 import EventCardCompact from "../components/EventCardCompact.astro";
 import EventBanner from "../components/EventBanner.astro";
 import NextMatch from "../components/NextMatch.astro";
+import DartTrainingCallout from "../components/DartTrainingCallout.astro";
 import allshortevents from "../data/shortevents.json";
+import { getDartOpenPlayApiUrl } from "../lib/dart-open-play";
 
 type ShortEvent = {
   title: string;
@@ -17,6 +19,7 @@ type ShortEvent = {
 };
 
 const settings = await getSiteSettings();
+const dartOpenPlayApiUrl = getDartOpenPlayApiUrl();
 const openingHours = settings.opening_hours || [
   "jeden Sonntag ab 18:30 Uhr",
   "jeden 1. Freitag im Monat ab 19:30 Uhr (ohne Gewähr)",
@@ -111,6 +114,8 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
           (post) => post.html && <Fragment set:html={post.html} />,
         )
       }
+
+      <DartTrainingCallout apiUrl={dartOpenPlayApiUrl} />
     </main>
 
     <!-- Berichte  -->
