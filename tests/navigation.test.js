@@ -49,7 +49,7 @@ test("mobile navigation opens a section and reaches room inquiries", async ({
     page.getByRole("heading", { name: "Feiern & Räume" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Hauptmenü öffnen" }).click();
-  await navigation.getByRole("button", { name: "Sportheim" }).click();
+  await expect(sportheimButton).toHaveAttribute("aria-expanded", "true");
   await expect(
     navigation.getByRole("link", { name: "Feiern & Räume" }),
   ).toHaveAttribute("aria-current", "page");
@@ -83,10 +83,21 @@ test("mobile items fill the drawer and collapsed links leave the tab order", asy
     exact: true,
   });
   const darts = navigation.getByRole("button", { name: "Darts", exact: true });
-  const homeBounds = await home.boundingBox();
-  const dartsBounds = await darts.boundingBox();
-  expect(homeBounds.width).toBeCloseTo(dartsBounds.width, 0);
-  expect(homeBounds.x).toBeCloseTo(dartsBounds.x, 0);
+  // Measure both items together while the drawer is sliding into view.
+  const bounds = await page.locator("#mobile-menu").evaluate((drawer) => {
+    const home = drawer.querySelector('a[href="/"]').getBoundingClientRect();
+    const darts = drawer
+      .querySelector('[aria-controls="mobile-submenu-3"]')
+      .getBoundingClientRect();
+    return {
+      homeWidth: home.width,
+      dartsWidth: darts.width,
+      homeX: home.x,
+      dartsX: darts.x,
+    };
+  });
+  expect(bounds.homeWidth).toBeCloseTo(bounds.dartsWidth, 0);
+  expect(bounds.homeX).toBeCloseTo(bounds.dartsX, 0);
 
   await darts.click();
   await expect(
@@ -213,3 +224,50 @@ test("room inquiry never shows incomplete personal contacts", async ({
     );
   }
 });
+
+for (const [path, section, label] of [
+  ["/veranstaltungen", "Veranstaltungen", "Termine"],
+  ["/berichte", "Veranstaltungen", "Berichte"],
+  ["/sportheim", "Sportheim", "Besuch & Öffnungszeiten"],
+  ["/sportheim/feiern", "Sportheim", "Feiern & Räume"],
+  ["/darts/training", "Darts", "Offenes Training"],
+  ["/darts", "Darts", "Liga & Mannschaft"],
+]) {
+  test(`mobile menu reveals the current section on ${path}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto(path, { waitUntil: "domcontentloaded" });
+    const openButton = page.getByRole("button", { name: "Hauptmenü öffnen" });
+    const navigation = page.getByRole("navigation", {
+      name: "Mobile Hauptnavigation",
+    });
+    const sectionButton = navigation.getByRole("button", {
+      name: section,
+      exact: true,
+    });
+    const currentLink = navigation.getByRole("link", {
+      name: label,
+      exact: true,
+    });
+
+    await openButton.click();
+    await expect(sectionButton).toHaveAttribute("aria-expanded", "true");
+    await expect(currentLink).toBeVisible();
+    await expect(currentLink).toHaveAttribute("aria-current", "page");
+    await expect(
+      navigation.locator('[data-nav-toggle][aria-expanded="true"]'),
+    ).toHaveCount(1);
+
+    await sectionButton.click();
+    await expect(sectionButton).toHaveAttribute("aria-expanded", "false");
+    await page.getByRole("button", { name: "Hauptmenü schließen" }).click();
+    await openButton.click();
+    await expect(sectionButton).toHaveAttribute("aria-expanded", "true");
+    await expect(currentLink).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(openButton).toBeFocused();
+    await expect(openButton).toHaveAttribute("aria-expanded", "false");
+  });
+}

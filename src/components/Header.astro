@@ -561,6 +561,13 @@ const isSelectedChild = (
 
   // Open mobile menu (Side Drawer)
   openBtn?.addEventListener("click", () => {
+    closeSubmenus(undefined, false);
+    const currentLink = mobileMenu?.querySelector('a[aria-current="page"]');
+    const currentToggle = currentLink
+      ?.closest(".mobile-section")
+      ?.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+    if (currentToggle) setSubmenu(currentToggle, true, false);
+
     mobileMenu?.removeAttribute("inert");
     mobileMenu?.classList.add("mobile-menu--open");
     mobileBackdrop?.classList.add("mobile-backdrop--open");
@@ -601,7 +608,8 @@ const isSelectedChild = (
 
   document.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
-    if (!event.target.closest(".desktop-item, .mobile-item")) closeSubmenus();
+    if (!event.target.closest(".desktop-item, .mobile-item, .open-btn"))
+      closeSubmenus();
   });
 
   // Close when clicking backdrop
