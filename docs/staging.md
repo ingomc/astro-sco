@@ -100,6 +100,11 @@ services:
       # Staging nutzt wechselnde Preview-Hosts. In Produktion ausschließlich
       # https://www.sc-oberfuellbach.de eintragen.
       ORDER_ALLOWED_ORIGINS: "*"
+      # Dart-Sonntagstraining: derselbe Endpunkt schreibt privat in Directus.
+      # In Produktion nur die produktive Website erlauben; Staging darf alle
+      # Preview-Hosts akzeptieren.
+      DART_OPEN_PLAY_SITE_URL: https://staging.sc-oberfuellbach.de
+      DART_OPEN_PLAY_ALLOWED_ORIGINS: "*"
       CORS_ENABLED: "true"
       CORS_ORIGIN: "true"
       TZ: Europe/Berlin
@@ -117,7 +122,7 @@ Direkt nach dem ersten Start das Schema provisionieren und mit Testdaten
 befüllen (per SSH auf den Directus-Container oder via lokales `pnpm`):
 
 ```sh
-# Schema identisch zu Prod anlegen (inklusive Essensvorbestellung)
+# Schema identisch zu Prod anlegen (inklusive Essensvorbestellung und Dart-Anmeldung)
 DIRECTUS_URL=https://cms-staging.dart.ingomc.de \
 DIRECTUS_TOKEN=<admin-token> \
 pnpm run directus:provision:sync
@@ -129,6 +134,12 @@ pnpm run directus:seed:assets
 Eigenes Static-Token für Astro-Builds anlegen
 (Directus → Settings → Access Tokens → "Astro Build Read") und in Dokploy
 als `DIRECTUS_TOKEN` hinterlegen.
+
+Für das Dart-Sonntagstraining danach in Directus unter **Settings**
+`dart_open_play_enabled` aktivieren und `dart_open_play_time` auf `18:00`
+setzen. Der öffentliche Endpunkt liest diese Werte zur Laufzeit; dadurch lässt
+sich die Anmeldung ohne Website-Build öffnen oder schließen. Die Sammlung
+`event_dart_registrations` bleibt für öffentliche Rollen gesperrt.
 
 ## 4. Astro-App in Dokploy anlegen
 
@@ -148,15 +159,16 @@ Dokploy-Versionen ist "Dockerfile" als Build-Quelle am einfachsten.
 
 **Build args:**
 
-| Arg                          | Wert                                        |
-| ---------------------------- | ------------------------------------------- |
-| `DIRECTUS_URL`               | `https://cms.dart.ingomc.de`                |
-| `DIRECTUS_TOKEN`             | (Static Read Token aus Prod-Directus)       |
-| `SITE_URL`                   | `https://www.sc-oberfuellbach.de/`          |
-| `SITE_HOST`                  | `sc-oberfuellbach.de`                       |
-| `STAGING`                    | `0`                                         |
-| `EXTRA_IMAGE_DOMAINS`        | (leer)                                      |
-| `PUBLIC_FOOD_ORDERS_API_URL` | `https://cms.dart.ingomc.de/food-preorders` |
+| Arg                             | Wert                                        |
+| ------------------------------- | ------------------------------------------- |
+| `DIRECTUS_URL`                  | `https://cms.dart.ingomc.de`                |
+| `DIRECTUS_TOKEN`                | (Static Read Token aus Prod-Directus)       |
+| `SITE_URL`                      | `https://www.sc-oberfuellbach.de/`          |
+| `SITE_HOST`                     | `sc-oberfuellbach.de`                       |
+| `STAGING`                       | `0`                                         |
+| `EXTRA_IMAGE_DOMAINS`           | (leer)                                      |
+| `PUBLIC_FOOD_ORDERS_API_URL`    | `https://cms.dart.ingomc.de/food-preorders` |
+| `PUBLIC_DART_OPEN_PLAY_API_URL` | `https://cms.dart.ingomc.de/dart-open-play` |
 
 Auto-Deploy: an, Webhook auf `push` zu `main`.
 
@@ -176,6 +188,7 @@ Dokploy unterstützt "Preview Deployments" pro Branch (siehe Dokploy-Docs
   - `STAGING=1`
   - `EXTRA_IMAGE_DOMAINS=cms-staging.dart.ingomc.de`
   - `PUBLIC_FOOD_ORDERS_API_URL=https://cms-staging.dart.ingomc.de/food-preorders`
+  - `PUBLIC_DART_OPEN_PLAY_API_URL=https://cms-staging.dart.ingomc.de/dart-open-play`
 
 Dokploy ersetzt `{{branch}}` in Domain-Templates automatisch. Für die
 `SITE_URL`/`SITE_HOST`-Args musst du schauen, ob deine Dokploy-Version

@@ -14,6 +14,10 @@ const extraImageDomains = (process.env.EXTRA_IMAGE_DOMAINS || "")
 
 export default defineConfig({
   site: siteUrl,
+  redirects: {
+    "/dart/anmelden": { status: 301, destination: "/darts/training" },
+    "/darts/anmelden": { status: 301, destination: "/darts/training" },
+  },
   server: {
     port: Number(process.env.PORT || 4328),
   },

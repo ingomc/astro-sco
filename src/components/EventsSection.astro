@@ -31,7 +31,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>('/public/assets/**/*
             <a
               class="flex flex-col lg:flex-row w-full bg-white rounded-lg border border-slate-300 transition-all duration-200 p-0 lg:p-4 overflow-hidden hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
               href={href}
-              aria-label={`Veranstaltung ansehen: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`}
+              aria-label={`${path === "berichte" ? "Bericht lesen" : "Veranstaltung ansehen"}: ${event.data.title} am ${event.data.eventDate.toLocaleDateString("de-DE")}`}
             >
               {event.data.heroImage && (
                 <div class="shrink-0 overflow-hidden w-full lg:w-64 xl:w-72 lg:rounded">

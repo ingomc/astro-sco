@@ -5,6 +5,7 @@ import {
 } from "../../lib/content-source";
 import { renderDirectusBodyToHtml } from "../../lib/body-content";
 import EventPost from "../../layouts/EventPost.astro";
+import { getPublicDirectusApiUrl } from "../../lib/public-directus-api";
 
 export async function getStaticPaths() {
   const allVeranstaltungen = (
@@ -59,9 +60,10 @@ type Props = {
 
 const { event, relatedItems } = Astro.props;
 const renderedBodyHtml = await renderDirectusBodyToHtml(event);
-const foodPreorderApiUrl =
-  import.meta.env.PUBLIC_FOOD_ORDERS_API_URL ||
-  process.env.PUBLIC_FOOD_ORDERS_API_URL;
+const foodPreorderApiUrl = getPublicDirectusApiUrl(
+  "food-preorders",
+  "PUBLIC_FOOD_ORDERS_API_URL",
+);
 ---
 
 <EventPost

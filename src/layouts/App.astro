@@ -15,7 +15,10 @@ const settings = await getSiteSettings();
 const { title, description, image, robots } = Astro.props;
 
 const isStaging =
-  import.meta.env.STAGING === "1" || process.env.STAGING === "1";
+  import.meta.env.STAGING === "1" ||
+  process.env.STAGING === "1" ||
+  import.meta.env.VERCEL_ENV === "preview" ||
+  process.env.VERCEL_ENV === "preview";
 const stagingRobots = isStaging ? "noindex,nofollow" : robots;
 const siteHost =
   import.meta.env.SITE_HOST ||
