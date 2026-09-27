@@ -1,6 +1,7 @@
 # Dart-Sonntagstraining: öffentliche Anmeldung
 
-Die Website zeigt die Anmeldung unter `/darts/anmelden/` und verlinkt darauf
+Die Website zeigt die Anmeldung unter `/darts/training` (bisherige Links unter
+`/dart/anmelden` und `/darts/anmelden/` leiten dorthin weiter) und verlinkt darauf
 direkt unter dem Darts-Header sowie auf der Startseite. Die Seite sendet keine
 Directus-Zugangsdaten an den Browser. Sie spricht ausschließlich den
 Custom-Endpoint `GET /dart-open-play` und `POST /dart-open-play/registrations`
