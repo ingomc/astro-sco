@@ -361,12 +361,11 @@ const isSelectedChild = (
     transform: rotate(225deg) translateY(-2px);
   }
   .desktop-submenu {
-    @apply absolute left-0 top-full z-50 mt-2 min-w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-xl;
+    @apply absolute right-0 top-full z-50 mt-2 w-max min-w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-xl;
     max-width: calc(100vw - 2rem);
   }
-  .desktop-item:last-child .desktop-submenu {
-    left: auto;
-    right: 0;
+  .desktop-submenu a {
+    white-space: nowrap;
   }
   .desktop-submenu:not([hidden]) {
     animation: submenu-open 180ms ease-out;
