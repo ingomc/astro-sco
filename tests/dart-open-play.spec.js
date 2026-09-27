@@ -136,7 +136,7 @@ test("direkt geöffnete Danke-Seite behauptet keine Anmeldung", async ({
   ).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Zum Anmeldeformular" }),
-  ).toHaveAttribute("href", "/darts/anmelden/");
+  ).toHaveAttribute("href", "/darts/training");
 });
 
 test("Darts-Seite führt Gäste sichtbar zur Anmeldung", async ({ page }) => {
@@ -165,7 +165,7 @@ test("Darts-Seite führt Gäste sichtbar zur Anmeldung", async ({ page }) => {
   await expect(callout).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Für nächsten Sonntag anmelden" }),
-  ).toHaveAttribute("href", "/darts/anmelden/");
+  ).toHaveAttribute("href", "/darts/training");
 
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(

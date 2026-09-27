@@ -1,5 +1,6 @@
 import { getCollection, getEntry } from "astro:content";
 import { toAbsoluteDirectusAssetUrl } from "./hero-image";
+import { normalizeClubName, prepareClubBody } from "./club-content.mjs";
 
 type SourceMode = "astro" | "directus" | "auto";
 
@@ -816,7 +817,7 @@ async function loadCollectionFromAstro<K extends SupportedCollection>(
   })) as ContentEntry<K>[];
 }
 
-export async function getContentCollection<K extends SupportedCollection>(
+async function loadContentCollection<K extends SupportedCollection>(
   collection: K,
 ): Promise<ContentEntry<K>[]> {
   const sourceMode = getSourceMode();
@@ -837,6 +838,27 @@ export async function getContentCollection<K extends SupportedCollection>(
     );
     return loadCollectionFromAstro(collection);
   }
+}
+
+export async function getContentCollection<K extends SupportedCollection>(
+  collection: K,
+): Promise<ContentEntry<K>[]> {
+  const entries = await loadContentCollection(collection);
+  return entries.map((entry) => ({
+    ...entry,
+    body: entry.body
+      ? prepareClubBody(collection, entry.slug, entry.body)
+      : entry.body,
+    data: Object.fromEntries(
+      Object.entries(entry.data).map(([key, value]) => [
+        key,
+        ["title", "description", "location"].includes(key) &&
+        typeof value === "string"
+          ? normalizeClubName(value)
+          : value,
+      ]),
+    ) as ContentEntry<K>["data"],
+  }));
 }
 
 export type SiteSettings = {
@@ -1025,7 +1047,7 @@ async function loadSettingsFromDirectus(): Promise<SiteSettings> {
   };
 }
 
-export async function getSiteSettings(): Promise<SiteSettings> {
+async function loadSiteSettings(): Promise<SiteSettings> {
   const sourceMode = getSourceMode();
 
   if (sourceMode === "astro") {
@@ -1044,6 +1066,17 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     );
     return loadSettingsFromAstro();
   }
+}
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  const settings = await loadSiteSettings();
+  return {
+    ...settings,
+    site_title: normalizeClubName(settings.site_title),
+    site_description: settings.site_description
+      ? normalizeClubName(settings.site_description)
+      : undefined,
+  };
 }
 
 export type DrinkPrice = {

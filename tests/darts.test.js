@@ -188,7 +188,7 @@ test.describe("Darts-Mannschaftsseite", () => {
     await expect(
       page.getByText("Saison 2026/27", { exact: true }).first(),
     ).toBeVisible();
-    await expect(page.getByText("Sportheim Oberfüllbach")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sportheim Oberfüllbach", exact: true })).toBeVisible();
     await expect(page.getByText("3 Boards")).toBeVisible();
 
     const upcomingMatches = page.locator('[data-dart-list="upcoming"] > li');
@@ -228,9 +228,12 @@ test.describe("Darts-Mannschaftsseite", () => {
     await expect(members.nth(2)).toContainText("Marion Bauer");
     await expect(members.nth(2)).not.toContainText("👑");
 
+    const navigation = page.getByRole("navigation", { name: "Hauptnavigation", exact: true });
+    await navigation.getByRole("button", { name: "Darts", exact: true }).click();
     await expect(
-      page.getByRole("link", { name: "Darts", exact: true }).first(),
+      navigation.getByRole("link", { name: "Liga & Mannschaft", exact: true }),
     ).toHaveAttribute("aria-current", "page");
+    await page.keyboard.press("Escape");
     const sourceLink = page.getByRole("link", {
       name: "Offizielle Daten bei 3K Darts",
     });

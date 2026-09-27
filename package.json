@@ -41,7 +41,8 @@
     "directus:cleanup": "node scripts/directus/cleanup-local-content.mjs --apply",
     "guard:content": "node scripts/guard/block-content-edits.mjs",
     "guard:content:staged": "node scripts/guard/block-content-edits.mjs --staged",
-    "unlighthouse": "unlighthouse-ci --site http://localhost:4328"
+    "unlighthouse": "unlighthouse-ci --site http://localhost:4328",
+    "test:club-content": "node --test tests/club-content.test.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.0",

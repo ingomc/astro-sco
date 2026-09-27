@@ -1,9 +1,11 @@
 ---
 type Props = {
   apiUrl?: string;
+  headingLevel?: "h1" | "h2";
 };
 
-const { apiUrl = "" } = Astro.props;
+const { apiUrl = "", headingLevel = "h1" } = Astro.props;
+const Heading = headingLevel;
 const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
 ---
 
@@ -16,12 +18,12 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
   <p class="text-sm font-bold uppercase tracking-wide text-red-700">
     Dart-Abteilung
   </p>
-  <h1
+  <Heading
     id="dart-open-play-signup-title"
     class="mt-1 text-3xl font-bold text-slate-950 md:text-4xl"
   >
     Zum offenen Sonntagstraining anmelden
-  </h1>
+  </Heading>
   <p class="mt-3 max-w-2xl text-slate-700">
     Das Training findet im Sportheim Oberfüllbach statt. Die Anmeldung gilt
     jeweils für den nächsten Sonntag.

@@ -4,8 +4,8 @@ import HpCard from "../components/HpCard.astro";
 import HpStage from "../components/HpStage.astro";
 import { getDrinksMenu } from "../lib/content-source";
 
-const title = "Getränkekarte - SCO-OGV Oberfüllbach";
-const description = "Aktuelle Getränkekarte im Sportheim des SCO-OGV Oberfüllbach.";
+const title = "Getränkekarte - SCO & OGV Oberfüllbach";
+const description = "Aktuelle Getränkekarte im Sportheim des SCO & OGV Oberfüllbach.";
 
 const slugify = (value: string) =>
   value
@@ -50,13 +50,13 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
           <div class="brand-lockup">
             <img
               src="/assets/logo_sco.png"
-              alt="SCO-OGV Oberfüllbach Logo"
+              alt="SCO & OGV Oberfüllbach Logo"
               class="brand-logo"
               loading="eager"
               decoding="async"
             />
             <div>
-              <p class="eyebrow">Sportheim SCO-OGV Oberfüllbach</p>
+              <p class="eyebrow">Sportheim SCO & OGV Oberfüllbach</p>
               <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Getränkekarte</h2>
               <p class="mt-2 max-w-2xl text-slate-700">
                 Frisch, fair und unkompliziert - für Spieltag, Feier und gemütliches Beisammensein.
@@ -170,10 +170,10 @@ const isPrintSectionRow = (row: PrintMenuRow): row is { section: string } => "se
 
     <article class="print-menu" hidden aria-label="Getränkekarte Druckansicht">
       <header class="print-menu-head">
-        <img src="/assets/logo_sco.png" alt="SCO-OGV Oberfüllbach Logo" class="print-logo-left" />
+        <img src="/assets/logo_sco.png" alt="SCO & OGV Oberfüllbach Logo" class="print-logo-left" />
 
         <div class="print-title-wrap">
-          <p class="print-kicker">Sportheim SCO-OGV Oberfüllbach</p>
+          <p class="print-kicker">Sportheim SCO & OGV Oberfüllbach</p>
           <h1>Getränkekarte</h1>
           <p class="print-darts-note">Sonntags ab 18 Uhr: Steel-Darts auf 5 Scheiben. Gäste sind herzlich willkommen, bitte kurz vorher anmelden.</p>
           <p class="print-payment-callout" aria-label="Hinweis zur Kartenzahlung Druckansicht">

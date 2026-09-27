@@ -36,6 +36,19 @@ test.describe('Visual Regression Tests - Critical Components', () => {
     });
   });
 
+  test('Mobile Side-Drawer Darts Expanded', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.locator('button.open-btn').click();
+    await page.getByRole('navigation', { name: 'Mobile Hauptnavigation' })
+      .getByRole('button', { name: 'Darts', exact: true }).click();
+    await expect(page.locator('#mobile-menu')).toHaveScreenshot('mobile-sidedrawer-darts.png', {
+      threshold: 0.2,
+      animations: 'disabled'
+    });
+  });
+
   test('Desktop Header Only', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
