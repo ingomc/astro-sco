@@ -52,10 +52,34 @@ anlegen oder ändern.
    das zugehörige Event verknüpfen, Bestellschluss setzen und erst danach
    `active` aktivieren.
 2. Unter **Food Dishes** die Gerichte mit Beschreibung, Allergenen, Preis in
-   Cent und Kontingent anlegen. Inaktive Gerichte sind nicht bestellbar.
+   Cent und Kontingent anlegen. Inaktive Gerichte sind nicht bestellbar. Wenn
+   Preis oder Kontingent noch nicht feststehen, ist jeweils `0` zulässig: Die
+   Website zeigt dann einen Preis bei Abholung an bzw. begrenzt die Bestellung
+   nicht durch ein Online-Kontingent.
 3. Die Veranstaltungsseite öffnen. Das Menü lädt zur Laufzeit; ein Astro-Build
    ist nach Änderungen an Gerichten, Kontingenten oder Bestellschluss nicht
    erforderlich.
+
+### Spintessen 2026
+
+Der idempotente Seed legt die aktive Bestellung für
+`2026-10-17-spintessen` samt den Varianten **Spint mit Sauerkraut** und
+**Kopfspint mit Sauerkraut** an. Der Bestellschluss ist der 10. Oktober 2026,
+23:59 Uhr Berliner Zeit. Weil Flyer und vorhandene Beiträge keine Preise oder
+Kontingente nennen, setzt der Seed beides auf `0`; diese Werte können später
+in Directus ergänzt werden.
+
+Zuerst das Directus-Image aus diesem Branch ausrollen, damit `0` als offener
+Preis bzw. unbegrenztes Online-Kontingent verarbeitet wird. Danach den Seed
+gegen dieselbe Directus-Instanz anwenden.
+
+```sh
+pnpm run directus:seed:spintessen:dry
+pnpm run directus:seed:spintessen
+```
+
+Bestehende Bestellungen und Gerichte lässt der Seed unverändert, damit
+nachträgliche Einstellungen im CMS nicht überschrieben werden.
 
 ## Organisation am Veranstaltungstag
 

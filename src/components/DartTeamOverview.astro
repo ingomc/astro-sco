@@ -1,5 +1,12 @@
 ---
 import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
+import DartTrainingCallout from "./DartTrainingCallout.astro";
+
+type Props = {
+  dartOpenPlayApiUrl?: string;
+};
+
+const { dartOpenPlayApiUrl } = Astro.props;
 ---
 
 <div id="dart-team-overview" class="min-h-[60vh] bg-slate-50">
@@ -60,6 +67,10 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
       </div>
     </div>
   </section>
+
+  <div class="container mx-auto px-4 pt-8 md:pt-10">
+    <DartTrainingCallout apiUrl={dartOpenPlayApiUrl} />
+  </div>
 
   <div class="container mx-auto px-4 py-8 md:py-12">
     <div
