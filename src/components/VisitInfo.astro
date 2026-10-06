@@ -39,8 +39,7 @@ const openingHours = settings.opening_hours?.length
       Sportheim Oberfüllbach<br />{venue.street}<br />{venue.city}
     </address>
     <p class="mt-4 text-slate-700">
-      Die Route zu unserem Sportheim öffnet sich in Google Maps. Bei Fragen zu
-      Ihrem Besuch erreichen Sie uns auch telefonisch.
+      Die Route zu unserem Sportheim öffnet sich in Google Maps.
     </p>
     <div class="mt-5 flex flex-wrap gap-3">
       <Button
@@ -49,8 +48,6 @@ const openingHours = settings.opening_hours?.length
         target="_blank"
         rel="noopener noreferrer">Route planen</Button
       >
-      <Button variant="secondary" href={venue.telUrl}>Sportheim anrufen</Button>
     </div>
-    <p class="mt-3 text-sm text-slate-700">{venue.phone}</p>
   </div>
 </section>

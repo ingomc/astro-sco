@@ -201,9 +201,8 @@ test("Besuchsinfos stehen nur auf Sportheim vor den Angebotstexten", async ({
     await expect(
       visit.getByRole("link", { name: "Öffnungszeiten & Anfahrt" }),
     ).toHaveCount(0);
-    await expect(
-      visit.getByRole("link", { name: "Sportheim anrufen" }),
-    ).toHaveAttribute("href", /^tel:/);
+    await expect(page.locator('main a[href^="tel:"]')).toHaveCount(0);
+    await expect(page.locator('footer a[href^="tel:"]')).toHaveCount(1);
     await expect(
       visit.getByRole("heading", { name: "Öffnungszeiten", exact: true }),
     ).toBeVisible();
@@ -273,7 +272,9 @@ test("Fehleraktionen verwenden einheitliche Buttons mit lesbarem Hover", async (
   await primary.hover();
   await expect(primary).toHaveCSS("color", "rgb(255, 255, 255)");
   await expect(primary).toHaveCSS("background-color", "rgb(153, 27, 27)");
-  for (const label of ["E-Mail schreiben", "Sportheim anrufen"]) {
+  await expect(page.locator('main a[href^="tel:"]')).toHaveCount(0);
+  await expect(page.locator('footer a[href^="tel:"]')).toHaveCount(1);
+  for (const label of ["E-Mail schreiben"]) {
     const link = help.getByRole("link", { name: label });
     await link.hover();
     await expect(link).toHaveCSS("color", "rgb(15, 23, 42)");
