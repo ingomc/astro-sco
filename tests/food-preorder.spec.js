@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const apiOrigin = "http://food-order-test.local";
-const corsHeaders = { "access-control-allow-origin": "http://localhost:4329" };
+const corsHeaders = { "access-control-allow-origin": "*" };
 
 test("Gast kann ein Gericht in den Warenkorb legen und eine Reservierung anfragen", async ({
   page,
@@ -82,7 +82,7 @@ test("Gast kann ein Gericht in den Warenkorb legen und eine Reservierung anfrage
   });
 
   await page.goto("/veranstaltungen/test-essensvorbestellung", {
-    waitUntil: "networkidle",
+    waitUntil: "domcontentloaded",
   });
   await expect(
     page.getByRole("heading", { name: "Essen vorbestellen" }),

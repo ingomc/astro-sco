@@ -168,6 +168,14 @@ async function mockDartTableApi(page, response = dartTableResponse) {
 test.describe("Darts-Mannschaftsseite", () => {
   test.beforeEach(async ({ page }) => {
     await page.clock.setFixedTime(new Date("2026-09-01T10:00:00.000Z"));
+    await page.route(
+      "https://live.3k-darts.com/dartsscorer-liveticker/api/v1/**",
+      (route) =>
+        route.fulfill({
+          contentType: "application/json",
+          body: JSON.stringify({ data: [], error: null }),
+        }),
+    );
   });
 
   test("zeigt Mannschaft, Spielplan, Ergebnisse und Kader", async ({
@@ -176,7 +184,7 @@ test.describe("Darts-Mannschaftsseite", () => {
     const getRequestCount = await mockDartApi(page);
     const getTableRequestCount = await mockDartTableApi(page);
 
-    await page.goto("/darts");
+    await page.goto("/darts", { waitUntil: "domcontentloaded" });
     await expect(page.locator('[data-dart-state="content"]')).toBeVisible();
 
     await expect(
@@ -188,7 +196,12 @@ test.describe("Darts-Mannschaftsseite", () => {
     await expect(
       page.getByText("Saison 2026/27", { exact: true }).first(),
     ).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Sportheim Oberfüllbach", exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: "Sportheim Oberfüllbach",
+        exact: true,
+      }),
+    ).toBeVisible();
     await expect(page.getByText("3 Boards")).toBeVisible();
 
     const upcomingMatches = page.locator('[data-dart-list="upcoming"] > li');
@@ -228,8 +241,16 @@ test.describe("Darts-Mannschaftsseite", () => {
     await expect(members.nth(2)).toContainText("Marion Bauer");
     await expect(members.nth(2)).not.toContainText("👑");
 
-    const navigation = page.getByRole("navigation", { name: "Hauptnavigation", exact: true });
-    await navigation.getByRole("button", { name: "Darts", exact: true }).click();
+    const mobile = (page.viewportSize()?.width ?? 1024) < 1024;
+    if (mobile)
+      await page.getByRole("button", { name: "Hauptmenü öffnen" }).click();
+    const navigation = page.getByRole("navigation", {
+      name: mobile ? "Mobile Hauptnavigation" : "Hauptnavigation",
+      exact: true,
+    });
+    await navigation
+      .getByRole("button", { name: "Darts", exact: true })
+      .click();
     await expect(
       navigation.getByRole("link", { name: "Liga & Mannschaft", exact: true }),
     ).toHaveAttribute("aria-current", "page");
@@ -238,7 +259,7 @@ test.describe("Darts-Mannschaftsseite", () => {
       name: "Offizielle Daten bei 3K Darts",
     });
     await sourceLink.hover();
-    await expect(sourceLink).toHaveCSS("color", "rgb(255, 255, 255)");
+    await expect(sourceLink).toHaveCSS("color", "rgb(15, 23, 42)");
     expect(getRequestCount()).toBe(1);
     expect(getTableRequestCount()).toBe(1);
   });
@@ -259,7 +280,7 @@ test.describe("Darts-Mannschaftsseite", () => {
       tableEntries: [{ index: 0, name: "TABLE" }],
     });
 
-    await page.goto("/darts");
+    await page.goto("/darts", { waitUntil: "domcontentloaded" });
     await expect(page.locator('[data-dart-state="content"]')).toBeVisible();
     await expect(
       page.getByText("Aktuell sind keine offenen Ligaspiele vorhanden."),
@@ -290,7 +311,7 @@ test.describe("Darts-Mannschaftsseite", () => {
       route.fulfill({ status: 503, body: "Nicht verfügbar" }),
     );
 
-    await page.goto("/darts");
+    await page.goto("/darts", { waitUntil: "domcontentloaded" });
     await expect(page.locator('[data-dart-state="error"]')).toBeVisible();
     const scheduleSourceLink = page.getByRole("link", {
       name: "Spielplan bei 3K Darts",
@@ -318,7 +339,7 @@ test.describe("Darts-Mannschaftsseite", () => {
     await mockDartApi(page);
     await mockDartTableApi(page);
 
-    await page.goto("/darts");
+    await page.goto("/darts", { waitUntil: "domcontentloaded" });
     await expect(page.locator('[data-dart-state="content"]')).toBeVisible();
 
     const scheduleTab = page.getByRole("tab", { name: "Kommende Spiele" });
@@ -359,7 +380,7 @@ test.describe("Darts-Mannschaftsseite", () => {
       route.fulfill({ status: 503, body: "Nicht verfügbar" }),
     );
 
-    await page.goto("/darts");
+    await page.goto("/darts", { waitUntil: "domcontentloaded" });
     await expect(page.locator('[data-dart-state="content"]')).toBeVisible();
 
     if ((page.viewportSize()?.width ?? 1024) < 1024) {
@@ -385,7 +406,7 @@ test.describe("Darts-Mannschaftsseite", () => {
   test("bleibt mit geladenen Daten barrierefrei", async ({ page }) => {
     await mockDartApi(page);
     await mockDartTableApi(page);
-    await page.goto("/darts");
+    await page.goto("/darts", { waitUntil: "domcontentloaded" });
     await expect(page.locator('[data-dart-state="content"]')).toBeVisible();
 
     const scan = await new AxeBuilder({ page })
@@ -401,7 +422,7 @@ test.describe("Darts-Mannschaftsseite", () => {
     const getRequestCount = await mockDartApi(page);
     const getTableRequestCount = await mockDartTableApi(page);
 
-    await page.goto("/");
+    await page.goto("/", { waitUntil: "domcontentloaded" });
     const fullWidget = page.locator(
       '.next-match-container[data-small="false"]',
     );

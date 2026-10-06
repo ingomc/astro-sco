@@ -1,4 +1,6 @@
 ---
+import Button from "./Button.astro";
+import OnlineServiceHelp from "./OnlineServiceHelp.astro";
 type Props = {
   apiUrl?: string;
   headingLevel?: "h1" | "h2";
@@ -42,6 +44,8 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
     Prüfe den nächsten Termin …
   </p>
 
+  <OnlineServiceHelp service="dart" />
+
   <form class="mt-6 grid gap-5" data-dart-open-play-form hidden novalidate>
     <div
       class="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-red-950"
@@ -60,7 +64,7 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
         Name
         <input
           id="dart-open-play-name"
-          class="rounded-lg border border-slate-300 px-3 py-2.5 font-normal text-slate-950 shadow-sm focus:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-200"
+          class="site-button site-button--secondary"
           name="name"
           autocomplete="name"
           maxlength="120"
@@ -76,7 +80,7 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
         Handynummer (bevorzugt)
         <input
           id="dart-open-play-phone"
-          class="rounded-lg border border-slate-300 px-3 py-2.5 font-normal text-slate-950 shadow-sm focus:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-200"
+          class="site-button site-button--secondary"
           name="phone"
           type="tel"
           autocomplete="tel"
@@ -92,7 +96,7 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
         <span data-dart-open-play-email-label>E-Mail-Adresse</span>
         <input
           id="dart-open-play-email"
-          class="rounded-lg border border-slate-300 px-3 py-2.5 font-normal text-slate-950 shadow-sm focus:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-200"
+          class="site-button site-button--secondary"
           name="email"
           type="email"
           autocomplete="email"
@@ -123,7 +127,7 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
       >
       <textarea
         id="dart-open-play-notes"
-        class="min-h-28 rounded-lg border border-slate-300 px-3 py-2.5 font-normal text-slate-950 shadow-sm focus:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-200"
+        class="site-button site-button--secondary"
         name="notes"
         maxlength="1000"
         placeholder="Zum Beispiel eine Rückfrage an die Orga"></textarea>
@@ -163,12 +167,7 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
     </label>
 
     <div class="flex flex-wrap items-center gap-4">
-      <button
-        class="rounded-full bg-red-700 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-        type="submit"
-      >
-        Verbindlich anmelden
-      </button>
+      <Button variant="primary" type="submit"> Verbindlich anmelden </Button>
       <p
         class="text-sm font-semibold text-slate-700"
         data-dart-open-play-message
@@ -249,57 +248,80 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
       return;
     }
 
-    if (!apiUrl) {
-      status.textContent = "Die Online-Anmeldung wird gerade eingerichtet.";
-      return;
-    }
-
     let nextSlotLabel = "";
     let supportsPhone = false;
+    let ready = false;
+    const help = root.querySelector("[data-online-service-help]");
+    const retry = root.querySelector("[data-service-retry]");
 
-    try {
-      const response = await fetch(apiUrl, {
-        headers: { Accept: "application/json" },
-      });
-      const result = await readJson(response);
-      if (!response.ok) {
-        throw new Error(
-          textFromError(result, "Der Termin konnte nicht geladen werden."),
-        );
+    const loadSlot = async () => {
+      ready = false;
+      form.hidden = true;
+      status.hidden = false;
+      status.textContent = "Prüfe den nächsten Termin …";
+      message.textContent = "";
+      if (help instanceof HTMLElement) help.hidden = true;
+      if (retry instanceof HTMLButtonElement) {
+        retry.disabled = true;
+        retry.hidden = !apiUrl;
       }
-      if (!result.open || typeof result?.slot?.label !== "string") {
-        status.textContent = textFromError(
-          result,
-          "Die Online-Anmeldung ist für den nächsten Termin aktuell nicht geöffnet.",
-        );
+      if (!apiUrl) {
+        status.textContent =
+          "Die Online-Anmeldung wird gerade eingerichtet. Bei Fragen erreichst du uns direkt.";
+        if (help instanceof HTMLElement) help.hidden = false;
         return;
       }
 
-      status.textContent = "Die Online-Anmeldung ist geöffnet.";
-      nextSlotLabel = result.slot.label;
-      slot.textContent = `Nächster Termin: ${nextSlotLabel}`;
-      supportsPhone =
-        Array.isArray(result.contactMethods) &&
-        result.contactMethods.includes("phone");
-      if (supportsPhone) {
-        phoneField.hidden = false;
-        emailInput.required = false;
-        emailLabel.textContent = "E-Mail-Adresse (optional)";
+      try {
+        const response = await fetch(apiUrl, {
+          headers: { Accept: "application/json" },
+          signal: AbortSignal.timeout(10000),
+        });
+        const result = await readJson(response);
+        if (!response.ok) {
+          throw new Error(
+            textFromError(result, "Der Termin konnte nicht geladen werden."),
+          );
+        }
+        if (
+          result.open !== true ||
+          typeof result?.slot?.label !== "string" ||
+          !result.slot.label.trim()
+        ) {
+          status.textContent = textFromError(
+            result,
+            "Die Online-Anmeldung ist für den nächsten Termin aktuell nicht geöffnet.",
+          );
+          return;
+        }
+
+        status.textContent = "Die Online-Anmeldung ist geöffnet.";
+        nextSlotLabel = result.slot.label;
+        slot.textContent = `Nächster Termin: ${nextSlotLabel}`;
+        supportsPhone =
+          Array.isArray(result.contactMethods) &&
+          result.contactMethods.includes("phone");
+        phoneField.hidden = !supportsPhone;
+        emailInput.required = !supportsPhone;
+        emailLabel.textContent = supportsPhone
+          ? "E-Mail-Adresse (optional)"
+          : "E-Mail-Adresse";
+        notificationNote.hidden = result.notificationsEnabled !== true;
+        ready = true;
+        form.hidden = false;
+      } catch {
+        status.hidden = true;
+        if (help instanceof HTMLElement) help.hidden = false;
+      } finally {
+        if (retry instanceof HTMLButtonElement) retry.disabled = false;
       }
-      notificationNote.hidden = result.notificationsEnabled !== true;
-      form.hidden = false;
-    } catch (error) {
-      status.textContent =
-        error instanceof Error
-          ? error.message
-          : "Die Online-Anmeldung ist gerade nicht erreichbar.";
-      return;
-    }
+    };
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const submitButton = form.querySelector('button[type="submit"]');
       if (!(submitButton instanceof HTMLButtonElement)) return;
+      if (!ready || submitButton.disabled) return;
 
       const data = new FormData(form);
       const payload = {
@@ -374,18 +396,29 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
             ? result.registrationId
             : "–";
         form.hidden = true;
+        ready = false;
         success.hidden = false;
         status.hidden = true;
       } catch (error) {
         message.className = "text-sm font-semibold text-red-800";
         message.textContent =
-          error instanceof Error
+          error instanceof Error && error.name !== "TypeError"
             ? error.message
-            : "Die Anmeldung konnte nicht gespeichert werden.";
+            : "Die Anmeldung konnte nicht gespeichert werden. Bitte versuche es erneut oder kontaktiere uns direkt.";
+        if (
+          error instanceof Error &&
+          error.name === "TypeError" &&
+          help instanceof HTMLElement
+        ) {
+          help.hidden = false;
+          if (retry instanceof HTMLButtonElement) retry.hidden = true;
+        }
       } finally {
         submitButton.disabled = false;
       }
     });
+    retry?.addEventListener("click", () => loadSlot());
+    await loadSlot();
   }
 
   document

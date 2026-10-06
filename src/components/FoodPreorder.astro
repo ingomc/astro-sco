@@ -1,4 +1,5 @@
 ---
+import OnlineServiceHelp from "./OnlineServiceHelp.astro";
 interface Props {
   eventSlug: string;
   apiUrl?: string;
@@ -28,6 +29,7 @@ const normalizedApiUrl = apiUrl?.replace(/\/$/, "");
         Lade Essensauswahl …
       </p>
       <div class="food-preorder-content" />
+      <OnlineServiceHelp service="food" />
       <noscript>
         <p class="mt-3 text-slate-700">
           Für die Essensvorbestellung wird JavaScript benötigt.
@@ -56,11 +58,20 @@ const normalizedApiUrl = apiUrl?.replace(/\/$/, "");
 
   async function request(apiUrl, path, options = {}) {
     const response = await fetch(endpoint(apiUrl, path), {
+      ...(!options.method || options.method === "GET"
+        ? { signal: AbortSignal.timeout(10000) }
+        : {}),
       headers: {
         ...(options.body ? { "Content-Type": "application/json" } : {}),
         ...(options.headers || {}),
       },
       ...options,
+    }).catch(() => {
+      const error = new Error(
+        "Die Online-Vorbestellung ist gerade nicht erreichbar. Bitte versuche es erneut oder kontaktiere uns direkt.",
+      );
+      error.code = "NETWORK_ERROR";
+      throw error;
     });
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) {
@@ -163,10 +174,10 @@ const normalizedApiUrl = apiUrl?.replace(/\/$/, "");
           <span>Ich habe die <a class="underline" href="/datenschutz">Datenschutzhinweise zur Essensvorbestellung</a> gelesen.</span>
         </label>
         <div class="mt-5 flex flex-wrap gap-3">
-          <button class="rounded bg-red-700 px-4 py-2 font-bold text-white hover:bg-red-800 disabled:cursor-not-allowed disabled:bg-slate-400" type="submit">
+          <button class="site-button site-button--primary" type="submit">
             ${mode === "manage" ? "Änderungen speichern" : "Reservierung anfragen"}
           </button>
-          ${mode === "manage" ? `<button class="food-preorder-cancel rounded border border-red-700 bg-white px-4 py-2 font-bold text-red-800 hover:bg-red-100" type="button">Reservierung stornieren</button>` : ""}
+          ${mode === "manage" ? `<button class="food-preorder-cancel site-button site-button--secondary" type="button">Reservierung stornieren</button>` : ""}
         </div>
         <p class="food-preorder-message mt-3 text-sm" aria-live="polite"></p>
       </form>`;
@@ -270,6 +281,10 @@ const normalizedApiUrl = apiUrl?.replace(/\/$/, "");
         message.className =
           "food-preorder-message mt-3 text-sm font-semibold text-red-800";
         message.textContent = error.message;
+        if (error.code === "NETWORK_ERROR") {
+          root.querySelector("[data-online-service-help]").hidden = false;
+          root.querySelector("[data-service-retry]").hidden = true;
+        }
       } finally {
         submitButton.disabled = false;
       }
@@ -304,6 +319,15 @@ const normalizedApiUrl = apiUrl?.replace(/\/$/, "");
     if (!apiUrl || !slug) return;
     const status = root.querySelector(".food-preorder-status");
     const content = root.querySelector(".food-preorder-content");
+    const help = root.querySelector("[data-online-service-help]");
+    const retry = root.querySelector("[data-service-retry]");
+    help.hidden = true;
+    help.querySelector("[data-service-error-message]").textContent =
+      "Bitte versuche es erneut. Bei Fragen erreichst du uns auch direkt.";
+    retry.hidden = false;
+    retry.disabled = true;
+    status.hidden = false;
+    status.textContent = "Lade Essensauswahl …";
     const url = new URL(window.location.href);
     let token = url.searchParams.get("food-order-token");
 
@@ -353,14 +377,36 @@ const normalizedApiUrl = apiUrl?.replace(/\/$/, "");
         return;
       }
       root.hidden = false;
-      status.textContent = error.message;
+      status.hidden = true;
       content.innerHTML = "";
+      help.hidden = false;
+      if (error.code === "INVALID_TOKEN") {
+        help.querySelector("[data-service-error-message]").textContent =
+          "Dieser Bestelllink ist nicht mehr gültig. Bitte kontaktiere uns bei Fragen zu deiner Reservierung.";
+      }
+    } finally {
+      retry.disabled = false;
     }
   }
 
-  document
-    .querySelectorAll("[data-food-preorder]")
-    .forEach((root) => initialise(root));
+  document.querySelectorAll("[data-food-preorder]").forEach((root) => {
+    const contacts = root.querySelector("[data-service-event-contacts]");
+    const existingLinks = root
+      .closest("article")
+      ?.querySelectorAll('a[href^="https://wa.me/"], a[href^="sms:"]');
+    const seen = new Set();
+    existingLinks?.forEach((link) => {
+      if (seen.has(link.href)) return;
+      seen.add(link.href);
+      const copy = link.cloneNode(true);
+      copy.className = "site-button site-button--secondary";
+      contacts.append(copy);
+    });
+    root
+      .querySelector("[data-service-retry]")
+      ?.addEventListener("click", () => initialise(root));
+    initialise(root);
+  });
 </script>
 
 <style>

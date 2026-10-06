@@ -4,6 +4,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 
 import tailwind from "@astrojs/tailwind";
+import { dartLiveDemo } from "./scripts/dev/dart-live-demo.mjs";
 
 // https://astro.build/config
 const siteUrl = process.env.SITE_URL || "https://www.sc-oberfuellbach.de/";
@@ -25,6 +26,9 @@ export default defineConfig({
     domains: ["cms.dart.ingomc.de", ...extraImageDomains],
   },
   integrations: [mdx(), sitemap(), tailwind()],
+  vite: {
+    plugins: process.env.PUBLIC_DART_LIVE_DEMO === "1" ? [dartLiveDemo()] : [],
+  },
   output: "static",
   adapter: vercel({
     webAnalytics: { enabled: true },

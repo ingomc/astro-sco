@@ -160,15 +160,15 @@ test("Darts-Seite führt Gäste sichtbar zur Anmeldung", async ({ page }) => {
 
   await page.goto("/darts/", { waitUntil: "networkidle" });
   const callout = page.getByRole("heading", {
-    name: "Offenes Sonntagstraining",
+    name: "Offenes Dart-Training",
   });
   await expect(callout).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Für nächsten Sonntag anmelden" }),
+    page.getByRole("link", { name: "Infos & Anmeldung" }),
   ).toHaveAttribute("href", "/darts/training");
 
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(
-    page.getByRole("heading", { name: "Offenes Sonntagstraining" }),
+    page.getByRole("heading", { name: "Dart am Sonntag" }),
   ).toBeVisible();
 });
