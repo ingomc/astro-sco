@@ -1,5 +1,6 @@
 ---
 import App from "../../layouts/App.astro";
+import HpStage from "../../components/HpStage.astro";
 import DartOpenPlaySignup from "../../components/DartOpenPlaySignup.astro";
 import { getDartOpenPlayApiUrl } from "../../lib/dart-open-play";
 
@@ -10,24 +11,21 @@ const apiUrl = getDartOpenPlayApiUrl();
   title="Offenes Dart-Training - SCO & OGV Oberfüllbach"
   description="Offenes Steel-Darts-Training für alle am Sonntag ab 18 Uhr im Sportheim Oberfüllbach"
 >
+  <HpStage
+    image="/src/media/buehne-sportheim.jpg"
+    title="Offenes Dart-Training"
+  />
   <div class="container mx-auto grid max-w-4xl gap-8 px-4 py-10">
-    <section class="rounded-xl bg-slate-900 px-6 py-8 text-white sm:px-10">
-      <p class="text-sm font-bold uppercase tracking-wide text-red-200">
-        Darts im Sportheim
+    <div class="prose max-w-none">
+      <p>
+        Sonntags ab 18:00 Uhr spielen wir Steel-Darts im Sportheim. Alle sind
+        willkommen – die Teilnahme ist kostenlos.
       </p>
-      <h1 class="mt-2 text-3xl font-bold sm:text-4xl">
-        Offenes Training für alle
-      </h1>
-      <p class="mt-4 max-w-2xl text-lg text-slate-100">
-        Sonntags ab 18:00 Uhr spielen wir Steel-Darts im Sportheim. Ob Sie zum
-        ersten Mal werfen oder schon Erfahrung haben: Sie sind willkommen. Die
-        Teilnahme ist kostenlos.
-      </p>
-      <p class="mt-3 text-slate-200">
+      <p>
         Melden Sie sich unten für den nächsten Sonntag an, damit wir Ihren
         Besuch einplanen können.
       </p>
-    </section>
+    </div>
 
     <DartOpenPlaySignup apiUrl={apiUrl} headingLevel="h2" />
 
