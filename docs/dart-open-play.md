@@ -54,6 +54,13 @@ Speicher. Ohne Bestätigung zeigt die Seite einen Link zurück zum Formular.
    Die Dart-Origin-Prüfung verwendet den Wildcard-Eintrag, Directus-CORS den
    regulären Ausdruck. Collection-Rechte bleiben davon unverändert.
 
+   Für die Vercel-Previews dieses Kontos lautet die Dart-Freigabe
+   `https://*-andre-bellmanns-projects.vercel.app`. Der passende CORS-Eintrag ist
+   `regex:^https://[a-z0-9][a-z0-9-]*-andre-bellmanns-projects\.vercel\.app$`.
+   Das umfasst Branch- und Deployment-Adressen mit diesem Suffix und erlaubt
+   keine anderen Vercel-Konten. Die zuvor versehentlich konfigurierte
+   `ingomc.de`-Wildcard wurde durch dieses Muster ersetzt.
+
 5. Für Astro/Vercel `PUBLIC_DART_OPEN_PLAY_API_URL` auf
    `https://cms.dart.ingomc.de/dart-open-play` setzen. Fehlt die Variable,
    leitet der Build die URL aus `DIRECTUS_URL` ab.

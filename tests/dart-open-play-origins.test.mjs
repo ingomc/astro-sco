@@ -107,3 +107,34 @@ test("Ohne Origin bleibt Lesen möglich, Anmeldung gesperrt; exakte bestehende F
   );
   assert.equal((await request("GET /", "https://preview.ingomc.de")).code, 403);
 });
+
+test("Vercel-Projekt-Wildcard erlaubt Branch- und Deployment-Adressen", async () => {
+  const request = harness("https://*-andre-bellmanns-projects.vercel.app");
+  for (const origin of [
+    "https://astro-sco-git-codex-menu-direct-505ed2-andre-bellmanns-projects.vercel.app",
+    "https://astro-p3pw94cb1-andre-bellmanns-projects.vercel.app",
+  ]) {
+    assert.equal((await request("GET /", origin)).code, 200);
+    assert.equal((await request("OPTIONS /*", origin)).code, 204);
+    const post = await request("POST /registrations", origin);
+    assert.equal(post.code, 400);
+    assert.notEqual(post.body.error, "ORIGIN_NOT_ALLOWED");
+    assert.equal(post.headers["Access-Control-Allow-Origin"], origin);
+  }
+  for (const origin of [
+    "https://astro-other-projects.vercel.app",
+    "https://astro-andre-bellmanns-projects.vercel.app.evil.test",
+    "https://astro-andre-bellmanns-projectsevil.vercel.app",
+    "https://andre-bellmanns-projects.vercel.app",
+    "https://nested.astro-andre-bellmanns-projects.vercel.app",
+    "http://astro-andre-bellmanns-projects.vercel.app",
+    "https://astro-andre-bellmanns-projects.vercel.app:8443",
+    "https://preview.ingomc.de",
+  ]) {
+    for (const route of ["GET /", "OPTIONS /*", "POST /registrations"]) {
+      const response = await request(route, origin);
+      assert.equal(response.code, 403, origin);
+      assert.equal(response.body.error, "ORIGIN_NOT_ALLOWED");
+    }
+  }
+});

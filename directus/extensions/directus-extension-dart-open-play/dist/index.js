@@ -64,8 +64,11 @@ function allowedOrigins(env) {
 
 function matchesOrigin(origin, pattern) {
   if (pattern === "*" || pattern === origin) return true;
-  if (!pattern.startsWith("https://*.")) return false;
-  const domain = pattern.slice("https://*.".length);
+  if (!pattern.startsWith("https://*")) return false;
+  const suffix = pattern.slice("https://*".length).toLowerCase();
+  const separator = suffix[0];
+  if (separator !== "." && separator !== "-") return false;
+  const domain = suffix.slice(1);
   if (
     !/^[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?)+$/i.test(
       domain,
@@ -75,13 +78,16 @@ function matchesOrigin(origin, pattern) {
   }
   try {
     const url = new URL(origin);
+    const prefix = url.hostname.slice(0, -suffix.length);
     return (
       url.origin === origin &&
       !url.username &&
       !url.password &&
       url.protocol === "https:" &&
       !url.port &&
-      url.hostname.endsWith(`.${domain.toLowerCase()}`)
+      url.hostname.endsWith(suffix) &&
+      prefix.length > 0 &&
+      (separator === "." || /^[a-z0-9][a-z0-9-]*$/i.test(prefix))
     );
   } catch {
     return false;
