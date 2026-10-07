@@ -1,6 +1,7 @@
 import { getCollection, getEntry } from "astro:content";
 import { toAbsoluteDirectusAssetUrl } from "./hero-image";
 import { normalizeClubName, prepareClubBody } from "./club-content.mjs";
+import { fetchDirectusWithRetry } from "./directus-fetch.mjs";
 
 type SourceMode = "astro" | "directus" | "auto";
 
@@ -276,7 +277,7 @@ async function directusGet(
       appendQueryParams(url.searchParams, key, value);
     }
 
-    const response = await fetch(url, {
+    const response = await fetchDirectusWithRetry(url, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${config.token}`,
