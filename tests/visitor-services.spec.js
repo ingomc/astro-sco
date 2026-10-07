@@ -3,24 +3,11 @@ import { expect, test } from "@playwright/test";
 const dartApi = "http://dart-open-play-test.local/dart-open-play";
 const dartRoute =
   /^http:\/\/dart-open-play-test\.local\/dart-open-play(?:\/.*)?$/;
-const foodApi = "http://food-order-test.local/food-preorders";
 const headers = { "access-control-allow-origin": "*" };
 const openSlot = {
   open: true,
   contactMethods: ["phone", "email"],
   slot: { label: "Sonntag, 04.10.2026, 18:00 Uhr", time: "18:00" },
-};
-const ordering = {
-  closed: false,
-  orderDeadline: "2026-12-31T18:00:00Z",
-  dishes: [
-    {
-      id: 1,
-      name: "Spint mit Sauerkraut",
-      priceCents: 0,
-      remainingQuantity: null,
-    },
-  ],
 };
 const fulfill = (route, data, status = 200) =>
   route.fulfill({
@@ -124,72 +111,28 @@ test("Netzwerkfehler beim Speichern lässt Angaben erhalten und behauptet keinen
   await expect(page).toHaveURL(/\/darts\/training\/?$/);
 });
 
-test("Vorbestellung kann nach Ladefehler erneut laden und behält Angaben bei Speicherfehler", async ({
+test("Veranstaltungen zeigen keine digitale Essensvorbestellung und laden keine Bestelldaten", async ({
   page,
 }) => {
-  let loads = 0;
-  await page.route(`${foodApi}/**`, async (route) => {
-    if (route.request().method() === "GET") {
-      if (++loads === 1)
-        return fulfill(
-          route,
-          { error: "ORIGIN_NOT_ALLOWED", message: "Origin not allowed" },
-          403,
-        );
-      return fulfill(route, ordering);
-    }
-    if (route.request().method() === "OPTIONS")
-      return route.fulfill({
-        status: 204,
-        headers: {
-          ...headers,
-          "access-control-allow-methods": "POST, OPTIONS",
-          "access-control-allow-headers": "content-type",
-        },
-      });
-    return route.abort("failed");
+  const foodRequests = [];
+  page.on("request", (request) => {
+    if (request.url().includes("/food-preorders"))
+      foodRequests.push(request.url());
   });
-  await page.goto("/veranstaltungen/test-essensvorbestellung", {
+  await page.goto("/veranstaltungen/test-veranstaltung", {
     waitUntil: "domcontentloaded",
   });
-  const root = page.locator("[data-food-preorder]");
   await expect(
-    root.getByRole("heading", {
-      name: "Die Online-Vorbestellung ist gerade nicht erreichbar",
-    }),
+    page.getByRole("heading", { name: "Test: Vereinsveranstaltung" }),
   ).toBeVisible();
-  await expect(root).not.toContainText("Origin not allowed");
-  await expect(root.locator("form")).toHaveCount(0);
-  await root.getByRole("button", { name: "Erneut versuchen" }).click();
-  await expect(root.locator("form")).toBeVisible();
-  await root.getByLabel("Menge").fill("2");
-  await root.getByLabel("Name", { exact: true }).fill("Erika Muster");
-  await root
-    .getByLabel("E-Mail-Adresse", { exact: true })
-    .fill("erika@example.de");
-  await root.getByLabel(/Datenschutzhinweise/).check();
-  await root.getByRole("button", { name: "Reservierung anfragen" }).click();
-  await expect(root.locator(".food-preorder-message")).toContainText(
-    "Die Online-Vorbestellung ist gerade nicht erreichbar",
-  );
-  await expect(root.getByLabel("Menge")).toHaveValue("2");
-  await expect(root.getByLabel("Name", { exact: true })).toHaveValue(
-    "Erika Muster",
-  );
+  await expect(page.locator("[data-food-preorder]")).toHaveCount(0);
   await expect(
-    root.getByRole("button", { name: "Reservierung anfragen" }),
-  ).toBeEnabled();
-  expect(loads).toBe(2);
-});
-
-test("Veranstaltungen ohne Essensangebot zeigen keine Bestellaktion", async ({
-  page,
-}) => {
-  await page.route(`${foodApi}/**`, (route) =>
-    fulfill(route, { error: "NOT_AVAILABLE" }, 404),
-  );
-  await page.goto("/veranstaltungen/test-essensvorbestellung");
-  await expect(page.locator("[data-food-preorder]")).toBeHidden();
+    page.getByRole("button", { name: "Reservierung anfragen" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Essen vorbestellen" }),
+  ).toHaveCount(0);
+  expect(foodRequests).toEqual([]);
 });
 
 test("Besuchsinfos stehen nur auf Sportheim vor den Angebotstexten", async ({

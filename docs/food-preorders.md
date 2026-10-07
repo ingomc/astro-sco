@@ -1,5 +1,13 @@
 # Essensvorbestellungen
 
+Stand 8. Oktober 2026: Die digitale Essensvorbestellung wurde aus dem
+Astro-Frontend entfernt. Veranstaltungsseiten enthalten keine Bestellformulare
+und rufen den Food-Endpunkt nicht mehr auf. Directus-Erweiterungen, Sammlungen
+und Backend-Tests bleiben für eine spätere Nutzung erhalten.
+
+Die folgenden Einrichtungsschritte dokumentieren die bisherige Funktion.
+Für eine erneute Nutzung ist zuerst eine Frontend-Anbindung erforderlich.
+
 Die Essensvorbestellung ist für beliebige Einträge aus `veranstaltungen`
 verwendbar. Sie wird nicht über öffentliche Directus-Collection-Rechte
 betrieben: Nur die Erweiterung unter `/food-preorders` darf Reservierungen

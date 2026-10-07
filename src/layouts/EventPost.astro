@@ -9,7 +9,6 @@ import BadgeMini from "../components/BadgeMini.astro";
 import RelatedContent from "../components/RelatedContent.astro";
 import Map from "../components/Map.astro";
 import Gallery from "../components/Gallery.astro";
-import FoodPreorder from "../components/FoodPreorder.astro";
 
 // type Props = CollectionEntry<'blog'>['data'];
 
@@ -26,8 +25,6 @@ const {
   mapHeight,
   galleryImages,
   galleryColumns,
-  eventSlug,
-  foodPreorderApiUrl,
 } = Astro.props;
 const robots = hidden ? "noindex, nofollow" : undefined;
 const images = import.meta.glob<{ default: ImageMetadata }>(
@@ -95,11 +92,6 @@ const hasImpressionenHeading =
         <div>
           <slot />
         </div>
-        {
-          typeof eventSlug === "string" && (
-            <FoodPreorder eventSlug={eventSlug} apiUrl={foodPreorderApiUrl} />
-          )
-        }
         {
           Array.isArray(mapLocations) && mapLocations.length > 0 && (
             <div>

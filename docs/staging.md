@@ -167,7 +167,6 @@ Dokploy-Versionen ist "Dockerfile" als Build-Quelle am einfachsten.
 | `SITE_HOST`                     | `sc-oberfuellbach.de`                       |
 | `STAGING`                       | `0`                                         |
 | `EXTRA_IMAGE_DOMAINS`           | (leer)                                      |
-| `PUBLIC_FOOD_ORDERS_API_URL`    | `https://cms.dart.ingomc.de/food-preorders` |
 | `PUBLIC_DART_OPEN_PLAY_API_URL` | `https://cms.dart.ingomc.de/dart-open-play` |
 
 Auto-Deploy: an, Webhook auf `push` zu `main`.
@@ -187,7 +186,6 @@ Dokploy unterstützt "Preview Deployments" pro Branch (siehe Dokploy-Docs
   - `SITE_HOST={{branch}}.staging.sc-oberfuellbach.de`
   - `STAGING=1`
   - `EXTRA_IMAGE_DOMAINS=cms-staging.dart.ingomc.de`
-  - `PUBLIC_FOOD_ORDERS_API_URL=https://cms-staging.dart.ingomc.de/food-preorders`
   - `PUBLIC_DART_OPEN_PLAY_API_URL=https://cms-staging.dart.ingomc.de/dart-open-play`
 
 Dokploy ersetzt `{{branch}}` in Domain-Templates automatisch. Für die

@@ -3,12 +3,8 @@ import Button from "./Button.astro";
 import { getSiteSettings } from "../lib/content-source";
 import { getVenueDetails } from "../lib/venue-details";
 
-const { service = "dart" } = Astro.props;
 const venue = getVenueDetails(await getSiteSettings());
-const isDart = service === "dart";
-const subject = isDart
-  ? "Frage zum offenen Dart-Training"
-  : "Frage zur Essensvorbestellung";
+const subject = "Frage zum offenen Dart-Training";
 ---
 
 <div
@@ -17,13 +13,7 @@ const subject = isDart
   class="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-red-950"
   role="alert"
 >
-  <h3 class="font-bold">
-    {
-      isDart
-        ? "Die Online-Anmeldung ist gerade nicht erreichbar"
-        : "Die Online-Vorbestellung ist gerade nicht erreichbar"
-    }
-  </h3>
+  <h3 class="font-bold">Die Online-Anmeldung ist gerade nicht erreichbar</h3>
   <p class="mt-2 text-sm" data-service-error-message>
     Bitte versuche es erneut. Bei Fragen erreichst du uns auch direkt.
   </p>
@@ -37,9 +27,4 @@ const subject = isDart
       >E-Mail schreiben</Button
     >
   </div>
-  {
-    !isDart && (
-      <div class="mt-3 flex flex-wrap gap-3" data-service-event-contacts />
-    )
-  }
 </div>

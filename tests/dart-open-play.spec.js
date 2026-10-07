@@ -88,7 +88,13 @@ test("Gast sieht den nächsten Termin und kann sich zum Sonntagstraining anmelde
 
   await expect(page).toHaveURL(/\/darts\/danke\/$/);
   await expect(
-    page.getByRole("heading", { name: "Du bist dabei!" }),
+    page.getByRole("heading", { name: "Danke für deine Anmeldung!" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Deine Anmeldung ist eingegangen. Wir melden uns bei dir, ob das Training stattfindet und du teilnehmen kannst.",
+      { exact: true },
+    ),
   ).toBeVisible();
   await expect(page.getByText("Sonntag, 27.09.2026, 18:00 Uhr")).toBeVisible();
   await expect(page.getByText("Sportheim Oberfüllbach")).toBeVisible();

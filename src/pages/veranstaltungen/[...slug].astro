@@ -5,19 +5,18 @@ import {
 } from "../../lib/content-source";
 import { renderDirectusBodyToHtml } from "../../lib/body-content";
 import EventPost from "../../layouts/EventPost.astro";
-import { getPublicDirectusApiUrl } from "../../lib/public-directus-api";
 
 export async function getStaticPaths() {
   const allVeranstaltungen = (
     await getContentCollection("veranstaltungen")
   ).filter((ev) => ev.data.pubDate <= new Date() && !ev.data.hidden);
-  if (process.env.FOOD_PREORDER_TEST_PAGE === "1") {
+  if (process.env.VISITOR_SERVICES_TEST_PAGE === "1") {
     allVeranstaltungen.push({
-      slug: "test-essensvorbestellung",
+      slug: "test-veranstaltung",
       collection: "veranstaltungen",
       source: "astro",
       data: {
-        title: "Test: Essensvorbestellung",
+        title: "Test: Vereinsveranstaltung",
         description: "Automatisches Testevent.",
         pubDate: new Date("2026-01-01T00:00:00.000Z"),
         eventDate: new Date("2026-09-01T12:00:00.000Z"),
@@ -60,18 +59,9 @@ type Props = {
 
 const { event, relatedItems } = Astro.props;
 const renderedBodyHtml = await renderDirectusBodyToHtml(event);
-const foodPreorderApiUrl = getPublicDirectusApiUrl(
-  "food-preorders",
-  "PUBLIC_FOOD_ORDERS_API_URL",
-);
 ---
 
-<EventPost
-  {...event.data}
-  relatedItems={relatedItems}
-  eventSlug={event.slug}
-  foodPreorderApiUrl={foodPreorderApiUrl}
->
+<EventPost {...event.data} relatedItems={relatedItems}>
   {
     renderedBodyHtml ? (
       <Fragment set:html={renderedBodyHtml} />

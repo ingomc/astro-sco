@@ -4,7 +4,7 @@ import App from "../../layouts/App.astro";
 
 <App
   title="Danke für deine Dart-Anmeldung – SCO & OGV Oberfüllbach"
-  description="Bestätigung deiner Anmeldung zum offenen Dart-Sonntagstraining."
+  description="Deine Dart-Anmeldung ist eingegangen. Wir melden uns, ob das Training stattfindet und du teilnehmen kannst."
   robots="noindex,nofollow"
 >
   <section class="relative isolate overflow-hidden bg-slate-950 text-white">
@@ -81,7 +81,7 @@ import App from "../../layouts/App.astro";
             id="dart-confirmation-details-title"
             class="mt-1 text-2xl font-bold text-slate-950"
           >
-            Dein nächster Dart-Sonntag
+            Deine Anmeldung
           </h2>
         </div>
         <span
@@ -96,7 +96,7 @@ import App from "../../layouts/App.astro";
           <p
             class="text-sm font-semibold uppercase tracking-wide text-slate-500"
           >
-            Wann
+            Angefragter Termin
           </p>
           <p
             class="mt-2 text-xl font-bold leading-snug text-slate-950"
@@ -225,10 +225,11 @@ import App from "../../layouts/App.astro";
     slot.textContent = saved.slotLabel;
     registrationId.textContent = saved.registrationId;
     confirmation.hidden = false;
-    if (title instanceof HTMLElement) title.textContent = "Du bist dabei!";
+    if (title instanceof HTMLElement)
+      title.textContent = "Danke für deine Anmeldung!";
     if (intro instanceof HTMLElement) {
       intro.textContent =
-        "Deine Anmeldung ist eingegangen. Wir freuen uns auf dich am Board!";
+        "Deine Anmeldung ist eingegangen. Wir melden uns bei dir, ob das Training stattfindet und du teilnehmen kannst.";
     }
 
     if (

@@ -32,7 +32,7 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
     Prüfe den nächsten Termin …
   </p>
 
-  <OnlineServiceHelp service="dart" />
+  <OnlineServiceHelp />
 
   <form class="mt-4 grid gap-5" data-dart-open-play-form hidden novalidate>
     <div
@@ -183,6 +183,10 @@ const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
   >
     <h2 class="text-lg font-bold">Anmeldung gespeichert</h2>
     <p class="mt-1" data-dart-open-play-success-message></p>
+    <p class="mt-2">
+      Wir melden uns bei dir, ob das Training stattfindet und du teilnehmen
+      kannst.
+    </p>
     <p class="mt-2 text-sm">
       Deine Anmeldenummer: <strong data-dart-open-play-registration-id></strong>
     </p>
