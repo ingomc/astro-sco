@@ -62,6 +62,32 @@ function allowedOrigins(env) {
   return [new URL(siteUrl).origin];
 }
 
+function matchesOrigin(origin, pattern) {
+  if (pattern === "*" || pattern === origin) return true;
+  if (!pattern.startsWith("https://*.")) return false;
+  const domain = pattern.slice("https://*.".length);
+  if (
+    !/^[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?)+$/i.test(
+      domain,
+    )
+  ) {
+    return false;
+  }
+  try {
+    const url = new URL(origin);
+    return (
+      url.origin === origin &&
+      !url.username &&
+      !url.password &&
+      url.protocol === "https:" &&
+      !url.port &&
+      url.hostname.endsWith(`.${domain.toLowerCase()}`)
+    );
+  } catch {
+    return false;
+  }
+}
+
 function assertAllowedOrigin(request, env, requireOrigin = false) {
   const origin = request.headers.origin;
   if (!origin) {
@@ -76,7 +102,7 @@ function assertAllowedOrigin(request, env, requireOrigin = false) {
   }
 
   const origins = allowedOrigins(env);
-  if (!origins.includes("*") && !origins.includes(origin)) {
+  if (!origins.some((pattern) => matchesOrigin(origin, pattern))) {
     throw new DartOpenPlayError(
       "ORIGIN_NOT_ALLOWED",
       "Diese Anfrage ist nicht erlaubt.",

@@ -38,7 +38,21 @@ Speicher. Ohne Bestätigung zeigt die Seite einen Link zurück zum Formular.
    ```
 
    Für einen Vercel-Preview zusätzlich dessen konkrete `https://…vercel.app`
-   Origin eintragen. In Produktion keine Wildcard verwenden.
+   Origin eintragen. Für eigene HTTPS-Subdomains kann zusätzlich
+   `https://*.ingomc.de` eingetragen werden. Das erlaubt auch verschachtelte
+   Subdomains, aber weder die Hauptdomain noch HTTP oder andere Ports.
+   Keine globale Wildcard `*` in Produktion verwenden.
+
+   Für den allgemeinen Directus-Datenabruf die CORS-Liste als typisiertes
+   Array mit exakten bisherigen Origins und dem begrenzten regulären Ausdruck
+   konfigurieren, beispielsweise:
+
+   ```text
+   CORS_ORIGIN=array:string:https://www.sc-oberfuellbach.de,regex:^https://([a-z0-9-]+\.)+ingomc\.de$
+   ```
+
+   Die Dart-Origin-Prüfung verwendet den Wildcard-Eintrag, Directus-CORS den
+   regulären Ausdruck. Collection-Rechte bleiben davon unverändert.
 
 5. Für Astro/Vercel `PUBLIC_DART_OPEN_PLAY_API_URL` auf
    `https://cms.dart.ingomc.de/dart-open-play` setzen. Fehlt die Variable,
