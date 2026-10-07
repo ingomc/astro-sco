@@ -149,7 +149,9 @@ test("Vorbestellung kann nach Ladefehler erneut laden und behält Angaben bei Sp
       });
     return route.abort("failed");
   });
-  await page.goto("/veranstaltungen/test-essensvorbestellung");
+  await page.goto("/veranstaltungen/test-essensvorbestellung", {
+    waitUntil: "domcontentloaded",
+  });
   const root = page.locator("[data-food-preorder]");
   await expect(
     root.getByRole("heading", {

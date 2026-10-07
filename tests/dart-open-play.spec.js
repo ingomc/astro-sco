@@ -63,7 +63,7 @@ test("Gast sieht den nächsten Termin und kann sich zum Sonntagstraining anmelde
     await route.fulfill({ status: 404, headers: corsHeaders, body: "{}" });
   });
 
-  await page.goto("/darts/anmelden/", { waitUntil: "networkidle" });
+  await page.goto("/darts/anmelden/", { waitUntil: "domcontentloaded" });
   await expect(
     page.getByRole("heading", {
       name: "Zum offenen Sonntagstraining anmelden",
@@ -116,7 +116,10 @@ test("alter Directus-Endpunkt verlangt weiterhin E-Mail und zeigt kein Handyfeld
       }),
     });
   });
-  await page.goto("/darts/anmelden/", { waitUntil: "networkidle" });
+  await page.goto("/darts/anmelden/", { waitUntil: "domcontentloaded" });
+  await expect(
+    page.getByText("Die Online-Anmeldung ist geöffnet.", { exact: true }),
+  ).toBeVisible();
   await expect(page.getByLabel("Handynummer (bevorzugt)")).toBeHidden();
   await expect(
     page.locator("[data-dart-open-play-notification-note]"),
@@ -158,7 +161,7 @@ test("Darts-Seite führt Gäste sichtbar zur Anmeldung", async ({ page }) => {
     await route.fulfill({ status: 404, headers: corsHeaders, body: "{}" });
   });
 
-  await page.goto("/darts/", { waitUntil: "networkidle" });
+  await page.goto("/darts/", { waitUntil: "domcontentloaded" });
   const callout = page.getByRole("heading", {
     name: "Offenes Dart-Training",
   });
@@ -167,7 +170,7 @@ test("Darts-Seite führt Gäste sichtbar zur Anmeldung", async ({ page }) => {
     page.getByRole("link", { name: "Infos & Anmeldung" }),
   ).toHaveAttribute("href", "/darts/training");
 
-  await page.goto("/", { waitUntil: "networkidle" });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(
     page.getByRole("heading", { name: "Dart am Sonntag" }),
   ).toBeVisible();
