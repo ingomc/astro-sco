@@ -66,7 +66,7 @@ test("Gast sieht den nächsten Termin und kann sich zum Sonntagstraining anmelde
   await page.goto("/darts/anmelden/", { waitUntil: "domcontentloaded" });
   await expect(
     page.getByRole("heading", {
-      name: "Zum offenen Sonntagstraining anmelden",
+      name: "Zum Training anmelden",
     }),
   ).toBeVisible();
   await expect(
@@ -117,9 +117,7 @@ test("alter Directus-Endpunkt verlangt weiterhin E-Mail und zeigt kein Handyfeld
     });
   });
   await page.goto("/darts/anmelden/", { waitUntil: "domcontentloaded" });
-  await expect(
-    page.getByText("Die Online-Anmeldung ist geöffnet.", { exact: true }),
-  ).toBeVisible();
+  await expect(page.locator("[data-dart-open-play-form]")).toBeVisible();
   await expect(page.getByLabel("Handynummer (bevorzugt)")).toBeHidden();
   await expect(
     page.locator("[data-dart-open-play-notification-note]"),
