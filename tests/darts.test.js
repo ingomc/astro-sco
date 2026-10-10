@@ -180,7 +180,7 @@ test.describe("Darts-Mannschaftsseite", () => {
 
   test("zeigt Mannschaft, Spielplan, Ergebnisse und Kader", async ({
     page,
-  }) => {
+  }, testInfo) => {
     const getRequestCount = await mockDartApi(page);
     const getTableRequestCount = await mockDartTableApi(page);
 
@@ -219,11 +219,24 @@ test.describe("Darts-Mannschaftsseite", () => {
 
     const results = page.locator('[data-dart-list="results"] > li');
     await expect(results).toHaveCount(1);
-    await expect(results.first()).toContainText("8:12");
+    const homeResult = results.first().locator("dl > div").nth(0);
+    const guestResult = results.first().locator("dl > div").nth(1);
+    await expect(homeResult.locator("dt")).toHaveText(
+      "SCO-Darts Team Fülltreffer",
+    );
+    await expect(homeResult.locator("dd")).toHaveText("8");
+    await expect(guestResult.locator("dt")).toHaveText("DC Test");
+    await expect(guestResult.locator("dd")).toHaveText("12");
     await expect(results.first()).toHaveAttribute(
       "data-match-state",
       "finished",
     );
+    await results.first().evaluate((card) => {
+      card.scrollIntoView({ block: "center" });
+    });
+    await results.first().screenshot({
+      path: testInfo.outputPath("completed-game.png"),
+    });
 
     const standings = page.locator('[data-dart-list="standings"] > tr');
     await expect(standings).toHaveCount(2);

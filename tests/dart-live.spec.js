@@ -248,9 +248,11 @@ test("Liga wechselt nach Abschluss zum nächsten Spiel und Ergebnis", async ({
   await expect(page.getByTestId("next-dart-match")).toContainText(
     "Nächstes Ligaspiel",
   );
-  await expect(page.locator('[data-dart-list="results"]')).toContainText(
-    "12:8",
+  const result = page.locator('[data-dart-list="results"] > li').first();
+  await expect(result.locator("dl > div").nth(0).locator("dd")).toHaveText(
+    "12",
   );
+  await expect(result.locator("dl > div").nth(1).locator("dd")).toHaveText("8");
   await expect(
     page.locator('[data-dart-list="results"]').getByRole("link"),
   ).toHaveCount(0);
