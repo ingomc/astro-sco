@@ -1,0 +1,445 @@
+---
+import Button from "./Button.astro";
+import OnlineServiceHelp from "./OnlineServiceHelp.astro";
+type Props = {
+  apiUrl?: string;
+  headingLevel?: "h1" | "h2";
+};
+
+const { apiUrl = "", headingLevel = "h1" } = Astro.props;
+const Heading = headingLevel;
+const normalizedApiUrl = apiUrl.trim().replace(/\/+$/, "");
+---
+
+<section
+  class="not-prose rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-7"
+  data-dart-open-play-signup
+  data-api-url={normalizedApiUrl}
+  aria-labelledby="dart-open-play-signup-title"
+>
+  <Heading
+    id="dart-open-play-signup-title"
+    class="text-2xl font-bold text-slate-950 md:text-3xl"
+  >
+    Zum Training anmelden
+  </Heading>
+
+  <p
+    class="mt-4 text-sm text-slate-700"
+    data-dart-open-play-status
+    aria-live="polite"
+  >
+    Prüfe den nächsten Termin …
+  </p>
+
+  <OnlineServiceHelp />
+
+  <form class="mt-4 grid gap-5" data-dart-open-play-form hidden novalidate>
+    <div
+      class="flex items-start gap-3 border-b border-slate-200 pb-4 text-slate-900"
+    >
+      <svg
+        class="mt-0.5 h-5 w-5 shrink-0 text-red-700"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+        <path d="M16 3v4M8 3v4M3 11h18"></path>
+      </svg>
+      <p class="font-semibold" data-dart-open-play-slot></p>
+    </div>
+
+    <div class="grid gap-5 sm:grid-cols-2">
+      <label
+        class="grid gap-2 text-sm font-bold text-slate-900"
+        for="dart-open-play-name"
+      >
+        Name
+        <input
+          id="dart-open-play-name"
+          class="rounded-lg border border-slate-300 px-3 py-2.5 font-normal text-slate-950 shadow-sm focus:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-200"
+          name="name"
+          autocomplete="name"
+          maxlength="120"
+          required
+        />
+      </label>
+      <label
+        class="grid gap-2 text-sm font-bold text-slate-900"
+        for="dart-open-play-phone"
+        data-dart-open-play-phone-field
+        hidden
+      >
+        Handynummer (bevorzugt)
+        <input
+          id="dart-open-play-phone"
+          class="rounded-lg border border-slate-300 px-3 py-2.5 font-normal text-slate-950 shadow-sm focus:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-200"
+          name="phone"
+          type="tel"
+          autocomplete="tel"
+          inputmode="tel"
+          maxlength="40"
+          placeholder="z. B. 0171 1234567"
+        />
+      </label>
+      <label
+        class="grid gap-2 text-sm font-bold text-slate-900"
+        for="dart-open-play-email"
+      >
+        <span data-dart-open-play-email-label>E-Mail-Adresse</span>
+        <input
+          id="dart-open-play-email"
+          class="rounded-lg border border-slate-300 px-3 py-2.5 font-normal text-slate-950 shadow-sm focus:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-200"
+          name="email"
+          type="email"
+          autocomplete="email"
+          maxlength="255"
+          required
+        />
+      </label>
+    </div>
+    <p class="text-sm text-slate-700">
+      Wir speichern deine Kontaktdaten nur, um dich wegen dieser Anmeldung zu
+      kontaktieren, zum Beispiel bei Rückfragen oder Terminänderungen. Keine
+      Werbung und keine Newsletter.
+    </p>
+    <p
+      class="text-sm text-slate-700"
+      data-dart-open-play-notification-note
+      hidden
+    >
+      Das Orga-Team erhält eine interne Benachrichtigung über neue Anmeldungen.
+    </p>
+
+    <label
+      class="grid gap-2 text-sm font-bold text-slate-900"
+      for="dart-open-play-notes"
+    >
+      Hinweis für die Orga <span class="font-normal text-slate-600"
+        >(optional)</span
+      >
+      <textarea
+        id="dart-open-play-notes"
+        class="min-h-28 rounded-lg border border-slate-300 px-3 py-2.5 font-normal text-slate-950 shadow-sm focus:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-200"
+        name="notes"
+        maxlength="1000"
+        placeholder="Zum Beispiel eine Rückfrage an die Orga"></textarea>
+    </label>
+
+    <div class="dart-open-play-honeypot" aria-hidden="true">
+      <label for="dart-open-play-website">Website</label>
+      <input
+        id="dart-open-play-website"
+        name="website"
+        tabindex="-1"
+        autocomplete="off"
+      />
+    </div>
+
+    <label
+      class="flex items-start gap-3 text-sm text-slate-800"
+      for="dart-open-play-privacy"
+    >
+      <input
+        id="dart-open-play-privacy"
+        class="mt-0.5 h-5 w-5 shrink-0 rounded border-slate-300 text-red-700 focus:ring-red-700"
+        name="privacy"
+        type="checkbox"
+        required
+      />
+      <span>
+        Ich habe die
+        <a
+          class="font-semibold text-red-800 underline underline-offset-2"
+          href="/datenschutz/"
+          target="_blank"
+          rel="noopener noreferrer">Datenschutzerklärung</a
+        >
+        gelesen und stimme der Verarbeitung meiner Angaben für diese Anmeldung zu.
+      </span>
+    </label>
+
+    <div class="flex flex-wrap items-center gap-4">
+      <Button variant="primary" type="submit"> Verbindlich anmelden </Button>
+      <p
+        class="text-sm font-semibold text-slate-700"
+        data-dart-open-play-message
+        aria-live="polite"
+      >
+      </p>
+    </div>
+  </form>
+
+  <div
+    class="mt-6 rounded-xl border border-green-200 bg-green-50 p-4 text-green-950"
+    data-dart-open-play-success
+    hidden
+    aria-live="polite"
+  >
+    <h2 class="text-lg font-bold">Anmeldung gespeichert</h2>
+    <p class="mt-1" data-dart-open-play-success-message></p>
+    <p class="mt-2">
+      Wir melden uns bei dir, ob das Training stattfindet und du teilnehmen
+      kannst.
+    </p>
+    <p class="mt-2 text-sm">
+      Deine Anmeldenummer: <strong data-dart-open-play-registration-id></strong>
+    </p>
+  </div>
+
+  <noscript>
+    <p class="mt-5 rounded-xl bg-amber-50 p-4 text-amber-950">
+      Für die Online-Anmeldung muss JavaScript aktiviert sein.
+    </p>
+  </noscript>
+</section>
+
+<script>
+  function readJson(response) {
+    return response.json().catch(() => ({}));
+  }
+
+  function textFromError(result, fallback) {
+    return typeof result?.message === "string" && result.message
+      ? result.message
+      : fallback;
+  }
+
+  async function initialiseSignup(root) {
+    if (!(root instanceof HTMLElement)) return;
+
+    const apiUrl = root.dataset.apiUrl;
+    const status = root.querySelector("[data-dart-open-play-status]");
+    const form = root.querySelector("[data-dart-open-play-form]");
+    const slot = root.querySelector("[data-dart-open-play-slot]");
+    const message = root.querySelector("[data-dart-open-play-message]");
+    const success = root.querySelector("[data-dart-open-play-success]");
+    const successMessage = root.querySelector(
+      "[data-dart-open-play-success-message]",
+    );
+    const registrationId = root.querySelector(
+      "[data-dart-open-play-registration-id]",
+    );
+    const phoneField = root.querySelector("[data-dart-open-play-phone-field]");
+    const phoneInput = form?.querySelector('input[name="phone"]');
+    const emailInput = form?.querySelector('input[name="email"]');
+    const emailLabel = root.querySelector("[data-dart-open-play-email-label]");
+    const notificationNote = root.querySelector(
+      "[data-dart-open-play-notification-note]",
+    );
+
+    if (
+      !(status instanceof HTMLElement) ||
+      !(form instanceof HTMLFormElement) ||
+      !(slot instanceof HTMLElement) ||
+      !(message instanceof HTMLElement) ||
+      !(success instanceof HTMLElement) ||
+      !(successMessage instanceof HTMLElement) ||
+      !(registrationId instanceof HTMLElement) ||
+      !(phoneField instanceof HTMLElement) ||
+      !(phoneInput instanceof HTMLInputElement) ||
+      !(emailInput instanceof HTMLInputElement) ||
+      !(emailLabel instanceof HTMLElement) ||
+      !(notificationNote instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    let nextSlotLabel = "";
+    let supportsPhone = false;
+    let ready = false;
+    const help = root.querySelector("[data-online-service-help]");
+    const retry = root.querySelector("[data-service-retry]");
+
+    const loadSlot = async () => {
+      ready = false;
+      form.hidden = true;
+      status.hidden = false;
+      status.classList.remove("sr-only");
+      status.textContent = "Prüfe den nächsten Termin …";
+      message.textContent = "";
+      if (help instanceof HTMLElement) help.hidden = true;
+      if (retry instanceof HTMLButtonElement) {
+        retry.disabled = true;
+        retry.hidden = !apiUrl;
+      }
+      if (!apiUrl) {
+        status.textContent =
+          "Die Online-Anmeldung wird gerade eingerichtet. Bei Fragen erreichst du uns direkt.";
+        if (help instanceof HTMLElement) help.hidden = false;
+        return;
+      }
+
+      try {
+        const response = await fetch(apiUrl, {
+          headers: { Accept: "application/json" },
+          signal: AbortSignal.timeout(10000),
+        });
+        const result = await readJson(response);
+        if (!response.ok) {
+          throw new Error(
+            textFromError(result, "Der Termin konnte nicht geladen werden."),
+          );
+        }
+        if (
+          result.open !== true ||
+          typeof result?.slot?.label !== "string" ||
+          !result.slot.label.trim()
+        ) {
+          status.textContent = textFromError(
+            result,
+            "Die Online-Anmeldung ist für den nächsten Termin aktuell nicht geöffnet.",
+          );
+          return;
+        }
+
+        status.textContent = "Die Online-Anmeldung ist geöffnet.";
+        status.classList.add("sr-only");
+        nextSlotLabel = result.slot.label;
+        slot.textContent = `Nächster Termin: ${nextSlotLabel}`;
+        supportsPhone =
+          Array.isArray(result.contactMethods) &&
+          result.contactMethods.includes("phone");
+        phoneField.hidden = !supportsPhone;
+        emailInput.required = !supportsPhone;
+        emailLabel.textContent = supportsPhone
+          ? "E-Mail-Adresse (optional)"
+          : "E-Mail-Adresse";
+        notificationNote.hidden = result.notificationsEnabled !== true;
+        ready = true;
+        form.hidden = false;
+      } catch {
+        status.hidden = true;
+        if (help instanceof HTMLElement) help.hidden = false;
+      } finally {
+        if (retry instanceof HTMLButtonElement) retry.disabled = false;
+      }
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const submitButton = form.querySelector('button[type="submit"]');
+      if (!(submitButton instanceof HTMLButtonElement)) return;
+      if (!ready || submitButton.disabled) return;
+
+      const data = new FormData(form);
+      const payload = {
+        name: data.get("name"),
+        email: data.get("email"),
+        phone: supportsPhone ? data.get("phone") : "",
+        notes: data.get("notes"),
+        website: data.get("website"),
+        privacyAccepted: data.get("privacy") === "on",
+      };
+
+      if (!form.reportValidity()) return;
+      if (
+        supportsPhone &&
+        !phoneInput.value.trim() &&
+        !emailInput.value.trim()
+      ) {
+        message.className = "text-sm font-semibold text-red-800";
+        message.textContent =
+          "Bitte gib eine Handynummer oder E-Mail-Adresse an.";
+        phoneInput.focus();
+        return;
+      }
+      submitButton.disabled = true;
+      message.className = "text-sm font-semibold text-slate-700";
+      message.textContent = "Anmeldung wird gespeichert …";
+
+      try {
+        const response = await fetch(`${apiUrl}/registrations`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+        const result = await readJson(response);
+        if (!response.ok) {
+          throw new Error(
+            textFromError(
+              result,
+              "Die Anmeldung konnte nicht gespeichert werden.",
+            ),
+          );
+        }
+
+        if (
+          typeof result.registrationId === "string" &&
+          result.registrationId
+        ) {
+          try {
+            sessionStorage.setItem(
+              "sco-dart-open-play-confirmation",
+              JSON.stringify({
+                registrationId: result.registrationId,
+                slotLabel: nextSlotLabel,
+              }),
+            );
+            window.location.assign("/darts/danke/");
+            return;
+          } catch {
+            // Keep the confirmation visible here if browser storage is unavailable.
+          }
+        }
+
+        successMessage.textContent = textFromError(
+          result,
+          "Danke, deine Anmeldung für das nächste Sonntagstraining ist eingegangen.",
+        );
+        registrationId.textContent =
+          typeof result.registrationId === "string"
+            ? result.registrationId
+            : "–";
+        form.hidden = true;
+        ready = false;
+        success.hidden = false;
+        status.hidden = true;
+      } catch (error) {
+        message.className = "text-sm font-semibold text-red-800";
+        message.textContent =
+          error instanceof Error && error.name !== "TypeError"
+            ? error.message
+            : "Die Anmeldung konnte nicht gespeichert werden. Bitte versuche es erneut oder kontaktiere uns direkt.";
+        if (
+          error instanceof Error &&
+          error.name === "TypeError" &&
+          help instanceof HTMLElement
+        ) {
+          help.hidden = false;
+          if (retry instanceof HTMLButtonElement) retry.hidden = true;
+        }
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+    retry?.addEventListener("click", () => loadSlot());
+    await loadSlot();
+  }
+
+  document
+    .querySelectorAll("[data-dart-open-play-signup]")
+    .forEach((root) => initialiseSignup(root));
+</script>
+
+<style>
+  [data-dart-open-play-phone-field][hidden] {
+    display: none !important;
+  }
+
+  .dart-open-play-honeypot {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+</style>

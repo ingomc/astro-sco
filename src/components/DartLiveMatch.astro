@@ -1,0 +1,652 @@
+---
+import Button from "./Button.astro";
+import { DART_SOURCE_URL } from "../lib/darts";
+---
+
+<section id="dart-live-match" class="min-h-[60vh] bg-slate-50 pb-6">
+  <div class="bg-slate-900 text-white">
+    <div class="container mx-auto max-w-6xl px-4 py-4 sm:py-5">
+      <a
+        href="/darts"
+        class="inline-flex py-2 text-sm font-semibold text-slate-200 underline underline-offset-4 hover:text-white"
+        >← Zurück zur Liga</a
+      >
+      <div class="mt-1 flex flex-wrap items-center gap-3">
+        <h1
+          class="text-xl font-bold tracking-tight sm:text-2xl"
+          data-live-field="title"
+        >
+          Ligaspiel
+        </h1>
+        <span
+          class="hidden rounded-full bg-red-700 px-3 py-1 text-sm font-bold"
+          data-live-field="badge">LIVE</span
+        >
+      </div>
+      <p class="mt-1 text-sm text-slate-300" data-live-field="meta">
+        SCO-Darts Team Fülltreffer
+      </p>
+    </div>
+  </div>
+  <div class="container mx-auto max-w-6xl px-4 py-4">
+    <p
+      role="status"
+      class="rounded-xl border border-slate-200 bg-white p-6 text-slate-600"
+      data-live-state="loading"
+    >
+      Spielinfos werden geladen …
+    </p>
+    <div
+      class="hidden rounded-xl border border-red-200 bg-red-50 p-6 text-red-950"
+      data-live-state="error"
+      role="alert"
+    >
+      <h2 class="text-xl font-bold">Spielinfos nicht verfügbar</h2>
+      <p class="mt-2" data-live-field="error"></p>
+      <Button variant="primary" type="button" class="mt-4" data-live-retry
+        >Erneut versuchen</Button
+      >
+    </div>
+    <div class="hidden" data-live-state="content">
+      <div
+        class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4"
+      >
+        <div
+          class="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 text-center"
+        >
+          <h2
+            class="break-words text-sm font-bold text-slate-900 sm:text-lg"
+            data-live-field="home"
+          >
+          </h2>
+          <div>
+            <p
+              class="text-xs font-semibold uppercase tracking-wide text-slate-500"
+              data-live-field="score-label"
+            >
+              Gesamtstand
+            </p>
+            <strong
+              class="mt-1 block text-3xl font-bold tabular-nums text-slate-900"
+              data-live-field="score">—:—</strong
+            >
+            <span
+              class="hidden text-xs text-slate-600"
+              data-live-field="total-legs"></span>
+          </div>
+          <h2
+            class="break-words text-sm font-bold text-slate-900 sm:text-lg"
+            data-live-field="guest"
+          >
+          </h2>
+        </div>
+        <div
+          class="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-slate-200 pt-2 text-xs text-slate-600"
+        >
+          <p data-live-field="connection"></p>
+          <p class="text-xs" data-live-field="updated"></p>
+          <p class="hidden w-full" data-live-field="no-feed">
+            Für dieses Spiel ist derzeit keine Live-Übertragung verfügbar.
+          </p>
+        </div>
+      </div>
+      <section class="mt-4" aria-labelledby="dart-live-pairings-heading">
+        <h2
+          id="dart-live-pairings-heading"
+          class="text-lg font-bold text-slate-900"
+        >
+          Übertragene Einzelpartien
+        </h2>
+        <ol
+          class="mt-2 grid items-start gap-3 md:grid-cols-2"
+          data-live-pairings
+        >
+        </ol>
+        <p class="mt-4 hidden text-slate-600" data-live-empty>
+          Noch keine Einzelpartien übertragen.
+        </p>
+      </section>
+    </div>
+    <p
+      class="sr-only"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      data-live-announcement
+    >
+    </p>
+    <Button
+      variant="secondary"
+      href={DART_SOURCE_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-4"
+      data-live-source>Offizielle Spielansicht bei 3K Darts</Button
+    >
+    <noscript
+      ><p class="mt-4 text-slate-700">
+        Für die Live-Anzeige wird JavaScript benötigt. Die Spielinfos findest du
+        auch direkt bei 3K Darts.
+      </p></noscript
+    >
+  </div>
+</section>
+
+<template id="dart-live-pairing-template">
+  <li
+    class="min-w-0 rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+    data-live-pairing
+  >
+    <div class="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div class="flex flex-wrap items-center gap-x-2">
+        <h3 class="font-bold text-slate-900" data-pairing="board"></h3>
+        <span class="text-slate-600" data-pairing="mode"></span>
+      </div>
+      <span
+        class="rounded-full bg-slate-100 px-2 py-0.5 font-bold text-slate-700"
+        data-pairing="status"></span>
+    </div>
+    <div
+      class="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 text-center"
+    >
+      <div class="min-w-0 rounded-lg p-1" data-player="home">
+        <span
+          class="block break-words text-sm font-semibold text-slate-900"
+          data-pairing="home"></span>
+        <span
+          class="block text-xs font-semibold text-red-800"
+          data-pairing="turn-home"></span>
+      </div>
+      <div>
+        <span class="block text-xs text-slate-600">Legs</span><strong
+          class="text-2xl tabular-nums text-slate-900"
+          data-pairing="legs"></strong>
+      </div>
+      <div class="min-w-0 rounded-lg p-1" data-player="guest">
+        <span
+          class="block break-words text-sm font-semibold text-slate-900"
+          data-pairing="guest"></span>
+        <span
+          class="block text-xs font-semibold text-red-800"
+          data-pairing="turn-guest"></span>
+      </div>
+    </div>
+    <div class="my-1 grid grid-cols-2 text-center" data-pairing="points">
+      <div>
+        <strong
+          class="block text-3xl leading-tight tabular-nums text-slate-900"
+          data-pairing="points-home"></strong><span
+          class="text-xs text-slate-600">Restpunkte</span
+        >
+      </div>
+      <div>
+        <strong
+          class="block text-3xl leading-tight tabular-nums text-slate-900"
+          data-pairing="points-guest"></strong><span
+          class="text-xs text-slate-600">Restpunkte</span
+        >
+      </div>
+    </div>
+    <table
+      class="mt-2 w-full table-fixed border-t border-slate-200 text-sm tabular-nums"
+      data-pairing="stats"
+    >
+      <caption class="sr-only" data-pairing="stats-caption"
+        >Spielstatistik</caption
+      >
+      <thead
+        ><tr class="text-xs text-slate-600"
+          ><th scope="col" class="w-1/2 py-1 text-left font-normal"
+            >Statistik</th
+          ><th scope="col" class="font-normal">Heim</th><th
+            scope="col"
+            class="font-normal">Gast</th
+          ></tr
+        ></thead
+      >
+      <tbody>
+        {
+          [
+            ["last", "Letzter Wurf"],
+            ["average", "3-Dart-Average"],
+            ["darts", "Darts im Leg"],
+            ["sets", "Sets"],
+            ["single", "Einzelwürfe"],
+          ].map(([key, label]) => (
+            <tr data-stat-row={key} class="border-t border-slate-100">
+              <th scope="row" class="py-1 text-left font-normal text-slate-600">
+                {label}
+              </th>
+              <td
+                class="text-center font-semibold text-slate-900"
+                data-pairing={`${key}-home`}
+              />
+              <td
+                class="text-center font-semibold text-slate-900"
+                data-pairing={`${key}-guest`}
+              />
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+    <details
+      class="group mt-1 border-t border-slate-200"
+      data-pairing="details"
+    >
+      <summary
+        class="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-slate-700 hover:text-slate-900 focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-700"
+        >Weitere Statistiken <span
+          aria-hidden="true"
+          class="ml-auto transition-transform group-open:rotate-180">▾</span
+        ></summary
+      >
+      <table
+        class="w-full table-fixed text-xs tabular-nums"
+        data-pairing="extra-stats"
+      >
+        <caption class="sr-only" data-pairing="extra-caption"
+          >Weitere Spielstatistiken</caption
+        >
+        <thead
+          ><tr class="text-slate-600"
+            ><th scope="col" class="w-1/2 py-1 text-left font-normal"
+              >Statistik</th
+            ><th scope="col" class="font-normal">Heim</th><th
+              scope="col"
+              class="font-normal">Gast</th
+            ></tr
+          ></thead
+        >
+        <tbody>
+          {
+            [
+              ["high", "High Finish"],
+              ["count-0", "Aufnahmen 60–79"],
+              ["count-1", "Aufnahmen 80–99"],
+              ["count-2", "Aufnahmen 100–139"],
+              ["count-3", "Aufnahmen 140–179"],
+              ["count-4", "180er"],
+            ].map(([key, label]) => (
+              <tr data-stat-row={key} class="border-t border-slate-100">
+                <th
+                  scope="row"
+                  class="py-1 text-left font-normal text-slate-600"
+                >
+                  {label}
+                </th>
+                <td
+                  class="text-center font-semibold text-slate-900"
+                  data-pairing={`${key}-home`}
+                />
+                <td
+                  class="text-center font-semibold text-slate-900"
+                  data-pairing={`${key}-guest`}
+                />
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </details>
+  </li>
+</template>
+
+<script>
+  import {
+    formatDartDate,
+    formatDartTime,
+    getDartTeamData,
+  } from "../lib/darts";
+  import {
+    DartLiveTracker,
+    liveConnectionText,
+    liveUpdatedText,
+  } from "../lib/dart-live";
+  import { dartLiveSourceUrl, type LiveFixture } from "../lib/dart-live-model";
+
+  const root = document.querySelector<HTMLElement>("#dart-live-match");
+  const ids = new URLSearchParams(location.search).getAll("match");
+  const matchId =
+    ids.length === 1 && /^[1-9]\d*$/.test(ids[0]) ? Number(ids[0]) : NaN;
+  let announced = "";
+  let tracker: DartLiveTracker | null = null;
+  let loading = false;
+  const setText = (field: string, text: string) => {
+    const element = root?.querySelector<HTMLElement>(
+      `[data-live-field="${field}"]`,
+    );
+    if (element && element.textContent !== text) element.textContent = text;
+  };
+  const state = (name: string) => {
+    root
+      ?.querySelectorAll<HTMLElement>("[data-live-state]")
+      .forEach((element) => {
+        element.classList.toggle("hidden", element.dataset.liveState !== name);
+      });
+    root?.setAttribute("aria-busy", String(name === "loading"));
+  };
+  const displayNumber = (value: number | null) =>
+    value === null ? "—" : String(value);
+
+  function render(fixture: LiveFixture) {
+    const { match, rubbers } = fixture;
+    setText("title", match.roundName);
+    setText(
+      "meta",
+      `${formatDartDate(match.datePlanned, "long")} · ${formatDartTime(match.datePlanned)} Uhr`,
+    );
+    setText("home", match.homeTeam);
+    setText("guest", match.guestTeam);
+    setText(
+      "score",
+      `${displayNumber(fixture.scoreHome)}:${displayNumber(fixture.scoreGuest)}`,
+    );
+    setText("score-label", match.isFinished ? "Endstand" : "Gesamtstand");
+    const totalLegs = root?.querySelector('[data-live-field="total-legs"]');
+    const hasTotalLegs =
+      !match.isFinished &&
+      fixture.totalLegsHome !== null &&
+      fixture.totalLegsGuest !== null;
+    totalLegs?.classList.toggle("hidden", !hasTotalLegs);
+    setText(
+      "total-legs",
+      hasTotalLegs
+        ? `Legs ${fixture.totalLegsHome}:${fixture.totalLegsGuest}`
+        : "",
+    );
+    document.title = `${match.roundName}: ${match.homeTeam} gegen ${match.guestTeam} - SCO-Darts`;
+    const badge = root?.querySelector<HTMLElement>('[data-live-field="badge"]');
+    if (badge) {
+      badge.classList.toggle("hidden", !fixture.isLive && !match.isFinished);
+      badge.textContent = match.isFinished ? "Beendet" : "LIVE";
+      badge.classList.toggle("bg-red-700", fixture.isLive);
+      badge.classList.toggle("bg-slate-700", match.isFinished);
+    }
+    const noFeed =
+      rubbers.length === 0 &&
+      !fixture.isLive &&
+      fixture.connection !== "connecting" &&
+      fixture.connection !== "unavailable";
+    root
+      ?.querySelector('[data-live-field="no-feed"]')
+      ?.classList.toggle("hidden", !noFeed);
+    setText(
+      "connection",
+      match.isFinished ? "Ligaspiel beendet." : liveConnectionText(fixture),
+    );
+    setText("updated", liveUpdatedText(fixture.lastUpdated));
+    const source = root?.querySelector<HTMLAnchorElement>("[data-live-source]");
+    if (source) source.href = dartLiveSourceUrl(match.id);
+
+    const list = root?.querySelector<HTMLOListElement>("[data-live-pairings]");
+    const template = document.querySelector<HTMLTemplateElement>(
+      "#dart-live-pairing-template",
+    );
+    if (list && template) {
+      const existing = new Map(
+        Array.from(list.children).map((row) => [
+          (row as HTMLElement).dataset.pairingKey,
+          row as HTMLElement,
+        ]),
+      );
+      const rows = rubbers.map((rubber) => {
+        const row =
+          existing.get(rubber.key) ??
+          (template.content.firstElementChild!.cloneNode(true) as HTMLElement);
+        row.dataset.pairingKey = rubber.key;
+        row.dataset.pairingState = String(rubber.status);
+        const write = (field: string, text: string) => {
+          const element = row.querySelector<HTMLElement>(
+            `[data-pairing="${field}"]`,
+          );
+          if (element && element.textContent !== text)
+            element.textContent = text;
+        };
+        write("board", rubber.board ? `Board ${rubber.board}` : "Einzelpartie");
+        write("mode", rubber.mode);
+        write(
+          "stats-caption",
+          `Spielstatistik ${rubber.players[0].name} gegen ${rubber.players[1].name}`,
+        );
+        write(
+          "extra-caption",
+          `Weitere Spielstatistiken ${rubber.players[0].name} gegen ${rubber.players[1].name}`,
+        );
+        rubber.players.forEach((player, index) => {
+          const side = index === 0 ? "home" : "guest";
+          const active =
+            rubber.status === 1 &&
+            !match.isFinished &&
+            rubber.currentPlayer === index;
+          row
+            .querySelector(`[data-player="${side}"]`)
+            ?.classList.toggle("bg-red-50", active);
+          const starter =
+            rubber.status === 1 &&
+            !match.isFinished &&
+            rubber.startPlayer === index
+              ? " · Anwurf"
+              : "";
+          const opponent = rubber.players[1 - index];
+          const winning =
+            rubber.status === 2 &&
+            player.legs !== null &&
+            opponent.legs !== null &&
+            player.legs > opponent.legs;
+          row
+            .querySelector(`[data-player="${side}"]`)
+            ?.classList.toggle("bg-emerald-50", winning);
+          write(
+            `turn-${side}`,
+            `${active ? (player.activeName ? `${player.activeName} am Wurf` : "Am Wurf") : winning ? "Sieger" : ""}${starter}`.replace(
+              /^ · /,
+              "",
+            ),
+          );
+        });
+        const statistic = (
+          key: string,
+          values: (number | string | null)[],
+          applicable = true,
+        ) => {
+          const available =
+            applicable &&
+            values.some((value) => value !== null && value !== "");
+          row
+            .querySelector(`[data-stat-row="${key}"]`)
+            ?.classList.toggle("hidden", !available);
+          values.forEach((value, index) =>
+            write(
+              `${key}-${index === 0 ? "home" : "guest"}`,
+              value === null ? "" : String(value),
+            ),
+          );
+          return available;
+        };
+        const players = rubber.players;
+        const basic = [
+          statistic(
+            "last",
+            players.map((player) => player.lastScore),
+          ),
+          statistic(
+            "average",
+            players.map((player) =>
+              player.average === null
+                ? null
+                : player.average.toFixed(1).replace(".", ","),
+            ),
+          ),
+          statistic(
+            "darts",
+            players.map((player) => player.darts),
+          ),
+          statistic(
+            "sets",
+            players.map((player) => player.sets),
+            players.some((player) => player.sets !== null && player.sets > 0) ||
+              /sets/i.test(rubber.mode),
+          ),
+          statistic(
+            "single",
+            players.map((player) =>
+              player.singleDarts.filter((dart) => dart !== "—").join(" · "),
+            ),
+          ),
+        ].some(Boolean);
+        row
+          .querySelector('[data-pairing="stats"]')
+          ?.classList.toggle("hidden", !basic);
+        const extra = [
+          statistic(
+            "high",
+            players.map((player) => player.highFinish),
+          ),
+          ...[0, 1, 2, 3, 4].map((index) =>
+            statistic(
+              `count-${index}`,
+              players.map((player) => player.counts[index]),
+            ),
+          ),
+        ].some(Boolean);
+        row
+          .querySelector('[data-pairing="extra-stats"]')
+          ?.classList.toggle("hidden", !extra);
+        const details = row.querySelector<HTMLDetailsElement>(
+          '[data-pairing="details"]',
+        );
+        if (details) {
+          details.dataset.hasStats = String(extra);
+          // Keep a focused disclosure in place during an update; hide it after focus leaves.
+          details.classList.toggle(
+            "hidden",
+            !extra && !details.contains(document.activeElement),
+          );
+          if (!details.dataset.focusHandler) {
+            details.dataset.focusHandler = "true";
+            details.addEventListener("focusout", (event) => {
+              if (
+                details.dataset.hasStats === "false" &&
+                !(
+                  event.relatedTarget instanceof Node &&
+                  details.contains(event.relatedTarget)
+                )
+              )
+                details.classList.add("hidden");
+            });
+          }
+        }
+        write("home", rubber.players[0].name);
+        write("guest", rubber.players[1].name);
+        write(
+          "legs",
+          `${displayNumber(rubber.players[0].legs)}:${displayNumber(rubber.players[1].legs)}`,
+        );
+        write("points-home", displayNumber(rubber.players[0].points));
+        write("points-guest", displayNumber(rubber.players[1].points));
+        write(
+          "status",
+          rubber.status === 1
+            ? "Läuft"
+            : rubber.status === 2
+              ? "Beendet"
+              : "Angesetzt",
+        );
+        row
+          .querySelector('[data-pairing="points"]')
+          ?.classList.toggle("hidden", rubber.status !== 1 || match.isFinished);
+        const status = row.querySelector<HTMLElement>(
+          '[data-pairing="status"]',
+        );
+        if (status)
+          status.className =
+            rubber.status === 1 && !match.isFinished
+              ? "rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-800"
+              : "rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-700";
+        if (match.isFinished) write("status", "Beendet");
+        return row;
+      });
+      for (const row of Array.from(list.children)) {
+        if (!rows.includes(row as HTMLElement)) row.remove();
+      }
+      rows.forEach((row, index) => {
+        if (list.children[index] !== row)
+          list.insertBefore(row, list.children[index] ?? null);
+      });
+      root
+        ?.querySelector("[data-live-empty]")
+        ?.classList.toggle("hidden", rubbers.length > 0);
+    }
+    // Only announce lifecycle/connection changes; scores update visually without chatter.
+    const announcement = match.isFinished
+      ? "Ligaspiel beendet. Der Endstand ist verfügbar."
+      : fixture.connection === "unavailable"
+        ? "Live-Verbindung unterbrochen. Der letzte bekannte Stand bleibt sichtbar."
+        : fixture.isLive
+          ? "Das Ligaspiel läuft live."
+          : "Spielinfos geladen.";
+    if (announcement !== announced) {
+      const element = root?.querySelector("[data-live-announcement]");
+      if (element) element.textContent = announcement;
+      announced = announcement;
+    }
+  }
+
+  async function load() {
+    if (loading) return;
+    loading = true;
+    state("loading");
+    tracker?.dispose();
+    tracker = null;
+    const retry = root?.querySelector<HTMLButtonElement>("[data-live-retry]");
+    try {
+      if (!Number.isSafeInteger(matchId) || matchId <= 0) {
+        setText(
+          "error",
+          "Dieser Spiellink ist ungültig. Wähle ein Spiel auf der Ligaseite aus.",
+        );
+        if (retry) retry.hidden = true;
+        state("error");
+        return;
+      }
+      const data = await getDartTeamData({ maxAge: 1_000 });
+      if (!data.matches.some((match) => match.id === matchId)) {
+        setText(
+          "error",
+          "Dieses Spiel wurde im aktuellen Spielplan nicht gefunden. Wähle ein Spiel auf der Ligaseite aus.",
+        );
+        if (retry) retry.hidden = true;
+        state("error");
+        return;
+      }
+      tracker = new DartLiveTracker({
+        selectedMatchId: matchId,
+        onChange: (fixtures) => {
+          const fixture = fixtures.find((item) => item.match.id === matchId);
+          if (fixture) render(fixture);
+        },
+        refreshTeam: async () => {
+          const next = await getDartTeamData({ force: true });
+          return next.matches;
+        },
+      });
+      tracker.setMatches(data.matches);
+      state("content");
+      tracker.start();
+    } catch {
+      setText(
+        "error",
+        "Die Spielinfos konnten nicht geladen werden. Versuche es erneut oder öffne die offiziellen Daten bei 3K Darts.",
+      );
+      if (retry) retry.hidden = false;
+      state("error");
+    } finally {
+      loading = false;
+    }
+  }
+  root
+    ?.querySelector("[data-live-retry]")
+    ?.addEventListener("click", () => void load());
+  void load();
+</script>

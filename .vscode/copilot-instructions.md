@@ -2,7 +2,7 @@
 
 ## Projektübersicht
 
-Dies ist eine Astro-basierte Website für den **SCO-OGV Oberfüllbach 1963 e.V.** (Sportverein) mit Directus als Content Management System.
+Dies ist eine Astro-basierte Website für den **SCO & OGV Oberfüllbach 1963 e.V.** (Sportverein) mit Directus als Content Management System.
 
 ## Technologie-Stack
 

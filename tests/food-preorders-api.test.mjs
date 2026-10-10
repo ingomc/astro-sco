@@ -66,6 +66,11 @@ test("berücksichtigt bestätigte Mengen beim Kontingent", () => {
   );
 });
 
+test("akzeptiert Gerichte ohne festes Online-Kontingent", () => {
+  const dish = { id: 1, name: "Spint", active: true, capacity: 0 };
+  ensureCapacity([{ dish, quantity: 50 }], new Map([[1, 250]]));
+});
+
 test("schließt Bestellungen nach dem Stichtag und speichert keine Klartext-Tokens", () => {
   assert.throws(
     () =>

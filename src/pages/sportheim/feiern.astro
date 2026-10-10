@@ -1,0 +1,86 @@
+---
+import Button from "../../components/Button.astro";
+import App from "../../layouts/App.astro";
+import HpStage from "../../components/HpStage.astro";
+import { getVenueDetails } from "../../lib/venue-details";
+import { getSiteSettings } from "../../lib/content-source";
+
+const venue = getVenueDetails(await getSiteSettings());
+const inquirySubject = "Anfrage: Private Feier im Sportheim";
+const inquiryBody =
+  "Hallo,\n\nich möchte das Sportheim für eine private Feier anfragen.\n\nAnlass:\nWunschtermin:\nUngefähre Personenzahl:\nGeplante Uhrzeit:\nWeitere Fragen:\n\nVielen Dank!";
+const inquiryEmailUrl = `${venue.emailUrl}?subject=${encodeURIComponent(inquirySubject)}&body=${encodeURIComponent(inquiryBody)}`;
+---
+
+<App
+  title="Feiern & Räume - SCO & OGV Oberfüllbach"
+  description="Sportheim für private Feiern anfragen und Möglichkeiten für den Dartraum besprechen"
+>
+  <HpStage image="/src/media/buehne-sportheim.jpg" title="Feiern & Räume" />
+  <div
+    class="container mx-auto grid gap-8 px-4 py-10 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]"
+  >
+    <aside
+      class="h-fit rounded-xl border border-red-200 bg-red-50 p-6 shadow-sm lg:order-2"
+      aria-labelledby="venue-contact-title"
+    >
+      <h2 id="venue-contact-title" class="text-xl font-bold text-slate-900">
+        Feier anfragen
+      </h2>
+      <p class="mt-3 text-slate-700">
+        Schicken Sie uns Anlass, Wunschtermin und ungefähre Personenzahl. Die
+        E-Mail-Vorlage hilft Ihnen dabei.
+      </p>
+      <div class="mt-4 grid gap-3">
+        <Button variant="primary" href={inquiryEmailUrl}
+          >Feier per E-Mail anfragen</Button
+        >
+      </div>
+      <p class="mt-3 break-words text-sm text-slate-700">{venue.email}</p>
+      <p class="mt-3 text-sm text-slate-700">
+        Wir klären Verfügbarkeit und Details Ihrer Feier per E-Mail.
+      </p>
+    </aside>
+
+    <div class="prose max-w-none lg:order-1">
+      <h2>Private Feiern im Sportheim</h2>
+      <p>
+        Ob Geburtstag, Familienfeier oder Jubiläum: Fragen Sie unser Sportheim
+        für Ihre private Feier an. Schicken Sie uns eine E-Mail mit Ihrem
+        Wunschtermin und der ungefähren Personenzahl.
+      </p>
+      <h2>Gästezahl und Räume</h2>
+      <p>
+        Die passende Raumaufteilung und Personenzahl stimmen wir mit Ihnen ab.
+        Nennen Sie uns, wie viele Gäste Sie erwarten.
+      </p>
+      <p>
+        Auch der Dartraum kann nach Rücksprache genutzt werden. Dort stehen fünf
+        Dartscheiben zur Verfügung.
+      </p>
+      <h2>Ausstattung und Getränke</h2>
+      <p>
+        Getränke sind im Sportheim vor Ort verfügbar. Eine Bewirtung bieten wir
+        nicht an. Unsere Getränkeauswahl finden Sie auf der
+        <a href="/getraenkekarte">Getränkekarte</a>.
+      </p>
+      <p>
+        Welche Ausstattung möglich ist, welche Kosten entstehen und wie Aufbau
+        und Reinigung ablaufen, klären wir gemeinsam.
+      </p>
+      <h2>Das gehört in Ihre Anfrage</h2>
+      <ul>
+        <li>Anlass der Feier</li>
+        <li>Wunschtermin und geplante Uhrzeit</li>
+        <li>Ungefähre Personenzahl</li>
+      </ul>
+      <p>
+        Der Anfrage-Button öffnet eine E-Mail-Vorlage mit diesen Angaben. Ihren
+        Termin und die Bedingungen stimmen wir anschließend mit Ihnen ab.
+      </p>
+      <a href="/sportheim" class="font-semibold text-red-800"
+        >Anschrift und Öffnungszeiten ansehen</a
+      >
+    </div>
+  </div>
+</App>

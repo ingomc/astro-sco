@@ -37,7 +37,7 @@
 - **Theme Colors**: Angepasst für verschiedene Color Schemes
 
 ### 6. Bilder & Medien
-- **Alt-Texte**: Beschreibend für alle Bilder ("SCO-OGV Oberfüllbach 1963 e.V. Logo")
+- **Alt-Texte**: Beschreibend für alle Bilder ("SCO & OGV Oberfüllbach 1963 e.V. Logo")
 - **Loading**: `loading="lazy"` für Performance
 - **Structured Data**: Schema.org LocalBusiness für bessere SEO
 

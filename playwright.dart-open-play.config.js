@@ -1,11 +1,13 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const apiOrigin = "http://dart-open-play-test.local";
+
 export default defineConfig({
   testDir: "./tests",
-  testMatch: "food-preorder.spec.js",
+  testMatch: "dart-open-play.spec.js",
   fullyParallel: true,
   use: {
-    baseURL: "http://localhost:4329",
+    baseURL: "http://localhost:4330",
     trace: "on-first-retry",
   },
   projects: [
@@ -19,14 +21,13 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:4329",
+    command: "pnpm run dev",
+    url: "http://localhost:4330",
     reuseExistingServer: false,
     env: {
       CONTENT_SOURCE: "astro",
-      FOOD_PREORDER_TEST_PAGE: "1",
-      PUBLIC_FOOD_ORDERS_API_URL: "http://food-order-test.local/food-preorders",
-      PORT: "4329",
+      PUBLIC_DART_OPEN_PLAY_API_URL: `${apiOrigin}/dart-open-play`,
+      PORT: "4330",
     },
   },
 });

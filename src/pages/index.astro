@@ -9,6 +9,7 @@ import FormattedDate from "../components/FormattedDate.astro";
 import EventCardCompact from "../components/EventCardCompact.astro";
 import EventBanner from "../components/EventBanner.astro";
 import NextMatch from "../components/NextMatch.astro";
+import DartTrainingCallout from "../components/DartTrainingCallout.astro";
 import allshortevents from "../data/shortevents.json";
 
 type ShortEvent = {
@@ -17,10 +18,6 @@ type ShortEvent = {
 };
 
 const settings = await getSiteSettings();
-const openingHours = settings.opening_hours || [
-  "jeden Sonntag ab 18:30 Uhr",
-  "jeden 1. Freitag im Monat ab 19:30 Uhr (ohne Gewähr)",
-];
 
 const startPosts = (await getContentCollection("start")).sort(
   (a, b) => a.data.order.valueOf() - b.data.order.valueOf(),
@@ -111,6 +108,8 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
           (post) => post.html && <Fragment set:html={post.html} />,
         )
       }
+
+      <DartTrainingCallout compact />
     </main>
 
     <!-- Berichte  -->
@@ -120,7 +119,7 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
           <h2 id="berichte-heading" class="font-bold">Berichte</h2>
           <a
             class="text-xs text-center font-semibold inline-flex gap-2 items-center py-2 px-4 justify-center rounded-full bg-slate-100 hover:bg-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
-            href="/veranstaltungen/"
+            href="/berichte/"
             aria-label="Alle Berichte anzeigen"
           >
             Alle Berichte
@@ -270,19 +269,6 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
       <NextMatch />
     </aside>
     <!-- / Nächstes Ligaspiel -->
-
-    <!-- Öffnungszeiten  -->
-    <aside class="side3" aria-labelledby="oeffnungszeiten-heading">
-      <HpCard>
-        <div class="flex gap-2 justify-between items-center" slot="title">
-          <h2 id="oeffnungszeiten-heading" class="font-bold">Öffnungszeiten</h2>
-        </div>
-        <ul class="prose list-disc pl-4 list-outside">
-          {openingHours.map((hour) => <li>{hour}</li>)}
-        </ul>
-      </HpCard>
-    </aside>
-    <!-- / Öffnungszeiten  -->
   </div>
 </App>
 
@@ -304,10 +290,9 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
       grid-template-areas:
         "content side1"
         "content side2"
-        "content side4"
-        "content side3";
+        "content side4";
       grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
-      grid-template-rows: auto auto auto 1fr;
+      grid-template-rows: auto auto 1fr;
     }
     .content {
       grid-area: content;
@@ -317,9 +302,6 @@ const showLatestBericht = latestBericht && isNew(latestBericht.data.pubDate);
     }
     .side2 {
       grid-area: side2;
-    }
-    .side3 {
-      grid-area: side3;
     }
     .side4 {
       grid-area: side4;
