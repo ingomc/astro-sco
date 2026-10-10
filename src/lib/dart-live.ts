@@ -95,7 +95,13 @@ export class DartLiveTracker {
       });
       if (!response.ok) throw new Error("Live-Daten nicht verfügbar");
       const result = objectData(await response.json());
-      if (!result || result.error || !Array.isArray(result.data)) {
+      // 3K also puts informational text such as "2 matches found." in `error`.
+      const successful =
+        result?.status === true ||
+        (typeof result?.status === "number" &&
+          result.status >= 200 &&
+          result.status < 300);
+      if (!result || !successful || !Array.isArray(result.data)) {
         throw new Error("Ungültige Live-Daten");
       }
       return result.data;

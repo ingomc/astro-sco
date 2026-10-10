@@ -1,11 +1,33 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { mockLive, rubber } from "./dart-live-fixtures.js";
+import { LIVE_API, mockLive, rubber } from "./dart-live-fixtures.js";
 
 const snapshot = (overrides = {}) =>
   rubber({ lastUpdate: "2026-10-02T18:01:00Z", ...overrides });
 test.beforeEach(async ({ page }) => {
   await page.clock.install({ time: new Date("2026-10-02T18:00:00Z") });
+});
+
+test("3K-Fehlerstatus wird auch bei HTTP 200 nicht als Live-Spiel dargestellt", async ({
+  page,
+}) => {
+  await mockLive(page);
+  await page.route(`${LIVE_API}match/5/0/102`, (route) =>
+    route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        status: 500,
+        error: "Internal error",
+        data: [rubber()],
+      }),
+    }),
+  );
+  await page.goto("/darts/spiel?match=102", { waitUntil: "domcontentloaded" });
+  await expect(page.locator('[data-live-field="connection"]')).toContainText(
+    "Verbindung unterbrochen",
+  );
+  await expect(page.locator("[data-live-pairings] > li")).toHaveCount(0);
+  await expect(page.locator('[data-live-field="badge"]')).toBeHidden();
 });
 
 test("Liga priorisiert laufendes Spiel und führt zur eigenen Live-Spielseite", async ({

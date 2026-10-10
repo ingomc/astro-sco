@@ -143,7 +143,12 @@ export async function mockLive(page, initial = [rubber()]) {
     return route.fulfill({
       status: failLive ? 503 : 200,
       contentType: "application/json",
-      body: JSON.stringify({ status: true, error: null, data }),
+      body: JSON.stringify({
+        status: 200,
+        statusCode: 1000,
+        error: `${data.length} ${path.startsWith("group?") ? "groups" : "matches"} found.`,
+        data,
+      }),
     });
   });
   await page.routeWebSocket(
