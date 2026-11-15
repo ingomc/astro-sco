@@ -7,6 +7,7 @@ import {
   LOGO_NORMAL,
   LOGO_WINTER,
 } from "../consts";
+
 import { toAbsoluteDirectusAssetUrl } from "../lib/hero-image";
 
 const { title, settings } = Astro.props;
@@ -33,7 +34,14 @@ if (settings) {
 }
 
 // Icons from Icones.js.org, Phosphor, Bold
-export const menuItems = [
+type MenuItem = {
+  label: string;
+  icon: string;
+  slug?: string;
+  children?: { label: string; slug: string }[];
+};
+
+export const menuItems: MenuItem[] = [
   {
     label: "Startseite",
     slug: "/",
@@ -41,22 +49,41 @@ export const menuItems = [
   },
   {
     label: "Veranstaltungen",
-    slug: "/veranstaltungen",
+    children: [
+      { label: "Termine", slug: "/veranstaltungen" },
+      { label: "Berichte", slug: "/berichte" },
+    ],
     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M208 28h-20v-4a12 12 0 0 0-24 0v4H92v-4a12 12 0 0 0-24 0v4H48a20 20 0 0 0-20 20v160a20 20 0 0 0 20 20h160a20 20 0 0 0 20-20V48a20 20 0 0 0-20-20ZM68 52a12 12 0 0 0 24 0h72a12 12 0 0 0 24 0h16v24H52V52ZM52 204V100h152v104Z"/></svg>`,
   },
   {
     label: "Sportheim",
-    slug: "/sportheim",
+    children: [
+      { label: "Besuch & Öffnungszeiten", slug: "/sportheim" },
+      { label: "Feiern & Räume", slug: "/sportheim/feiern" },
+    ],
     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M216 84h-12V72a44.05 44.05 0 0 0-44-44h-9.73c-12.5-10.22-29.09-16-46.27-16c-37.5 0-68 26.92-68 60v136a20 20 0 0 0 20 20h128a20 20 0 0 0 20-20v-4h12a28 28 0 0 0 28-28v-64a28 28 0 0 0-28-28ZM104 36c12.85 0 25 4.62 33.44 12.67a12 12 0 0 0 8.3 3.33H160a20 20 0 0 1 19.6 16H60.28C62.72 50 81.39 36 104 36Zm76 168H60V92h120Zm40-28a4 4 0 0 1-4 4h-12v-72h12a4 4 0 0 1 4 4Zm-112-56v56a12 12 0 0 1-24 0v-56a12 12 0 0 1 24 0Zm48 0v56a12 12 0 0 1-24 0v-56a12 12 0 0 1 24 0Z"/></svg>`,
   },
   {
     label: "Darts",
-    slug: "/darts",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M244.49 55.51l-32-32a12 12 0 0 0-17 0L165 54v35l-37 37a12 12 0 1 0 17 17l37-37h35l30.49-30.49a12 12 0 0 0 0-17ZM207 82h-17V65l14-14l15 15ZM128 28a100 100 0 1 0 100 100a12 12 0 0 0-24 0a76 76 0 1 1-76-76a12 12 0 0 0 0-24Zm0 48a52 52 0 1 0 52 52a12 12 0 0 0-24 0a28 28 0 1 1-28-28a12 12 0 0 0 0-24Z"/></svg>`,
+    children: [
+      { label: "Offenes Training", slug: "/darts/training" },
+      { label: "Liga & Mannschaft", slug: "/darts" },
+    ],
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M244.49 55.51l-32-32a12 12 0 0 0-17 0L165 54v35l-37 37a12 12 0 1 0 17 17l37-37h35l30.49-30.49a12 12 0 0 0 0-17ZM207 82h-17V65l14-14l15 15ZM128 28a100 100 0 1 0 100 100a12 12 0 0 0-24 0a76 76 0 1 1-76-76a12 12 0 0 0 0-24Zm0 48a52 52 0 1 0 52 52a12 12 0 0 0-24 0a28 28 0 1 1-28-28a12 12 0 0 1 28 0Z"/></svg>`,
   },
 ];
 
 const isMaintenanceMode = false;
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isCurrent = (slug: string) =>
+  currentPath === slug || (slug !== "/" && currentPath.startsWith(`${slug}/`));
+const isSelectedChild = (
+  slug: string,
+  children: NonNullable<MenuItem["children"]>,
+) =>
+  children
+    .filter((child) => isCurrent(child.slug))
+    .sort((a, b) => b.slug.length - a.slug.length)[0]?.slug === slug;
 ---
 
 <header role="banner">
@@ -88,35 +115,80 @@ const isMaintenanceMode = false;
 
           <nav
             id="navigation"
-            class="pointer-events-none md:pointer-events-auto hidden md:block"
+            class="pointer-events-none lg:pointer-events-auto hidden lg:block"
             role="navigation"
             aria-label="Hauptnavigation"
           >
             <ul class="flex gap-4" role="list">
-              {menuItems.map((menuItem) => (
-                <li>
-                  <HeaderLink href={menuItem.slug}>
+              {menuItems.map((menuItem, index) => (
+                <li class="desktop-item">
+                  {menuItem.children ? (
                     <>
+                      <button
+                        type="button"
+                        class:list={[
+                          "nav-toggle",
+                          {
+                            active: menuItem.children.some((child) =>
+                              isCurrent(child.slug),
+                            ),
+                          },
+                        ]}
+                        data-nav-toggle
+                        aria-expanded="false"
+                        aria-controls={`desktop-submenu-${index}`}
+                      >
+                        <span
+                          class="icon"
+                          set:html={menuItem.icon}
+                          aria-hidden="true"
+                        />
+                        <span>{menuItem.label}</span>
+                        <span class="chevron" aria-hidden="true" />
+                      </button>
+                      <ul
+                        id={`desktop-submenu-${index}`}
+                        class="desktop-submenu submenu"
+                        hidden
+                      >
+                        {menuItem.children.map((child) => (
+                          <li>
+                            <a
+                              href={child.slug}
+                              aria-current={
+                                isSelectedChild(child.slug, menuItem.children)
+                                  ? "page"
+                                  : undefined
+                              }
+                            >
+                              {child.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : (
+                    <HeaderLink href={menuItem.slug}>
                       <span
                         class="icon"
                         set:html={menuItem.icon}
                         aria-hidden="true"
                       />
                       <span>{menuItem.label}</span>
-                    </>
-                  </HeaderLink>
+                    </HeaderLink>
+                  )}
                 </li>
               ))}
             </ul>
           </nav>
           <nav
-            class="md:hidden md:pointer-events-none"
+            class="lg:hidden lg:pointer-events-none"
             role="navigation"
             aria-label="Mobile Navigation"
           >
             <button
               type="button"
-              class="open-btn inline-flex gap-2 items-center px-5 h-10 justify-center rounded-full md:hidden bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+              class="open-btn inline-flex gap-2 items-center px-5 h-10 justify-center rounded-full lg:hidden bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
               aria-expanded="false"
               aria-controls="mobile-menu"
             >
@@ -148,22 +220,23 @@ const isMaintenanceMode = false;
 <!-- Mobile Menu Backdrop -->
 <div
   id="mobile-backdrop"
-  class="mobile-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 hidden"
+  class="mobile-backdrop fixed inset-0 bg-black bg-opacity-50 z-40"
 >
 </div>
 
 <!-- Side Drawer Mobile Menu - außerhalb des Headers -->
 <div
   id="mobile-menu"
-  class="mobile-menu md:pointer-events-none md:hidden bg-neutral-200 shadow-2xl text-right top-0 right-0 w-[75vw] p-4 fixed h-full z-50"
+  class="mobile-menu lg:pointer-events-none lg:hidden bg-neutral-200 shadow-2xl top-0 right-0 w-[75vw] max-w-sm p-4 fixed z-50"
   inert
   aria-labelledby="mobile-menu-title"
 >
   <nav role="navigation" aria-label="Mobile Hauptnavigation">
-    <div class="flex flex-col gap-4 text-right justify-end">
+    <h2 id="mobile-menu-title" class="sr-only">Hauptnavigation</h2>
+    <div class="flex flex-col gap-3 text-left">
       <button
         type="button"
-        class="close-btn inline-flex gap-2 items-center px-5 h-10 justify-start self-start rounded-full md:hidden bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700"
+        class="close-btn inline-flex gap-2 items-center px-5 h-10 justify-start self-start rounded-full lg:hidden bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700"
         aria-label="Hauptmenü schließen"
       >
         <span class="sr-only">Hauptmenü schließen</span>
@@ -181,11 +254,73 @@ const isMaintenanceMode = false;
         </svg>
       </button>
       {
-        menuItems.map((menuItem) => (
-          <HeaderLink href={menuItem.slug}>
-            <span class="icon" set:html={menuItem.icon} aria-hidden="true" />
-            &nbsp;<span>{menuItem.label}</span>
-          </HeaderLink>
+        menuItems.map((menuItem, index) => (
+          <div
+            class:list={[
+              "mobile-item",
+              { "mobile-section": !!menuItem.children },
+            ]}
+          >
+            {menuItem.children ? (
+              <>
+                <button
+                  type="button"
+                  class:list={[
+                    "nav-toggle",
+                    "mobile-toggle",
+                    {
+                      active: menuItem.children.some((child) =>
+                        isCurrent(child.slug),
+                      ),
+                    },
+                  ]}
+                  data-nav-toggle
+                  aria-expanded="false"
+                  aria-controls={`mobile-submenu-${index}`}
+                >
+                  <span
+                    class="icon"
+                    set:html={menuItem.icon}
+                    aria-hidden="true"
+                  />
+                  <span>{menuItem.label}</span>
+                  <span class="chevron" aria-hidden="true" />
+                </button>
+                <div
+                  id={`mobile-submenu-${index}`}
+                  class="mobile-reveal"
+                  hidden
+                  inert
+                >
+                  <ul class="mobile-submenu submenu">
+                    {menuItem.children.map((child) => (
+                      <li>
+                        <a
+                          href={child.slug}
+                          aria-current={
+                            isSelectedChild(child.slug, menuItem.children)
+                              ? "page"
+                              : undefined
+                          }
+                        >
+                          {child.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            ) : (
+              <HeaderLink href={menuItem.slug} class="w-full">
+                <span
+                  class="icon"
+                  set:html={menuItem.icon}
+                  aria-hidden="true"
+                />
+                <span>{menuItem.label}</span>
+              </HeaderLink>
+            )}
+          </div>
         ))
       }
     </div>
@@ -205,24 +340,118 @@ const isMaintenanceMode = false;
   .icon svg {
     @apply block w-5 h-5;
   }
+  .desktop-item {
+    position: relative;
+  }
+  .nav-toggle {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-slate-900 bg-white font-medium hover:bg-slate-100 hover:text-red-700 transition-colors duration-200;
+  }
+  .nav-toggle.active {
+    @apply bg-red-700 text-white hover:bg-red-800 hover:text-white;
+  }
+  .chevron {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg) translateY(-2px);
+    transition: transform 0.2s ease;
+  }
+  .nav-toggle[aria-expanded="true"] .chevron {
+    transform: rotate(225deg) translateY(-2px);
+  }
+  .desktop-submenu {
+    @apply absolute right-0 top-full z-50 mt-2 w-max min-w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-xl;
+    max-width: calc(100vw - 2rem);
+  }
+  .desktop-submenu a {
+    white-space: nowrap;
+  }
+  .desktop-submenu:not([hidden]) {
+    animation: submenu-open 180ms ease-out;
+  }
+  @keyframes submenu-open {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .submenu a {
+    @apply block rounded-lg px-4 py-3 text-slate-900 hover:bg-slate-100 hover:text-red-700;
+  }
+  .submenu a[aria-current="page"] {
+    @apply bg-red-50 font-semibold text-red-800;
+  }
+  .mobile-section {
+    @apply bg-white;
+    border-radius: 1.25rem;
+  }
+  .mobile-toggle {
+    @apply w-full justify-start;
+    border-radius: 1.25rem;
+    transition:
+      background-color 200ms,
+      color 200ms,
+      border-radius 220ms ease;
+  }
+  .mobile-toggle[aria-expanded="true"] {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .mobile-toggle .chevron {
+    margin-left: auto;
+  }
+  .mobile-reveal {
+    overflow: hidden;
+  }
+  .mobile-submenu {
+    @apply px-2 pt-1 pb-2;
+  }
+  .mobile-submenu a {
+    padding-left: 2.25rem;
+    font-size: 0.9375rem;
+  }
+  .mobile-toggle:focus-visible,
+  .mobile-submenu a:focus-visible {
+    @apply ring-inset;
+  }
 
   /* Mobile Menu Styles */
   .mobile-backdrop {
-    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.3s ease-in-out,
+      visibility 0s linear 0.3s;
   }
 
   .mobile-backdrop.mobile-backdrop--open {
-    @apply block;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
   }
 
   .mobile-menu {
+    visibility: hidden;
     transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
+    transition:
+      transform 0.3s ease-in-out,
+      visibility 0s linear 0.3s;
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    height: 100dvh;
   }
 
   .mobile-menu.mobile-menu--open {
+    visibility: visible;
     transform: translateX(0);
+    transition-delay: 0s;
   } /* Focus styles for better accessibility */
   button:focus-visible,
   a:focus-visible {
@@ -238,8 +467,14 @@ const isMaintenanceMode = false;
 
   /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
-    .mobile-menu {
+    .mobile-menu,
+    .mobile-backdrop,
+    .mobile-toggle,
+    .chevron {
       transition: none;
+    }
+    .desktop-submenu:not([hidden]) {
+      animation: none;
     }
   }
 
@@ -256,9 +491,83 @@ const isMaintenanceMode = false;
   const mobileBackdrop = document.querySelector(
     "#mobile-backdrop",
   ) as HTMLElement;
+  const navToggles =
+    document.querySelectorAll<HTMLButtonElement>("[data-nav-toggle]");
+  const submenuAnimations = new WeakMap<HTMLElement, Animation>();
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  const setSubmenu = (
+    button: HTMLButtonElement,
+    expanded: boolean,
+    animate = true,
+  ) => {
+    const panel = document.getElementById(
+      button.getAttribute("aria-controls") ?? "",
+    );
+    if (!panel) return;
+    if (button.getAttribute("aria-expanded") === String(expanded)) return;
+
+    const height = panel.hidden ? 0 : panel.getBoundingClientRect().height;
+    const opacity = panel.hidden ? 0 : Number(getComputedStyle(panel).opacity);
+    const runningAnimation = submenuAnimations.get(panel);
+    if (runningAnimation) {
+      runningAnimation.onfinish = null;
+      runningAnimation.cancel();
+      submenuAnimations.delete(panel);
+    }
+
+    button.setAttribute("aria-expanded", String(expanded));
+    panel.inert = !expanded;
+    if (
+      !panel.classList.contains("mobile-reveal") ||
+      !animate ||
+      reducedMotion.matches
+    ) {
+      panel.hidden = !expanded;
+      return;
+    }
+
+    panel.hidden = false;
+    const animation = panel.animate(
+      [
+        { height: `${height}px`, opacity },
+        {
+          height: `${expanded ? panel.scrollHeight : 0}px`,
+          opacity: expanded ? 1 : 0,
+        },
+      ],
+      { duration: 220, easing: "cubic-bezier(0.2, 0, 0, 1)" },
+    );
+    submenuAnimations.set(panel, animation);
+    animation.onfinish = () => {
+      panel.hidden = !expanded;
+      submenuAnimations.delete(panel);
+    };
+  };
+
+  const closeSubmenus = (except?: HTMLButtonElement, animate = true) => {
+    navToggles.forEach((button) => {
+      if (button !== except) setSubmenu(button, false, animate);
+    });
+  };
+
+  navToggles.forEach((button) => {
+    button.addEventListener("click", () => {
+      const wasOpen = button.getAttribute("aria-expanded") === "true";
+      closeSubmenus(button);
+      setSubmenu(button, !wasOpen);
+    });
+  });
 
   // Open mobile menu (Side Drawer)
   openBtn?.addEventListener("click", () => {
+    closeSubmenus(undefined, false);
+    const currentLink = mobileMenu?.querySelector('a[aria-current="page"]');
+    const currentToggle = currentLink
+      ?.closest(".mobile-section")
+      ?.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+    if (currentToggle) setSubmenu(currentToggle, true, false);
+
     mobileMenu?.removeAttribute("inert");
     mobileMenu?.classList.add("mobile-menu--open");
     mobileBackdrop?.classList.add("mobile-backdrop--open");
@@ -271,6 +580,7 @@ const isMaintenanceMode = false;
 
   // Close mobile menu
   const closeMobileMenu = () => {
+    closeSubmenus(undefined, false);
     mobileMenu?.classList.remove("mobile-menu--open");
     mobileBackdrop?.classList.remove("mobile-backdrop--open");
     mobileMenu?.setAttribute("inert", "true");
@@ -282,22 +592,45 @@ const isMaintenanceMode = false;
 
   // Close on Escape key
   document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (mobileMenu?.classList.contains("mobile-menu--open")) {
+      closeMobileMenu();
+      return;
+    }
+    const openToggle = document.querySelector<HTMLButtonElement>(
+      '.desktop-item [data-nav-toggle][aria-expanded="true"]',
+    );
+    if (openToggle) {
+      closeSubmenus();
+      openToggle.focus();
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    if (!event.target.closest(".desktop-item, .mobile-item, .open-btn"))
+      closeSubmenus();
+  });
+
+  // Close when clicking backdrop
+  mobileBackdrop?.addEventListener("click", closeMobileMenu);
+  window.addEventListener("resize", () => {
     if (
-      e.key === "Escape" &&
+      window.innerWidth >= 1024 &&
       mobileMenu?.classList.contains("mobile-menu--open")
     ) {
       closeMobileMenu();
     }
   });
 
-  // Close when clicking backdrop
-  mobileBackdrop?.addEventListener("click", closeMobileMenu);
-
   // Trap focus within mobile menu
   mobileMenu?.addEventListener("keydown", (e) => {
     if (e.key === "Tab") {
-      const focusableElements = mobileMenu.querySelectorAll(
-        'button, a, [tabindex="0"]',
+      const focusableElements = Array.from(
+        mobileMenu.querySelectorAll<HTMLElement>('button, a, [tabindex="0"]'),
+      ).filter(
+        (element) =>
+          element.getClientRects().length > 0 && !element.closest("[inert]"),
       );
       const firstElement = focusableElements[0] as HTMLElement;
       const lastElement = focusableElements[

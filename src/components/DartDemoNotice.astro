@@ -1,0 +1,32 @@
+---
+const enabled =
+  import.meta.env.DEV && import.meta.env.PUBLIC_DART_LIVE_DEMO === "1";
+---
+
+{
+  enabled && (
+    <aside class="bg-amber-100 px-4 py-3 text-center font-semibold text-amber-950">
+      Dart-Demo · simulierte Spiele und Namen ·{" "}
+      <a
+        class="underline underline-offset-4"
+        href="/__dart-demo/"
+        target="dart-demo-controls"
+      >
+        Testszenario ändern
+      </a>
+    </aside>
+  )
+}
+<script>
+  if (import.meta.env.DEV && import.meta.env.PUBLIC_DART_LIVE_DEMO === "1") {
+    import.meta.hot?.on("dart-demo:reset", () => {
+      try {
+        sessionStorage.removeItem("sco_dart_team_demo");
+        sessionStorage.removeItem("sco_dart_standings_demo");
+      } catch {
+        /* Demo also works without session storage. */
+      }
+      location.reload();
+    });
+  }
+</script>

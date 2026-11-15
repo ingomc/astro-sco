@@ -37,6 +37,16 @@ test.describe("Accessibility Tests", () => {
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 
+  for (const route of ["/berichte", "/sportheim/feiern", "/darts/training", "/darts"]) {
+    test(`${route} sollte keine a11y-Verstöße haben`, async ({ page }) => {
+      await page.goto(route, { waitUntil: "domcontentloaded" });
+      const results = await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze();
+      expect(results.violations).toEqual([]);
+    });
+  }
+
   test("Keyboard Navigation sollte funktionieren", async ({
     page,
     browserName,

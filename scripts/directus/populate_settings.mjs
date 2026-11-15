@@ -4,8 +4,8 @@ async function run() {
   console.log("Updating Directus CMS settings singleton...");
 
   const payload = {
-    site_title: "SCO-OGV Oberfüllbach 1963 e.V.",
-    site_description: "Der SCO-OGV Oberfüllbach 1963 e.V. ist ein offener und familiärer Verein, bei dem neben dem sportlichen Betätigung auch das gesellschaftliche Leben eine wichtige Rolle spielt.",
+    site_title: "SCO & OGV Oberfüllbach 1963 e.V.",
+    site_description: "Der SCO & OGV Oberfüllbach 1963 e.V. ist ein offener und familiärer Verein, bei dem neben dem sportlichen Betätigung auch das gesellschaftliche Leben eine wichtige Rolle spielt.",
     posts_front_limit: 234,
     posts_author: "author",
     posts_thumb: "/assets/placeholder-about.jpg",

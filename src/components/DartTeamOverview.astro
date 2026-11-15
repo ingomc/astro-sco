@@ -1,5 +1,7 @@
 ---
+import Button from "./Button.astro";
 import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
+import DartTrainingCallout from "./DartTrainingCallout.astro";
 ---
 
 <div id="dart-team-overview" class="min-h-[60vh] bg-slate-50">
@@ -61,6 +63,14 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
     </div>
   </section>
 
+  <div class="container mx-auto px-4 pt-8 md:pt-10">
+    <DartTrainingCallout
+      compact
+      compactTitle="Offenes Dart-Training"
+      compactText="Sonntags ab 18:00 Uhr im Sportheim. Komm vorbei und spiel mit!"
+    />
+  </div>
+
   <div class="container mx-auto px-4 py-8 md:py-12">
     <div
       class="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-600 shadow-sm"
@@ -101,24 +111,27 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
         Darts auf.
       </p>
       <div class="mt-4 flex flex-wrap gap-3">
-        <button
-          type="button"
-          class="rounded-full bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
-          data-dart-retry
-        >
+        <Button variant="primary" type="button" data-dart-retry>
           Erneut versuchen
-        </button>
-        <a
+        </Button>
+        <Button
+          variant="secondary"
           href={DART_SOURCE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          class="rounded-full border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-800 hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
         >
           Spielplan bei 3K Darts
-        </a>
+        </Button>
       </div>
     </div>
 
+    <p
+      class="sr-only"
+      role="status"
+      aria-live="polite"
+      data-dart-live-announcement
+    >
+    </p>
     <div class="hidden" data-dart-state="content">
       <div class="dart-dashboard">
         <section class="dart-next-area" aria-label="Mannschaftsüberblick">
@@ -129,7 +142,9 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
             <div
               class="flex flex-wrap items-center justify-between gap-2 bg-red-800 px-5 py-4 text-white"
             >
-              <h2 class="text-lg font-bold">Nächstes Ligaspiel</h2>
+              <h2 class="text-lg font-bold" data-dart-next="heading">
+                Nächstes Ligaspiel
+              </h2>
               <span
                 class="rounded-full px-3 py-1 text-xs font-bold"
                 data-dart-next="badge"></span>
@@ -141,6 +156,10 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
                 <span
                   class="rounded-full bg-white px-3 py-1 font-semibold text-slate-800 shadow-sm"
                   data-dart-next="round"></span>
+                <span
+                  class="hidden rounded-full bg-red-800 px-3 py-1 font-bold text-white"
+                  data-dart-next="live">LIVE</span
+                >
                 <time data-dart-next="date"></time>
                 <span aria-hidden="true">·</span>
                 <span data-dart-next="time"></span>
@@ -151,13 +170,28 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
                 <span
                   class="text-lg font-bold text-slate-900"
                   data-dart-next="home"></span>
-                <span class="text-sm font-semibold uppercase text-slate-600"
-                  >gegen</span
+                <span
+                  class="text-2xl font-bold text-slate-900"
+                  data-dart-next="score">gegen</span
                 >
                 <span
                   class="text-lg font-bold text-slate-900 sm:text-right"
                   data-dart-next="guest"></span>
               </div>
+            </div>
+            <div class="px-5 pb-5 sm:px-6" data-dart-next="details" hidden>
+              <Button
+                variant="primary"
+                data-dart-next="link"
+                href="/darts"
+                hidden>Live-Spiel ansehen</Button
+              >
+              <p
+                class="mt-3 text-sm text-slate-600"
+                data-dart-next="connection"
+              >
+              </p>
+              <p class="text-xs text-slate-500" data-dart-next="updated"></p>
             </div>
             <p class="hidden p-6 text-sm text-slate-600" data-dart-next="empty">
               Aktuell ist kein weiteres Ligaspiel angesetzt.
@@ -304,21 +338,17 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
               Die Rangliste ist gerade nicht verfügbar.
             </p>
             <div class="mt-3 flex flex-wrap gap-2">
-              <button
-                type="button"
-                class="rounded-full bg-amber-800 px-4 py-2 font-semibold text-white hover:bg-amber-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-800 focus-visible:ring-offset-2"
-                data-dart-standings-retry
-              >
+              <Button type="button" variant="primary" data-dart-standings-retry>
                 Erneut versuchen
-              </button>
-              <a
+              </Button>
+              <Button
                 href={DART_TABLE_SOURCE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="rounded-full border border-amber-300 bg-white px-4 py-2 font-semibold text-amber-900 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-800 focus-visible:ring-offset-2"
+                variant="secondary"
               >
                 Tabelle bei 3K Darts
-              </a>
+              </Button>
             </div>
           </div>
         </section>
@@ -342,7 +372,7 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
             <span class="text-sm text-slate-500" data-dart-count="results"
             ></span>
           </div>
-          <ol class="space-y-2" data-dart-list="results"></ol>
+          <ol class="grid gap-3 md:grid-cols-2" data-dart-list="results"></ol>
           <p
             class="hidden rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-600"
             data-dart-empty="results"
@@ -428,11 +458,11 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
         <div
           class="dart-source-area border-t border-slate-200 pt-6 text-center"
         >
-          <a
+          <Button
             href={DART_SOURCE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2"
+            variant="secondary"
           >
             Offizielle Daten bei 3K Darts
             <svg
@@ -447,7 +477,7 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
                 d="M228 104a12 12 0 0 1-24 0V69l-83.51 83.51a12 12 0 0 1-17-17L187 52h-35a12 12 0 0 1 0-24h64a12 12 0 0 1 12 12ZM172 124a12 12 0 0 0-12 12v68H52V96h68a12 12 0 0 0 0-24H48a20 20 0 0 0-20 20v116a20 20 0 0 0 20 20h116a20 20 0 0 0 20-20v-72a12 12 0 0 0-12-12Z"
               ></path>
             </svg>
-          </a>
+          </Button>
         </div>
       </div>
     </div>
@@ -537,9 +567,62 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
         ></span>
       </div>
     </div>
-    <strong
-      class="hidden min-w-16 rounded-lg bg-slate-900 px-3 py-2 text-center text-lg text-white"
-      data-dart-match="score"></strong>
+    <div class="flex flex-wrap items-center gap-3 sm:flex-col sm:items-end">
+      <span
+        class="hidden rounded-full bg-red-800 px-2.5 py-1 text-xs font-bold text-white"
+        data-dart-match="live">LIVE</span
+      >
+      <strong
+        class="hidden min-w-16 rounded-lg bg-slate-900 px-3 py-2 text-center text-lg text-white"
+        data-dart-match="score"></strong>
+      <Button variant="primary" data-dart-match="link" href="/darts" hidden
+        >Live-Spiel ansehen</Button
+      >
+    </div>
+  </li>
+</template>
+
+<template id="dart-result-row-template">
+  <li
+    class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4"
+    data-testid="dart-match-row"
+  >
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <span class="text-xs font-bold text-slate-900" data-dart-match="round"
+      ></span>
+      <span data-dart-match="badge"></span>
+    </div>
+    <div class="mt-1 flex items-center gap-1.5 text-xs text-slate-600">
+      <time data-dart-match="date"></time>
+      <span aria-hidden="true">·</span>
+      <span data-dart-match="time"></span>
+    </div>
+    <dl class="mt-3 grid gap-2 border-t border-slate-100 pt-3">
+      <div class="grid grid-cols-[minmax(0,1fr)_2.5rem] items-center gap-3">
+        <dt
+          class="min-w-0 break-words text-sm font-semibold leading-snug text-slate-900"
+          data-dart-match="home"
+        >
+        </dt>
+        <dd
+          class="text-center text-xl font-bold tabular-nums text-slate-900"
+          data-dart-match="score-home"
+        >
+        </dd>
+      </div>
+      <div class="grid grid-cols-[minmax(0,1fr)_2.5rem] items-center gap-3">
+        <dt
+          class="min-w-0 break-words text-sm font-semibold leading-snug text-slate-900"
+          data-dart-match="guest"
+        >
+        </dt>
+        <dd
+          class="text-center text-xl font-bold tabular-nums text-slate-900"
+          data-dart-match="score-guest"
+        >
+        </dd>
+      </div>
+    </dl>
   </li>
 </template>
 
@@ -587,6 +670,42 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
     type DartTeamData,
   } from "../lib/darts";
 
+  import {
+    DartLiveTracker,
+    liveConnectionText,
+    liveUpdatedText,
+  } from "../lib/dart-live";
+  import { dartMatchUrl, type LiveFixture } from "../lib/dart-live-model";
+
+  let currentTeam: DartTeamData | null = null;
+  let liveFixtures = new Map<number, LiveFixture>();
+  let announcedMatch: number | null = null;
+  const tracker = new DartLiveTracker({
+    onChange(fixtures) {
+      liveFixtures = new Map(
+        fixtures.map((fixture) => [fixture.match.id, fixture]),
+      );
+      if (!currentTeam) return;
+      renderFixtures(currentTeam);
+      const liveMatch = fixtures.find((fixture) => fixture.isLive);
+      if ((liveMatch?.match.id ?? null) !== announcedMatch) {
+        setText(
+          "[data-dart-live-announcement]",
+          liveMatch
+            ? `${liveMatch.match.roundName}: Das Ligaspiel läuft jetzt live.`
+            : "Die Live-Anzeige des Ligaspiels wurde beendet.",
+        );
+        announcedMatch = liveMatch?.match.id ?? null;
+      }
+    },
+    async refreshTeam() {
+      const data = await getDartTeamData({ force: true });
+      currentTeam = data;
+      renderTeam(data);
+      return data.matches;
+    },
+  });
+
   const overview = document.querySelector<HTMLElement>("#dart-team-overview");
 
   function setText(selector: string, text: string) {
@@ -623,7 +742,42 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
   }
 
   function renderNextMatch(data: DartTeamData) {
-    const match = data.nextMatch;
+    const live = data.matches
+      .map((match) => liveFixtures.get(match.id))
+      .find((fixture) => fixture?.isLive);
+    const match = live?.match ?? data.nextMatch;
+    setText(
+      '[data-dart-next="heading"]',
+      live ? "Ligaspiel läuft" : "Nächstes Ligaspiel",
+    );
+    document
+      .querySelector('[data-dart-next="details"]')
+      ?.toggleAttribute("hidden", !live);
+    document
+      .querySelector('[data-dart-next="live"]')
+      ?.classList.toggle("hidden", !live);
+    setText(
+      '[data-dart-next="score"]',
+      live?.scoreHome != null && live.scoreGuest != null
+        ? `${live.scoreHome}:${live.scoreGuest}`
+        : "gegen",
+    );
+    const link = document.querySelector<HTMLAnchorElement>(
+      '[data-dart-next="link"]',
+    );
+    if (link && match) {
+      link.href = dartMatchUrl(match.id);
+      link.textContent = "Live-Spiel ansehen";
+      link.hidden = !live;
+    }
+    setText(
+      '[data-dart-next="connection"]',
+      live ? liveConnectionText(live) : "",
+    );
+    setText(
+      '[data-dart-next="updated"]',
+      live ? liveUpdatedText(live.lastUpdated) : "",
+    );
     const content = document.querySelector<HTMLElement>(
       '[data-dart-next="content"]',
     );
@@ -668,17 +822,54 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
       `[data-dart-empty="${listName}"]`,
     );
     const template = document.querySelector<HTMLTemplateElement>(
-      "#dart-match-row-template",
+      listName === "results"
+        ? "#dart-result-row-template"
+        : "#dart-match-row-template",
     );
     if (!list || !template) return;
 
-    const fragment = document.createDocumentFragment();
+    const existing = new Map(
+      Array.from(list.children).map((row) => [
+        (row as HTMLElement).dataset.fixtureId,
+        row as HTMLElement,
+      ]),
+    );
+    const rows: HTMLElement[] = [];
 
     matches.forEach((match) => {
-      const row = template.content.firstElementChild?.cloneNode(
-        true,
-      ) as HTMLElement | null;
+      const row =
+        existing.get(String(match.id)) ??
+        (template.content.firstElementChild?.cloneNode(
+          true,
+        ) as HTMLElement | null);
       if (!row) return;
+      row.dataset.fixtureId = String(match.id);
+      row.dataset.matchState = match.isFinished ? "finished" : "open";
+      delete row.dataset.highlighted;
+      row.className =
+        "grid gap-2 rounded-xl border border-slate-300 bg-white p-3 shadow-sm sm:grid-cols-[6rem_minmax(0,1fr)_auto] sm:items-center";
+      const live = liveFixtures.get(match.id);
+      const isLive = Boolean(live?.isLive);
+      row
+        .querySelector('[data-dart-match="live"]')
+        ?.classList.toggle("hidden", !isLive);
+      const link = row.querySelector<HTMLAnchorElement>(
+        '[data-dart-match="link"]',
+      );
+      if (link) {
+        link.href = dartMatchUrl(match.id);
+        link.textContent = "Live-Spiel ansehen";
+        link.hidden = !isLive;
+        link.setAttribute(
+          "aria-label",
+          `${isLive ? "Live-Spiel" : "Spiel"} ansehen: ${match.roundName}, ${match.homeTeam} gegen ${match.guestTeam}`,
+        );
+      }
+      if (isLive) row.dataset.matchState = "live";
+      const scoreElement = row.querySelector<HTMLElement>(
+        '[data-dart-match="score"]',
+      );
+      scoreElement?.classList.add("hidden");
 
       const setRowText = (field: string, text: string) => {
         const element = row.querySelector<HTMLElement>(
@@ -688,13 +879,7 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
       };
 
       setRowText("round", match.roundName);
-      setRowText(
-        "date",
-        formatDartDate(
-          match.datePlanned,
-          listName === "upcoming" ? "short" : "long",
-        ),
-      );
+      setRowText("date", formatDartDate(match.datePlanned, "short"));
       setRowText("time", `${formatDartTime(match.datePlanned)} Uhr`);
       setRowText("home", match.homeTeam);
       setRowText("guest", match.guestTeam);
@@ -702,7 +887,7 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
       if (listName === "results") {
         row.dataset.matchState = "finished";
         row.className =
-          "grid gap-2 rounded-lg border border-slate-200 bg-slate-100 px-3 py-3 text-sm sm:grid-cols-[6.5rem_minmax(0,1fr)_auto] sm:items-center";
+          "rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4";
       } else if (match.id === nextMatchId) {
         row.dataset.highlighted = "true";
         row.classList.remove("border-slate-300", "bg-white", "shadow-sm");
@@ -718,6 +903,16 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
       );
       const badge = row.querySelector<HTMLElement>('[data-dart-match="badge"]');
       if (listName === "results") {
+        row
+          .querySelectorAll(
+            '[data-dart-match="home"], [data-dart-match="guest"]',
+          )
+          .forEach((team) => {
+            team.classList.remove("text-red-700", "font-bold");
+            team.classList.add("font-semibold", "text-slate-900");
+          });
+        ownTeam?.classList.remove("font-semibold", "text-slate-900");
+        ownTeam?.classList.add("text-red-700", "font-bold");
         if (badge) {
           badge.textContent = match.isHome ? "Heimspiel" : "Auswärts";
           badge.className =
@@ -733,20 +928,33 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
         match.scoreHome !== null &&
         match.scoreGuest !== null
       ) {
-        const score = row.querySelector<HTMLElement>(
-          '[data-dart-match="score"]',
-        );
-        if (score) {
-          score.textContent = `${match.scoreHome}:${match.scoreGuest}`;
-          score.className =
-            "min-w-14 rounded-md bg-slate-300 px-2.5 py-1.5 text-center text-base text-slate-800";
-        }
+        setRowText("score-home", String(match.scoreHome));
+        setRowText("score-guest", String(match.scoreGuest));
+      } else if (listName === "results") {
+        setRowText("score-home", "–");
+        setRowText("score-guest", "–");
       }
 
-      fragment.append(row);
+      if (
+        isLive &&
+        live?.scoreHome != null &&
+        live.scoreGuest != null &&
+        scoreElement
+      ) {
+        scoreElement.textContent = `${live.scoreHome}:${live.scoreGuest}`;
+        scoreElement.className =
+          "min-w-14 rounded-md bg-red-800 px-3 py-2 text-center text-lg text-white";
+      }
+      rows.push(row);
     });
 
-    list.replaceChildren(fragment);
+    for (const row of Array.from(list.children)) {
+      if (!rows.includes(row as HTMLElement)) row.remove();
+    }
+    rows.forEach((row, index) => {
+      if (list.children[index] !== row)
+        list.insertBefore(row, list.children[index] ?? null);
+    });
     list.classList.toggle("hidden", matches.length === 0);
     empty?.classList.toggle("hidden", matches.length > 0);
     setText(
@@ -879,10 +1087,24 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
       setText('[data-dart-venue="boards"]', "Steel-Darts");
     }
 
-    renderNextMatch(data);
-    renderMatches("upcoming", data.upcomingMatches, data.nextMatch?.id);
-    renderMatches("results", data.results);
+    renderFixtures(data);
     renderMembers(data);
+  }
+
+  function renderFixtures(data: DartTeamData) {
+    renderNextMatch(data);
+    const upcoming = [...data.upcomingMatches].sort(
+      (a, b) =>
+        Number(Boolean(liveFixtures.get(b.id)?.isLive)) -
+        Number(Boolean(liveFixtures.get(a.id)?.isLive)),
+    );
+    renderMatches(
+      "upcoming",
+      upcoming,
+      upcoming.find((match) => liveFixtures.get(match.id)?.isLive)?.id ??
+        data.nextMatch?.id,
+    );
+    renderMatches("results", data.results);
   }
 
   async function loadStandings(force = false) {
@@ -902,9 +1124,12 @@ import { DART_SOURCE_URL, DART_TABLE_SOURCE_URL } from "../lib/darts";
     setOverviewState("loading");
 
     try {
-      const data = await getDartTeamData({ force });
+      const data = await getDartTeamData({ force, maxAge: 1_000 });
+      currentTeam = data;
+      tracker.setMatches(data.matches);
       renderTeam(data);
       setOverviewState("content");
+      tracker.start();
     } catch (error) {
       console.error("Fehler beim Laden der Dart-Mannschaftsseite:", error);
       setOverviewState("error");

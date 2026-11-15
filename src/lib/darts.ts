@@ -1,16 +1,22 @@
 export const DART_TEAM_ID = 633505;
 export const DART_EVENT_ID = 24970;
-export const DART_API_URL =
-  "https://backend4.3k-darts.com/2k-backend4/api/v1/frontend/participant/633505";
-export const DART_TABLE_API_URL =
-  "https://backend4.3k-darts.com/2k-backend4/api/v1/frontend/event/24970/phase/0/round/0/table";
+const demo =
+  import.meta.env?.DEV && import.meta.env.PUBLIC_DART_LIVE_DEMO === "1";
+export const DART_API_URL = demo
+  ? "/__dart-demo/api/team"
+  : "https://backend4.3k-darts.com/2k-backend4/api/v1/frontend/participant/633505";
+export const DART_TABLE_API_URL = demo
+  ? "/__dart-demo/api/table"
+  : "https://backend4.3k-darts.com/2k-backend4/api/v1/frontend/event/24970/phase/0/round/0/table";
 export const DART_SOURCE_URL =
   "https://portal.3k-darts.com/frontend/events/5/event/24970/participants/633505";
 export const DART_TABLE_SOURCE_URL =
   "https://portal.3k-darts.com/frontend/events/5/event/24970/table";
 
-const DART_CACHE_KEY = "sco_dart_team_2026_27_v2";
-const DART_STANDINGS_CACHE_KEY = "sco_dart_standings_2026_27_v2";
+const DART_CACHE_KEY = demo ? "sco_dart_team_demo" : "sco_dart_team_2026_27_v2";
+const DART_STANDINGS_CACHE_KEY = demo
+  ? "sco_dart_standings_demo"
+  : "sco_dart_standings_2026_27_v2";
 const DART_CACHE_DURATION = 1000 * 60 * 15;
 const DART_TIME_ZONE = "Europe/Berlin";
 
@@ -348,7 +354,7 @@ export function normalizeDartStandings(
     });
 }
 
-function readCachedTeamData() {
+function readCachedTeamData(maxAge = DART_CACHE_DURATION) {
   try {
     const cached = sessionStorage.getItem(DART_CACHE_KEY);
     if (!cached) return null;
@@ -361,7 +367,7 @@ function readCachedTeamData() {
     if (
       !parsed.timestamp ||
       !parsed.data ||
-      Date.now() - parsed.timestamp >= DART_CACHE_DURATION
+      Date.now() - parsed.timestamp >= maxAge
     ) {
       sessionStorage.removeItem(DART_CACHE_KEY);
       return null;
@@ -420,22 +426,24 @@ function cacheStandings(data: DartStanding[]) {
   }
 }
 
-export async function getDartTeamData(options: { force?: boolean } = {}) {
+export async function getDartTeamData(
+  options: { force?: boolean; maxAge?: number } = {},
+) {
   if (options.force) {
     try {
       sessionStorage.removeItem(DART_CACHE_KEY);
     } catch {
       // Kein Cache vorhanden oder Session Storage ist nicht verfügbar.
     }
-    window.__scoDartTeamPromise = undefined;
   }
 
-  const cached = readCachedTeamData();
+  const cached = readCachedTeamData(options.maxAge);
   if (cached) return cached;
 
   if (!window.__scoDartTeamPromise) {
     window.__scoDartTeamPromise = fetch(DART_API_URL, {
       headers: { Accept: "application/json" },
+      cache: "no-store",
     })
       .then(async (response) => {
         if (!response.ok) {
@@ -448,9 +456,8 @@ export async function getDartTeamData(options: { force?: boolean } = {}) {
         cacheTeamData(data);
         return data;
       })
-      .catch((error) => {
+      .finally(() => {
         window.__scoDartTeamPromise = undefined;
-        throw error;
       });
   }
 

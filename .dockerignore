@@ -22,6 +22,8 @@ pnpm-debug.log*
 
 # Astro / Vercel build artifacts
 dist
+!directus/extensions/*/dist/
+!directus/extensions/*/dist/**
 .vercel
 .astro
 .cache

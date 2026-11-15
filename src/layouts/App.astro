@@ -1,4 +1,5 @@
 ---
+import DartDemoNotice from "../components/DartDemoNotice.astro";
 import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
@@ -15,7 +16,10 @@ const settings = await getSiteSettings();
 const { title, description, image, robots } = Astro.props;
 
 const isStaging =
-  import.meta.env.STAGING === "1" || process.env.STAGING === "1";
+  import.meta.env.STAGING === "1" ||
+  process.env.STAGING === "1" ||
+  import.meta.env.VERCEL_ENV === "preview" ||
+  process.env.VERCEL_ENV === "preview";
 const stagingRobots = isStaging ? "noindex,nofollow" : robots;
 const siteHost =
   import.meta.env.SITE_HOST ||
@@ -51,6 +55,7 @@ const siteHost =
       </div>
       <Header title={settings.site_title} settings={settings} />
       <main id="main-content" role="main" tabindex="-1">
+        <DartDemoNotice />
         <slot />
       </main>
       <Footer settings={settings} />

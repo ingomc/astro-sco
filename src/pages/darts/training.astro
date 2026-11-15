@@ -1,0 +1,35 @@
+---
+import App from "../../layouts/App.astro";
+import HpStage from "../../components/HpStage.astro";
+import DartOpenPlaySignup from "../../components/DartOpenPlaySignup.astro";
+import { getDartOpenPlayApiUrl } from "../../lib/dart-open-play";
+
+const apiUrl = getDartOpenPlayApiUrl();
+---
+
+<App
+  title="Offenes Dart-Training - SCO & OGV Oberfüllbach"
+  description="Offenes Steel-Darts-Training für alle am Sonntag ab 18 Uhr im Sportheim Oberfüllbach"
+>
+  <HpStage
+    image="/src/media/buehne-sportheim.jpg"
+    title="Offenes Dart-Training"
+  />
+  <div class="container mx-auto grid max-w-4xl gap-8 px-4 py-10">
+    <p class="text-slate-700">
+      Kostenloses Steel-Darts-Training im Sportheim. Alle sind willkommen – fünf
+      Boards und Leihpfeile stehen bereit.
+    </p>
+
+    <DartOpenPlaySignup apiUrl={apiUrl} headingLevel="h2" />
+
+    <p class="text-slate-700">
+      Sie interessieren sich auch für die Mannschaft?
+      <a
+        href="/darts"
+        class="font-semibold text-red-800 underline underline-offset-4"
+        >Liga, Spielplan und Ergebnisse ansehen</a
+      >.
+    </p>
+  </div>
+</App>

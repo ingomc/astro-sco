@@ -1,0 +1,53 @@
+---
+import Button from "./Button.astro";
+import { getVenueDetails } from "../lib/venue-details";
+
+const { settings = {} } = Astro.props;
+const venue = getVenueDetails(settings);
+const openingHours = settings.opening_hours?.length
+  ? settings.opening_hours
+  : [
+      "jeden Sonntag ab 18:30 Uhr",
+      "jeden 1. Freitag im Monat ab 19:30 Uhr (ohne Gewähr)",
+    ];
+---
+
+<section
+  id="besuch-planen"
+  class="not-prose grid gap-10 border-b border-slate-200 pb-10 md:grid-cols-2"
+  aria-labelledby="visit-info-title"
+>
+  <div>
+    <h2 id="visit-info-title" class="text-2xl font-bold text-slate-950">
+      Öffnungszeiten
+    </h2>
+    <p class="mt-4 text-slate-700">
+      Zu diesen Zeiten ist unser Sportheim regulär geöffnet:
+    </p>
+    <ul class="mt-3 space-y-3 font-semibold text-slate-900">
+      {openingHours.map((hour) => <li>{hour}</li>)}
+    </ul>
+    <p class="mt-4 text-slate-700">
+      Die Zeiten oben gelten für den regulären Sportheimbetrieb. Das offene
+      Dart-Training beginnt sonntags bereits um 18:00 Uhr. Die Teilnahme ist
+      kostenlos; Leihpfeile sind vorhanden.
+    </p>
+  </div>
+  <div>
+    <h2 class="text-2xl font-bold text-slate-950">Anschrift & Anfahrt</h2>
+    <address class="mt-4 not-italic text-slate-700">
+      Sportheim Oberfüllbach<br />{venue.street}<br />{venue.city}
+    </address>
+    <p class="mt-4 text-slate-700">
+      Die Route zu unserem Sportheim öffnet sich in Google Maps.
+    </p>
+    <div class="mt-5 flex flex-wrap gap-3">
+      <Button
+        variant="primary"
+        href={venue.routeUrl}
+        target="_blank"
+        rel="noopener noreferrer">Route planen</Button
+      >
+    </div>
+  </div>
+</section>

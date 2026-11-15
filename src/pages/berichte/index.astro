@@ -1,0 +1,38 @@
+---
+import { getContentCollection } from "../../lib/content-source";
+import App from "../../layouts/App.astro";
+import EventsSection from "../../components/EventsSection.astro";
+import HpStage from "../../components/HpStage.astro";
+
+const now = new Date();
+const reports = (await getContentCollection("berichte"))
+  .filter((report) => report.data.pubDate <= now && !report.data.hidden)
+  .sort((a, b) => b.data.eventDate.getTime() - a.data.eventDate.getTime());
+---
+
+<App
+  title="Berichte - SCO & OGV Oberfüllbach"
+  description="Berichte und Rückblicke aus dem Vereinsleben des SCO & OGV Oberfüllbach"
+>
+  <HpStage image="/src/media/buehne-events.jpg" title="Berichte" />
+  <div class="container mx-auto px-4 py-8">
+    <p class="mb-8 max-w-2xl text-lg text-slate-700">
+      Rückblicke auf Veranstaltungen und Geschichten aus unserem Vereinsleben.
+    </p>
+    {
+      reports.length > 0 ? (
+        <EventsSection data={reports} path="berichte" />
+      ) : (
+        <p>Zurzeit sind keine Berichte veröffentlicht.</p>
+      )
+    }
+    <p class="mt-8">
+      <a
+        href="/veranstaltungen"
+        class="font-semibold text-red-800 underline underline-offset-4 hover:text-red-950"
+      >
+        Zu den nächsten Terminen
+      </a>
+    </p>
+  </div>
+</App>

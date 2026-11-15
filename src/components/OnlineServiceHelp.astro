@@ -1,0 +1,30 @@
+---
+import Button from "./Button.astro";
+import { getSiteSettings } from "../lib/content-source";
+import { getVenueDetails } from "../lib/venue-details";
+
+const venue = getVenueDetails(await getSiteSettings());
+const subject = "Frage zum offenen Dart-Training";
+---
+
+<div
+  data-online-service-help
+  hidden
+  class="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-red-950"
+  role="alert"
+>
+  <h3 class="font-bold">Die Online-Anmeldung ist gerade nicht erreichbar</h3>
+  <p class="mt-2 text-sm" data-service-error-message>
+    Bitte versuche es erneut. Bei Fragen erreichst du uns auch direkt.
+  </p>
+  <div class="mt-4 flex flex-wrap gap-3">
+    <Button variant="primary" type="button" data-service-retry
+      >Erneut versuchen</Button
+    >
+    <Button
+      variant="secondary"
+      href={`${venue.emailUrl}?subject=${encodeURIComponent(subject)}`}
+      >E-Mail schreiben</Button
+    >
+  </div>
+</div>

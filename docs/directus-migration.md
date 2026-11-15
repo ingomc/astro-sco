@@ -2,6 +2,44 @@
 
 This project now includes migration scripts to provision Directus schema and import Astro content.
 
+## Produktives Directus per MCP
+
+Das produktive CMS unter `https://cms.dart.ingomc.de/` bietet die native
+MCP-Schnittstelle unter `https://cms.dart.ingomc.de/mcp`. Der lokale Zugang liegt
+in der nicht versionierten `.env` als `MCP_TOKEN`; den Tokenwert nicht ausgeben
+oder committen. Am 20.09.2026 war dieser Token für Schema- und Inhaltsänderungen
+geeignet. Der separate `DIRECTUS_TOKEN` lieferte bei der Admin-Prüfung `401` und
+sollte nicht ungeprüft dafür verwendet werden.
+
+Die Schnittstelle spricht MCP über HTTP-POST mit JSON-RPC 2.0. Für die
+Authentifizierung `Authorization: Bearer <MCP_TOKEN>` setzen, dazu
+`Content-Type: application/json`, `Accept: application/json, text/event-stream`
+und `MCP-Protocol-Version: 2025-06-18`. Ein `initialize`-Aufruf mit dieser
+Protokollversion und anschließend `tools/list` liefert die verfügbaren Werkzeuge.
+`tools/call` ruft unter anderem `schema`, `fields` und `items` auf. Beispiel für
+eine lesende Schemaabfrage:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "schema",
+    "arguments": { "keys": ["settings", "event_dart_registrations"] }
+  }
+}
+```
+
+Vor einem Schreibaufruf zuerst `schema` für die betroffenen Sammlungen und
+`items` für den aktuellen Datensatz lesen. Fehlende Felder über `fields` mit
+`action: "create"` anlegen; `data` ist dabei immer ein Array. Die Singleton-
+Sammlung `settings` lässt sich über `items` mit `action: "update"` und einem
+`data`-Objekt ohne Schlüssel aktualisieren. Danach die Werte per MCP und den
+zugehörigen öffentlichen Endpoint prüfen. Die Dart-Felder
+`dart_open_play_enabled` und `dart_open_play_time` wurden am 20.09.2026 so
+angelegt und auf `true` bzw. `18:00` gesetzt.
+
 ## Required Environment Variables
 
 - DIRECTUS_URL
@@ -110,5 +148,5 @@ Read-path behavior (implemented):
 - Editorial content is maintained in Directus.
 - Repository content files under src/content should not be edited for daily content updates.
 - Use guard:content in CI (and optionally guard:content:staged locally) to prevent accidental content edits.
-- Use directus:seed* commands for one-time seeding/backfills without overwriting CMS-managed records.
-- Use directus:cleanup* to retire local content files after parity checks.
+- Use directus:seed\* commands for one-time seeding/backfills without overwriting CMS-managed records.
+- Use directus:cleanup\* to retire local content files after parity checks.
