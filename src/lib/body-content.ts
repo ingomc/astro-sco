@@ -70,7 +70,8 @@ function rewriteDirectusAssetLinks(html: string): string {
       // Return rewritten <img> tag
       return `<img${beforeSrc}src=${quote}${defaultSrc}${quote} srcset=${quote}${srcset}${quote} sizes=${quote}(max-width: 768px) 100vw, 800px${quote}${afterSrc}`;
     } catch {
-      return `src=${quote}${avifUrlBase}${quote}`;
+      // Kein Directus-Asset (z. B. /assets/foo.jpg aus public/): Tag unverändert lassen.
+      return fullMatch;
     }
   });
 

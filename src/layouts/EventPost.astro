@@ -50,7 +50,12 @@ const hasImpressionenHeading =
       </div>
     </div>
     <article class="container mx-auto px-2">
-      <div class="hero-image-wrapper">
+      <div
+        class:list={[
+          "hero-image-wrapper",
+          { "no-hero": resolvedHero.kind === "none" },
+        ]}
+      >
         {
           resolvedHero.kind !== "none" && (
             <div class="hero-image not-prose rounded-xl overflow-hidden shadow-xl">
@@ -183,6 +188,11 @@ const hasImpressionenHeading =
     margin-top: -10rem;
     position: relative;
     z-index: 10;
+  }
+
+  /* Ohne Hero-Bild nichts unter das Banner ziehen. */
+  .hero-image-wrapper.no-hero {
+    margin-top: 0;
   }
 
   .hero-image {
