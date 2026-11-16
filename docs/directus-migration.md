@@ -99,6 +99,21 @@ Read-path behavior (implemented):
 - Hero backfill can upload local hero assets automatically, but external hero URLs remain external and are not converted into Directus file relations.
 - MDX component semantics are preserved as raw body content; execution/rendering adaptation is still pending.
 
+## Link-Vorschau (Open Graph)
+
+- `veranstaltungen` und `berichte` haben das Dateifeld `og_image` (Link-Vorschau
+  für WhatsApp, Facebook usw.). Es am besten bei jedem neuen Beitrag mit
+  pflegen, idealerweise 1200×630 px.
+- Der Code (`toOgImageUrl` in `src/lib/hero-image.ts`) fordert bei Directus
+  immer eine JPG-Variante in 1200×630 an. Messenger zeigen kein AVIF.
+- Reihenfolge: `og_image` → `hero_image_file` (wird zugeschnitten) →
+  Standardbild `public/og-default.png`.
+- Das Feld ist per MCP angelegt und in `scripts/directus/schema.mjs`
+  nachgezogen. `directus:provision` kennt es also auch für neue Instanzen.
+- Ein im CMS gesetztes `settings.default_og_image` wird derzeit nicht korrekt
+  in eine absolute Directus-URL umgesetzt; das Standardbild liegt deshalb
+  statisch in `public/`.
+
 ## Editor UX Notes
 
 - body is configured as a rich text HTML editor field for CMS authoring.

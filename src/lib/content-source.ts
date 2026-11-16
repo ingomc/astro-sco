@@ -17,6 +17,7 @@ type VeranstaltungData = {
   eventDate: Date;
   location?: string;
   heroImage?: string;
+  ogImage?: string;
   cta?: string;
   featured: boolean;
   hidden: boolean;
@@ -30,6 +31,7 @@ type BerichtData = {
   eventDate: Date;
   location?: string;
   heroImage?: string;
+  ogImage?: string;
   hidden: boolean;
   tags: string[];
   mapLocations?: {
@@ -591,6 +593,7 @@ function mapDirectusItem<K extends SupportedCollection>(
         eventDate: toDate(item.event_date, "event_date", collection, slug),
         location: toStringOrUndefined(item.location),
         heroImage: resolveHeroImageValue(item),
+        ogImage: resolveFileValue(item.og_image),
         cta: toStringOrUndefined(item.cta),
         featured: toBoolean(item.featured, false),
         hidden: toBoolean(item.hidden, false),
@@ -615,6 +618,7 @@ function mapDirectusItem<K extends SupportedCollection>(
         eventDate: toDate(item.event_date, "event_date", collection, slug),
         location: toStringOrUndefined(item.location),
         heroImage: resolveHeroImageValue(item),
+        ogImage: resolveFileValue(item.og_image),
         hidden: toBoolean(item.hidden, false),
         tags: toStringArray(item.tags),
         mapLocations: toMapLocations(item.map_locations),

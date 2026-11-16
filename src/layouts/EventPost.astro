@@ -22,6 +22,7 @@ const {
   description,
   eventDate,
   heroImage,
+  ogImage: ogImagePath,
   location,
   hidden,
   relatedItems,
@@ -38,7 +39,8 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
   "/public/assets/**/*.{jpeg,jpg,png,gif,avif}",
 );
 const resolvedHero = resolveHeroImage(heroImage, images);
-const ogImage = toOgImageUrl(heroImage);
+// Eigenes OG-Bild (CMS-Feld og_image) hat Vorrang, sonst wird das Hero-Bild zugeschnitten.
+const ogImage = toOgImageUrl(ogImagePath) ?? toOgImageUrl(heroImage);
 const metaImage =
   ogImage ??
   (resolvedHero.kind === "remote" ? resolvedHero.src : toMetaImageUrl(heroImage));

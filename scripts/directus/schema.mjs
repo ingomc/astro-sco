@@ -259,6 +259,9 @@ export const TARGET_SCHEMA = [
         note: "Upload/select hero image in Directus files.",
       }),
       stringField("hero_image_alt", false, "half", 255),
+      fileImageField("og_image", false, "half", {
+        note: "Bild für Link-Vorschau (WhatsApp, Facebook …): idealerweise 1200×630 px. Leer = Hero-Bild wird zugeschnitten.",
+      }),
       stringField("cta", false, "half"),
       boolField("featured", false, false),
       boolField("hidden", false, false),
@@ -314,6 +317,9 @@ export const TARGET_SCHEMA = [
         note: "Upload/select hero image in Directus files.",
       }),
       stringField("hero_image_alt", false, "half", 255),
+      fileImageField("og_image", false, "half", {
+        note: "Bild für Link-Vorschau (WhatsApp, Facebook …): idealerweise 1200×630 px. Leer = Hero-Bild wird zugeschnitten.",
+      }),
       boolField("hidden", false, false),
       {
         name: "tags",
@@ -925,6 +931,8 @@ function fileRelation(collection, field) {
 export const TARGET_RELATIONS = [
   fileRelation("veranstaltungen", "hero_image_file"),
   fileRelation("berichte", "hero_image_file"),
+  fileRelation("veranstaltungen", "og_image"),
+  fileRelation("berichte", "og_image"),
   fileRelation("settings", "default_og_image"),
   fileRelation("settings", "logo_normal"),
   fileRelation("settings", "logo_winter"),
