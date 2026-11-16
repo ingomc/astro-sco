@@ -1,12 +1,14 @@
 ---
 import App from "../../layouts/App.astro";
 import DartTeamOverview from "../../components/DartTeamOverview.astro";
+import { getDartOpenPlayApiUrl } from "../../lib/dart-open-play";
 
 const title = "Darts - SCO-OGV Oberfüllbach";
 const description =
   "Spielplan, Ergebnisse und Mannschaftskader der SCO-Darts Team Fülltreffer in der Saison 2026/27.";
+const dartOpenPlayApiUrl = getDartOpenPlayApiUrl();
 ---
 
 <App title={title} description={description}>
-  <DartTeamOverview />
+  <DartTeamOverview dartOpenPlayApiUrl={dartOpenPlayApiUrl} />
 </App>

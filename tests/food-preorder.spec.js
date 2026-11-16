@@ -39,6 +39,12 @@ test("Gast kann ein Gericht in den Warenkorb legen und eine Reservierung anfrage
               priceCents: 1250,
               remainingQuantity: 8,
             },
+            {
+              id: 2,
+              name: "Spint mit Sauerkraut",
+              priceCents: 0,
+              remainingQuantity: null,
+            },
           ],
         }),
       });
@@ -81,11 +87,18 @@ test("Gast kann ein Gericht in den Warenkorb legen und eine Reservierung anfrage
   await expect(
     page.getByRole("heading", { name: "Essen vorbestellen" }),
   ).toBeVisible();
-  await expect(page.locator(".food-preorder-dish")).toContainText(
+  await expect(page.locator(".food-preorder-dish").first()).toContainText(
     "Allergene: Sellerie",
+  );
+  await expect(page.locator(".food-preorder-dish").nth(1)).toContainText(
+    "Preis wird bei der Abholung bekannt gegeben.",
   );
 
   await page.locator("#food-quantity-1").fill("2");
+  await page.locator("#food-quantity-2").fill("1");
+  await expect(page.locator(".food-preorder-total")).toContainText(
+    "Der Preis für einzelne Gerichte wird bei der Abholung bekannt gegeben.",
+  );
   await page.locator("#food-name").fill("Erika Muster");
   await page.locator("#food-email").fill("erika@example.de");
   await page.getByRole("button", { name: "Reservierung anfragen" }).click();
@@ -109,6 +122,9 @@ test("Gast kann ein Gericht in den Warenkorb legen und eine Reservierung anfrage
     name: "Erika Muster",
     email: "erika@example.de",
     privacyAccepted: true,
-    items: [{ dishId: 1, quantity: 2 }],
+    items: [
+      { dishId: 1, quantity: 2 },
+      { dishId: 2, quantity: 1 },
+    ],
   });
 });

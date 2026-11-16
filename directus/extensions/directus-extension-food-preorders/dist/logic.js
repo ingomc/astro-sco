@@ -91,7 +91,16 @@ export function ensureCapacity(selectedItems, confirmedQuantities) {
   for (const { dish, quantity } of selectedItems) {
     const confirmed = Number(confirmedQuantities.get(Number(dish.id)) || 0);
     const capacity = Number(dish.capacity);
-    if (!Number.isInteger(capacity) || capacity < 1 || confirmed + quantity > capacity) {
+    if (!Number.isInteger(capacity) || capacity < 0) {
+      throw new FoodOrderError(
+        "DISH_UNAVAILABLE",
+        `Das Gericht „${dish.name}“ ist derzeit nicht verfügbar.`,
+        409,
+      );
+    }
+    // A capacity of zero deliberately means that no online quota is set.
+    // This lets events collect menu choices before the kitchen fixes a cap.
+    if (capacity > 0 && confirmed + quantity > capacity) {
       throw new FoodOrderError(
         "DISH_SOLD_OUT",
         `Für „${dish.name}“ ist die gewünschte Menge leider nicht mehr verfügbar.`,
