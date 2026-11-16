@@ -129,6 +129,29 @@ export function toOptimizedDirectusAssetUrl(path: string, transform: DirectusAss
   return directusAssetUrl.toString();
 }
 
+/**
+ * Open-Graph-Variante eines Directus-Bildes: 1200x630 (1.91:1), zugeschnitten,
+ * als JPG. Messenger und soziale Netzwerke (WhatsApp, Facebook, X) zeigen kein
+ * AVIF. Liefert undefined, wenn der Pfad kein Directus-Asset ist.
+ */
+export function toOgImageUrl(path?: string): string | undefined {
+  if (!path) {
+    return undefined;
+  }
+
+  const url = resolveDirectusAssetUrl(path);
+  if (!url) {
+    return undefined;
+  }
+
+  url.searchParams.set("width", "1200");
+  url.searchParams.set("height", "630");
+  url.searchParams.set("fit", "cover");
+  url.searchParams.set("format", "jpg");
+  url.searchParams.set("quality", "85");
+  return url.toString();
+}
+
 export function toMetaImageUrl(heroImage?: string): string | undefined {
   if (!heroImage) {
     return undefined;

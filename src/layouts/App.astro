@@ -12,7 +12,7 @@ import SpeedInsights from "@vercel/speed-insights/astro";
 
 const settings = await getSiteSettings();
 
-const { title, description, image, robots } = Astro.props;
+const { title, description, image, imageAlt, robots } = Astro.props;
 
 const isStaging =
   import.meta.env.STAGING === "1" || process.env.STAGING === "1";
@@ -30,6 +30,7 @@ const siteHost =
       title={title || settings.site_title}
       description={description || settings.site_description || ""}
       image={image || settings.default_og_image}
+      imageAlt={image ? imageAlt : undefined}
       robots={stagingRobots}
     />
     {

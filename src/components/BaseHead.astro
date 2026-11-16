@@ -7,6 +7,7 @@ interface Props {
   title: string;
   description: string;
   image?: string;
+  imageAlt?: string;
   robots?: string;
 }
 
@@ -16,6 +17,7 @@ const {
   title,
   description,
   image = "/og-default.png",
+  imageAlt = "SCO-OGV Oberfüllbach 1963 e.V. Logo",
   robots = "index,follow",
 } = Astro.props;
 
@@ -52,7 +54,7 @@ const siteOrigin = `https://${siteHost}`;
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={new URL(image, Astro.url)} />
-<meta property="og:image:alt" content="SCO-OGV Oberfüllbach 1963 e.V. Logo" />
+<meta property="og:image:alt" content={imageAlt} />
 <meta property="og:locale" content="de_DE" />
 <meta property="og:site_name" content="SCO-OGV Oberfüllbach 1963 e.V." />
 
@@ -62,10 +64,7 @@ const siteOrigin = `https://${siteHost}`;
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(image, Astro.url)} />
-<meta
-  property="twitter:image:alt"
-  content="SCO-OGV Oberfüllbach 1963 e.V. Logo"
-/>
+<meta property="twitter:image:alt" content={imageAlt} />
 
 <!-- Performance & Accessibility -->
 <link
